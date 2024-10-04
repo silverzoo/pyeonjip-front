@@ -1,18 +1,24 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import logo from './logo.svg';
+import './App.css';
 
 function App() {
-  const [hidata, setHello] = useState('')
-
-  useEffect(() => {
-    axios.get('http://localhost:8080/api/hello')
-      .then(response => setHello(response.data))
-      .catch(error => console.log(error))
-  }, []);
-
   return (
-    <div>
-      백엔드 스프링 부트 데이터 : {hidata}
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+          편안하게 집을 편집하다 : 가구 쇼핑몰 편집
+        </p>
+        <a
+          className="App-link"
+          href="https://reactjs.org"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Learn React
+        </a>
+      </header>
     </div>
   );
 }
