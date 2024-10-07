@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './animation.css'; // CSS 파일 경로에 맞게 수정하세요.
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
@@ -8,21 +9,29 @@ function CartApp() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [previousTotal, setPreviousTotal] = useState(0);
     const [itemCount, setItemCount] = useState(0);
+    const [animatedTotal, setAnimatedTotal] = useState(0); // 애니메이션된 총 가격
+    const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
 
-    // 데이터 가져오기
     useEffect(() => {
-        // 컨트롤러에서 JSON 가져오기
         fetch('http://localhost:8080/cart')
             .then(response => response.json())
             .then(data => setCoupons(data))
             .catch(error => console.error('Error fetching data:', error));
 
-        // LocalStorage 에서 JSON 가져오기
         const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(storedCartItems);
         updateTotalPrice(storedCartItems);
     }, []);
 
+    useEffect(() => {
+        updateTotalPrice(cartItems);
+    }, [couponDiscount, isCouponApplied]); // 두 값이 변경될 때마다 실행
+
+    useEffect(() => {
+        if (cartItems.length > 0) {
+            updateTotalPrice(cartItems);
+        }
+    }, [cartItems]);
 
     const updateTotalPrice = (items) => {
         let total = 0;
@@ -31,28 +40,60 @@ function CartApp() {
                 total += item.price * item.quantity;
             }
         });
+
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
         const discountedTotal = total - discount;
-        setTotalPrice(discountedTotal);
-        setPreviousTotal(discountedTotal);
+
+        // 애니메이션
+        animateTotalPrice(discountedTotal, discount);
+
+        // 상태 업데이트
+        setPreviousTotal(total); // 실제 총 금액을 저장합니다 (할인 전 금액).
         setItemCount(items.filter(item => item.check).length);
     };
 
+    const animateTotalPrice = (newTotal, discount) => {
+        const duration = 200; // 애니메이션 지속 시간 (ms)
+        const startTime = performance.now();
+        const startValue = animatedTotal;
+        const startDiscountValue = animatedDiscountedPrice;
+
+        const animate = (currentTime) => {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / duration, 1); // 0에서 1로 진행
+            const currentValue = Math.floor(startValue + (newTotal - startValue) * progress);
+            const currentDiscountedValue = Math.floor(startDiscountValue + (discount - startDiscountValue) * progress);
+
+            setAnimatedTotal(currentValue);
+            setAnimatedDiscountedPrice(currentDiscountedValue);
+
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // 애니메이션 완료 후 최종값 설정
+                setTotalPrice(newTotal);
+            }
+        };
+
+        requestAnimationFrame(animate);
+    };
+
     const applyCouponDiscount = (couponCode) => {
+        setIsCouponApplied(false);
         const coupon = coupons.find(c => c.promocode === couponCode);
 
         if (coupon) {
             setCouponDiscount(coupon.percent);
             setIsCouponApplied(true);
             alert(`쿠폰이 적용되었습니다: ${coupon.percent}% 할인`);
+
         } else {
             setCouponDiscount(0);
             setIsCouponApplied(false);
             alert('유효하지 않은 쿠폰 코드입니다.');
         }
-        updateTotalPrice(cartItems);
+        //updateTotalPrice(cartItems);
     };
-
 
     const validateQuantity = (index, value) => {
         const min = 0;
@@ -67,7 +108,7 @@ function CartApp() {
         newCartItems[index].quantity = validatedValue;
         setCartItems(newCartItems);
         localStorage.setItem('cart', JSON.stringify(newCartItems));
-        updateTotalPrice(newCartItems);
+        //updateTotalPrice(newCartItems);
     };
 
     const handleCheckboxChange = (index) => {
@@ -75,14 +116,14 @@ function CartApp() {
         newCartItems[index].check = !newCartItems[index].check;
         setCartItems(newCartItems);
         localStorage.setItem('cart', JSON.stringify(newCartItems));
-        updateTotalPrice(newCartItems);
+        //updateTotalPrice(newCartItems);
     };
 
     const handleDeleteItem = (index) => {
         const newCartItems = cartItems.filter((_, i) => i !== index);
         setCartItems(newCartItems);
         localStorage.setItem('cart', JSON.stringify(newCartItems));
-        updateTotalPrice(newCartItems);
+        //updateTotalPrice(newCartItems);
     };
 
     const handleCouponApply = () => {
@@ -142,7 +183,7 @@ function CartApp() {
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
-                                                            <button onClick={() => handleDeleteItem(index)} className="text-muted delete-item"><i className="bi bi-trash3-fill"></i></button>
+                                                            <button onClick={() => handleDeleteItem(index)} ><i className="bi bi-trash3"></i></button>
                                                         </div>
                                                         <hr className="my-4" />
                                                     </div>
@@ -159,11 +200,11 @@ function CartApp() {
                                             <hr className="my-3" />
                                             <div className="d-flex justify-content-between mb-3">
                                                 <h5 className="text-uppercase">Total price</h5>
-                                                <h5 id="totalPriceDisplay">₩ {totalPrice.toLocaleString()}</h5>
+                                                <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                             </div>
                                             <div className="d-flex justify-content-between mb-3" id="discountRow" style={{ display: couponDiscount > 0 ? 'flex' : 'none' }}>
                                                 <h6 className="text-muted">Discount</h6>
-                                                <h6 id="discountedPriceDisplay">₩ {totalPrice * (couponDiscount / 100).toLocaleString()}</h6>
+                                                <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                             <div className="d-grid gap-2">
                                                 <select className="form-select mb-4 pb-2" aria-label="Default select example">
@@ -182,7 +223,7 @@ function CartApp() {
                                                 </div>
                                             </div>
                                             <hr className="my-4" />
-                                            <form id="checkoutForm" action="/" method="POST">
+                                            <form id="checkoutForm" action="/public" method="POST">
                                                 <div id="itemDetailsContainer"></div>
                                                 <input type="hidden" id="totalPriceInput" name="totalPrice" value={previousTotal} />
                                                 <input type="hidden" id="itemCountInput" name="itemCount" value={itemCount} />

@@ -15,7 +15,7 @@ function SandboxApp() {
     // 로컬스토리지 초기화
     const resetStorage = () => {
         localStorage.clear();
-        alert('로컬스토리지 초기화 완료');
+        alert('장바구니 초기화');
     };
 
     // 장바구니에 아이템 추가
@@ -40,11 +40,11 @@ function SandboxApp() {
         const itemExists = cart.some(cartItem => cartItem.id === item.id);
 
         if (itemExists) {
-            alert(`${item.name} is already in the cart!`);
+            alert(`이미 장바구니에 존재합니다.`);
         } else {
             cart.push(cartItem);
             localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${item.name} added to cart!`);
+            alert(`장바구니에 추가되었습니다. ${item.name} `);
         }
     };
 
@@ -77,11 +77,11 @@ function SandboxApp() {
                                             </div>
 
                                             <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={() => window.location.href = '/cart'}>
-                                                장바구니로 이동
+                                                장바구니 이동
                                             </button>
 
                                             <button className="btn btn-dark btn-block btn-lg gap-4" onClick={resetStorage}>
-                                                로컬스토리지 초기화
+                                                장바구니 초기화
                                             </button>
                                         </div>
                                     </div>
