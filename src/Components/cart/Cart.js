@@ -12,7 +12,7 @@ function CartApp() {
     // 데이터 가져오기
     useEffect(() => {
         // 컨트롤러에서 JSON 가져오기
-        fetch('http://localhost:8080/cart/sandbox')
+        fetch('http://localhost:8080/cart')
             .then(response => response.json())
             .then(data => setCoupons(data))
             .catch(error => console.error('Error fetching data:', error));
@@ -25,7 +25,6 @@ function CartApp() {
 
 
     const updateTotalPrice = (items) => {
-        console.log(coupons);
         let total = 0;
         items.forEach(item => {
             if (item.check) {
