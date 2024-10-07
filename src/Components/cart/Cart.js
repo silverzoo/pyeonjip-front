@@ -43,15 +43,15 @@ function CartApp() {
         const coupon = coupons.find(c => c.promocode === couponCode);
 
         if (coupon) {
-            setCouponDiscount(coupon.percent); // Set the discount percentage
-            setIsCouponApplied(true); // Mark the coupon as applied
-            alert(`쿠폰이 적용되었습니다: ${coupon.percent}% 할인`); // Show alert
+            setCouponDiscount(coupon.percent);
+            setIsCouponApplied(true);
+            alert(`쿠폰이 적용되었습니다: ${coupon.percent}% 할인`);
         } else {
-            setCouponDiscount(0); // Reset discount if coupon not found
-            setIsCouponApplied(false); // Mark coupon as not applied
-            alert('유효하지 않은 쿠폰 코드입니다.'); // Show alert
+            setCouponDiscount(0);
+            setIsCouponApplied(false);
+            alert('유효하지 않은 쿠폰 코드입니다.');
         }
-        updateTotalPrice(cartItems); // Update total price after applying the coupon
+        updateTotalPrice(cartItems);
     };
 
 
