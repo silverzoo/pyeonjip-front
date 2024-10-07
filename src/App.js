@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import AppRouter from "./Components/router/Router";
 
 function App() {
   return (
@@ -10,8 +11,9 @@ function App() {
           편안하게 집을 편집하다 : 가구 쇼핑몰 편집
         </p>
       </header>
+
+        <AppRouter />
     </div>
   );
-} 
-
+}
 export default App;
