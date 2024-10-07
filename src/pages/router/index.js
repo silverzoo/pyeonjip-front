@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Sandbox from "../cart/Sandbox";
-import Cart from "../cart/Cart";
+import Sandbox from "../Cart/Sandbox";
+import Cart from "../Cart";
 
 function AppRouter() {
     return (

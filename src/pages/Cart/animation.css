@@ -1,0 +1,15 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#totalPriceDisplay,
+#discountedPriceDisplay {
+    animation: fadeIn 0.5s ease-in-out; /* 애니메이션 추가 */
+    transition: all 0.5s ease; /* 부드러운 전환 효과 추가 */
+}
+
