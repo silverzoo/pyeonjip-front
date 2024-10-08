@@ -103,12 +103,14 @@ function CartApp() {
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const max = 10;
+        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
+
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 1;
-        } else if (validatedValue > max) {
-            validatedValue = 10;
+        } else if (validatedValue > maxQuantity) {
+            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
+            validatedValue = maxQuantity;
         }
         const newCartItems = [...cartItems];
         newCartItems[index].quantity = validatedValue;
@@ -155,7 +157,11 @@ function CartApp() {
                                     <div className="col-lg-8 col-xl-8">
                                         <div className="p-5">
                                             <div className="d-flex justify-content-between align-items-center mb-2">
-                                                <h1 className="fw-bold mb-0">장바구니</h1>
+                                                <div
+                                                    className="cart-header d-flex justify-content-between align-items-center">
+                                                    <h1 className="fw-bold mb-0">장바구니</h1>
+                                                    <i className="bi bi-cart3 mx-3" style={{fontSize: '2rem'}}></i>
+                                                </div>
                                                 <h6 className="mb-0 text-muted">{itemCount}개 아이템</h6>
                                             </div>
                                             <hr className="my-3"/>
@@ -180,7 +186,7 @@ function CartApp() {
 
                                                         <div className="col-md-2 col-lg-2 col-xl-2 ">
                                                             <a href='/cart/sandbox'>
-                                                                <img src={item.image} className="img-fluid rounded-3"
+                                                                <img src={item.url} className="img-fluid rounded-3"
                                                                      alt={item.name}/>
                                                             </a>
 
@@ -191,7 +197,7 @@ function CartApp() {
                                                                 color: 'inherit',
                                                                 textAlign: 'left'
                                                             }}>
-                                                                <h6 className="text-muted">{item.category}</h6>
+                                                                <h6 className="text-muted">{item.optionName}</h6>
                                                                 <h6 className="mb-0">{item.name}</h6>
                                                             </a>
                                                         </div>
@@ -253,13 +259,13 @@ function CartApp() {
                                                 <h5 className="text-uppercase">Total price</h5>
                                                 <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                             </div>
-                                            <div className="d-flex justify-content-between mb-3" id="discountRow"
+                                            <div className="d-flex justify-content-between mb-3 my-4" id="discountRow"
                                                  style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
                                                 <h6 className="text-muted">Discount</h6>
                                                 <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                             <div className="d-grid gap-2">
-                                                <select className="form-select mb-4 pb-2"
+                                                <select className="form-select mb-4 pb-2 my-3"
                                                         aria-label="Default select example">
                                                     <option selected>결제 방법 선택</option>
                                                     <option value="1">신용카드</option>
@@ -268,7 +274,9 @@ function CartApp() {
                                                     <option value="4">무통장 입금</option>
                                                 </select>
                                             </div>
-                                            <h5 className="text-uppercase mb-2">쿠폰</h5>
+
+
+                                            <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
                                             <div className="mb-2">
                                                 <div className="form-outline d-flex">
                                                     <input type="text" id="form3Examplea2"
@@ -279,6 +287,7 @@ function CartApp() {
                                                     </button>
                                                 </div>
                                             </div>
+
                                             <hr className="my-4"/>
                                             <form id="checkoutForm" action="/public" method="POST">
                                                 <div id="itemDetailsContainer"></div>

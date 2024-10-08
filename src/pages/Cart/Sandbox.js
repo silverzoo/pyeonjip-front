@@ -22,13 +22,12 @@ function SandboxApp() {
         const cartItem = {
             id: item.id,
             name: item.name,
-            options: item.productDetails.map(option => ({
-                optionName: option.optionName,
-                price: option.optionPrice,
-                url: option.url,
-                maxQuantity: option.maxQuantity,
-            })), // 모든 옵션 추가
-            quantity: 1, // 기본 수량
+            optionName: item.optionName,
+            price: item.optionPrice,
+            quantity: item.quantity,
+            maxQuantity: item.maxQuantity,
+            url: item.url,
+
             check: true,
         };
 
@@ -51,7 +50,7 @@ function SandboxApp() {
     };
 
     return (
-        <section>
+        <section >
             <div className="container h-100">
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
@@ -60,45 +59,31 @@ function SandboxApp() {
                                 <div className="p-5">
                                     <div className="row">
                                         {items.map((item) => (
-                                            <div className="col-md-4" key={item.id}>
+                                            <div className="col-md-3" key={item.id}>
                                                 <div className="card mb-2">
-                                                    <img
-                                                        src={item.productDetails[0].url}
-                                                        className="card-img-top"
-                                                        alt="Item Image"
-                                                        onError={(e) => {
-                                                            e.target.src = 'default-image-url.jpg';
-                                                        }} // 이미지 오류 시 기본 이미지
-                                                    />
+                                                    <img src={item.url} className="card-img-top" alt="Item Image" />
                                                     <div className="card-body">
                                                         <h5 className="card-title">{item.name}</h5>
-                                                        {/* 모든 옵션이 장바구니에 추가됨 */}
-                                                        <button
-                                                            className="btn btn-dark btn-block btn-lg gap-4 m-2 "
-                                                            onClick={() => addToCart(item)} // 아이템 추가
-                                                        >
+                                                        {/*<p className="card-text">{item.optionPrice} 원</p>*/}
+                                                        {/*<p className="card-text">{item.category}</p>*/}
+
+                                                        <button className="btn btn-dark btn-block btn-lg gap-4 m-2"
+                                                                onClick={() => addToCart(item)}>
                                                             Add to Cart
                                                         </button>
                                                     </div>
                                                 </div>
                                             </div>
                                         ))}
-                                        <div>
-                                        <button
-                                            className="btn btn-dark btn-block btn-lg gap-4 m-2 col-lg-3"
-                                            onClick={() => window.location.href = '/cart'}
-                                        >
-                                            장바구니 이동
-                                        </button>
+                                    </div>
 
-                                        <button
-                                            className="btn btn-dark btn-block btn-lg gap-4 col-lg-3"
-                                            onClick={resetStorage}
-                                        >
-                                            장바구니 초기화
-                                        </button>
-                                    </div>
-                                    </div>
+                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={() => window.location.href = '/cart'}>
+                                        장바구니 이동
+                                    </button>
+
+                                    <button className="btn btn-dark btn-block btn-lg gap-4" onClick={resetStorage}>
+                                        장바구니 초기화
+                                    </button>
                                 </div>
                             </div>
                         </div>
