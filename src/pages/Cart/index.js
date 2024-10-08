@@ -85,18 +85,33 @@ function CartApp() {
         setIsCouponApplied(false);
         const coupon = coupons.find(c => c.code === couponCode);
 
-        if (coupon) {
-            setCouponDiscount(coupon.percent);
-            setIsCouponApplied(true);
-            alert(`쿠폰이 적용되었습니다: ${coupon.percent}% 할인`);
+        if (!coupon) {
+            alert('유효하지 않은 쿠폰 코드입니다.');
+            return;
+        }
 
-        } else {
+        if (coupon.active === false) {
             setCouponDiscount(0);
             setIsCouponApplied(false);
-            alert('유효하지 않은 쿠폰 코드입니다.');
+            alert('이미 사용한 쿠폰입니다.');
+            return;
         }
-        //updateTotalPrice(cartItems);
+
+        // 쿠폰의 유효기간 검사
+        const expiryDate = new Date(coupon.expiryDate);
+        const currentDate = new Date();
+        if (currentDate > expiryDate) {
+            setCouponDiscount(0);
+            setIsCouponApplied(false);
+            alert('만료된 쿠폰입니다.');
+            return;
+        }
+
+        setCouponDiscount(coupon.discount);
+        setIsCouponApplied(true);
+        alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
     };
+
 
     const validateQuantity = (index, value) => {
         const min = 0;
