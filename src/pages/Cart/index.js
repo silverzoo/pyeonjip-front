@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './animation.css'; // CSS 파일 경로에 맞게 수정하세요.
+import './animation.css';
+import { useNavigate } from 'react-router-dom';
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
@@ -11,6 +12,8 @@ function CartApp() {
     const [itemCount, setItemCount] = useState(0);
     const [animatedTotal, setAnimatedTotal] = useState(0); // 애니메이션된 총 가격
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
+    const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:8080/cart')
@@ -97,12 +100,12 @@ function CartApp() {
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const max = 999;
+        const max = 10;
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 1;
         } else if (validatedValue > max) {
-            validatedValue = 999;
+            validatedValue = 10;
         }
         const newCartItems = [...cartItems];
         newCartItems[index].quantity = validatedValue;
@@ -120,10 +123,16 @@ function CartApp() {
     };
 
     const handleDeleteItem = (index) => {
-        const newCartItems = cartItems.filter((_, i) => i !== index);
-        setCartItems(newCartItems);
-        localStorage.setItem('cart', JSON.stringify(newCartItems));
-        //updateTotalPrice(newCartItems);
+        // 애니메이션 클래스 추가
+        setAnimatedItems((prev) => [...prev, index]); // 애니메이션 적용할 항목 인덱스 추가
+
+        // 애니메이션이 끝난 후 아이템을 삭제
+        setTimeout(() => {
+            const updatedCartItems = cartItems.filter((_, i) => i !== index);
+            setCartItems(updatedCartItems);
+            localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+            setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
+        }, 500); // 애니메이션 지속 시간에 맞춤
     };
 
     const handleCouponApply = () => {
@@ -133,70 +142,104 @@ function CartApp() {
 
     return (
         <section className="h-100 h-custom" style={{ backgroundColor: '#ffffff' }}>
-            <div className="container py-5 h-100">
-                <div className="row d-flex justify-content-center align-items-center h-100">
-                    <div className="col-12">
-                        <div className="card card-registration card-registration-2" style={{ borderRadius: '15px' }}>
+            <div className="container h-100">
+                <div className="row d-flex justify-content-between align-items-end h-100">
+                    <div className="col-12 col-xl-12">
+                        <div className="card border-1 card-registration card-registration-2">
                             <div className="card-body p-0">
-                                <div className="row g-0">
-                                    <div className="col-lg-8">
+                                <div className="row g-1">
+                                    <div className="col-lg-8 col-xl-8">
                                         <div className="p-5">
                                             <div className="d-flex justify-content-between align-items-center mb-2">
                                                 <h1 className="fw-bold mb-0">장바구니</h1>
-                                                <h6 className="mb-0 text-muted">{itemCount} 개 아이템 선택</h6>
+                                                <h6 className="mb-0 text-muted">{itemCount}개 아이템</h6>
                                             </div>
                                             <hr className="my-3" />
                                             <div id="cartItemsContainer">
                                                 {cartItems.map((item, index) => (
-                                                    <div key={index} className="row mb-2 d-flex justify-content-between align-items-center cart-item">
+                                                    <div
+                                                        key={index}
+                                                        className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
+                                                    >
                                                         <div className="form-check col-md-1 col-lg-1">
                                                             <input
-                                                                className="form-check-input"
+                                                                className="checkbox"
                                                                 type="checkbox"
                                                                 checked={item.check}
                                                                 onChange={() => handleCheckboxChange(index)}
-                                                                data-price={item.price}
-                                                                data-item-id={item.id}
-                                                                data-name={item.name}
-                                                                data-category={item.category}
-                                                                data-image={item.image}
+                                                                id={`checkbox-${index}`} // 각 체크박스에 고유 ID 추가
                                                             />
-                                                            <label className="form-check-label"></label>
+                                                            <label
+                                                                htmlFor={`checkbox-${index}`}
+                                                                className={`custom-checkbox ${item.check ? 'checked' : ''}`}></label>
                                                         </div>
-                                                        <div className="col-md-2 col-lg-2 col-xl-1">
-                                                            <img src={item.image} className="img-fluid rounded-3" alt={item.name} />
+
+                                                        <div className="col-md-2 col-lg-2 col-xl-2 ">
+                                                            <a href='/cart/sandbox'>
+                                                                <img src={item.image} className="img-fluid rounded-3"
+                                                                     alt={item.name}/>
+                                                            </a>
+
                                                         </div>
-                                                        <div className="col-md-3 col-lg-3 col-xl-3">
-                                                            <h6 className="text-muted">{item.category}</h6>
-                                                            <h6 className="mb-0">{item.name}</h6>
+                                                        <div className="col-md-3 col-lg-3 col-xl-3 ">
+                                                            <a href='/cart/sandbox' style={{ textDecoration: 'none', color: 'inherit', textAlign: 'left'}}>
+                                                                <h6 className="text-muted">{item.category}</h6>
+                                                                <h6 className="mb-0">{item.name}</h6>
+                                                            </a>
                                                         </div>
-                                                        <div className="col-md-2 col-lg-1 col-xl-2">
+                                                        <div
+                                                            className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity - 1)}
+                                                                disabled={item.quantity <= 1} // 최소 수량 1
+                                                            >
+                                                                -
+                                                            </button>
                                                             <input
                                                                 type="number"
-                                                                className="form-control quantity"
+                                                                className="form-control quantity mx-2" // mx-2는 양쪽 여백 추가
                                                                 value={item.quantity}
-                                                                min="0"
+                                                                min="1" // 최소 수량 1
                                                                 onChange={(e) => validateQuantity(index, e.target.value)}
                                                             />
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity + 1)}
+                                                            >
+                                                                +
+                                                            </button>
                                                         </div>
-                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-2">
+
+                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
-                                                            <button onClick={() => handleDeleteItem(index)} ><i className="bi bi-trash3"></i></button>
+                                                            <button className="delete-button"
+                                                                    onClick={() => handleDeleteItem(index)}>
+                                                                <i className="bi bi-trash3"></i>
+                                                            </button>
                                                         </div>
-                                                        <hr className="my-4" />
+                                                        <hr className="my-3"/>
                                                     </div>
                                                 ))}
+
                                             </div>
-                                            <div className="row mb-2 d-flex justify-content-between align-items-center">
-                                                <h6 className="mb-0 text-muted"><i className="bi bi-arrow-left"></i> 뒤로가기</h6>
+                                            <div className="back-button-container d-flex justify-content-start">
+                                                <h6
+                                                    className="mb-0 text-muted back-button"
+                                                    onClick={() => navigate(-1)}
+                                                    style={{cursor: 'pointer'}}
+                                                >
+                                                    <i className="bi bi-arrow-left"></i> 뒤로가기
+                                                </h6>
                                             </div>
+
                                         </div>
                                     </div>
                                     <div className="col-lg-4 bg-body-tertiary">
                                         <div className="p-5">
-                                            <h3 className="fw-bold mb-2 mt-2 pt-1">Summary</h3>
+                                        <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
                                             <hr className="my-3" />
                                             <div className="d-flex justify-content-between mb-3">
                                                 <h5 className="text-uppercase">Total price</h5>
@@ -227,7 +270,7 @@ function CartApp() {
                                                 <div id="itemDetailsContainer"></div>
                                                 <input type="hidden" id="totalPriceInput" name="totalPrice" value={previousTotal} />
                                                 <input type="hidden" id="itemCountInput" name="itemCount" value={itemCount} />
-                                                <button type="submit" className="btn btn-dark btn-lg mb-1">결제하기</button>
+                                                <button type="submit" className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기</button>
                                             </form>
                                         </div>
                                     </div>
