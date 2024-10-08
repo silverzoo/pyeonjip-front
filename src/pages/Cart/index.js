@@ -27,14 +27,11 @@ function CartApp() {
     }, []);
 
     useEffect(() => {
-        updateTotalPrice(cartItems);
-    }, [couponDiscount, isCouponApplied]); // 두 값이 변경될 때마다 실행
-
-    useEffect(() => {
         if (cartItems.length > 0) {
             updateTotalPrice(cartItems);
         }
-    }, [cartItems]);
+    }, [cartItems, couponDiscount, isCouponApplied]);
+
 
     const updateTotalPrice = (items) => {
         let total = 0;
