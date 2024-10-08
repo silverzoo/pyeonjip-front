@@ -83,7 +83,7 @@ function CartApp() {
 
     const applyCouponDiscount = (couponCode) => {
         setIsCouponApplied(false);
-        const coupon = coupons.find(c => c.promocode === couponCode);
+        const coupon = coupons.find(c => c.code === couponCode);
 
         if (coupon) {
             setCouponDiscount(coupon.percent);
