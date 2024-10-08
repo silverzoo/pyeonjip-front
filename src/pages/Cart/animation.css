@@ -90,8 +90,6 @@ button {
 }
 
 
-
-
 /* 수량 입력 필드 스타일 */
 .quantity {
 
@@ -108,6 +106,7 @@ button {
 
     appearance: none; /* 기본 스타일 제거 */
 }
+
 .quantity::-webkit-inner-spin-button,
 .quantity::-webkit-outer-spin-button {
     -webkit-appearance: none; /* Chrome 및 Safari에서 스피너 제거 */
@@ -131,6 +130,7 @@ button {
     transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
     border-radius: 4px; /* 라운드 모서리 추가 */
 }
+
 .quantity-button:hover {
     padding: 2px 7px; /* 호버 시 패딩 증가 */
     background-color: rgba(0, 0, 0, 0.1); /* 회색 배경 추가 */
@@ -140,7 +140,6 @@ button {
 .quantity-button:disabled {
     cursor: not-allowed; /* 비활성화된 버튼의 커서 모양 */
 }
-
 
 
 .back-button {
