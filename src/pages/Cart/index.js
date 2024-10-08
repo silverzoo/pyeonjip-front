@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import './animation.css';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
@@ -83,7 +83,7 @@ function CartApp() {
 
     const applyCouponDiscount = (couponCode) => {
         setIsCouponApplied(false);
-        const coupon = coupons.find(c => c.promocode === couponCode);
+        const coupon = coupons.find(c => c.code === couponCode);
 
         if (coupon) {
             setCouponDiscount(coupon.percent);
@@ -141,7 +141,7 @@ function CartApp() {
     };
 
     return (
-        <section className="h-100 h-custom" style={{ backgroundColor: '#ffffff' }}>
+        <section className="h-100 h-custom" style={{backgroundColor: '#ffffff'}}>
             <div className="container h-100">
                 <div className="row d-flex justify-content-between align-items-end h-100">
                     <div className="col-12 col-xl-12">
@@ -154,7 +154,7 @@ function CartApp() {
                                                 <h1 className="fw-bold mb-0">장바구니</h1>
                                                 <h6 className="mb-0 text-muted">{itemCount}개 아이템</h6>
                                             </div>
-                                            <hr className="my-3" />
+                                            <hr className="my-3"/>
                                             <div id="cartItemsContainer">
                                                 {cartItems.map((item, index) => (
                                                     <div
@@ -182,7 +182,11 @@ function CartApp() {
 
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                            <a href='/cart/sandbox' style={{ textDecoration: 'none', color: 'inherit', textAlign: 'left'}}>
+                                                            <a href='/cart/sandbox' style={{
+                                                                textDecoration: 'none',
+                                                                color: 'inherit',
+                                                                textAlign: 'left'
+                                                            }}>
                                                                 <h6 className="text-muted">{item.category}</h6>
                                                                 <h6 className="mb-0">{item.name}</h6>
                                                             </a>
@@ -239,18 +243,20 @@ function CartApp() {
                                     </div>
                                     <div className="col-lg-4 bg-body-tertiary">
                                         <div className="p-5">
-                                        <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
-                                            <hr className="my-3" />
+                                            <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
+                                            <hr className="my-3"/>
                                             <div className="d-flex justify-content-between mb-3">
                                                 <h5 className="text-uppercase">Total price</h5>
                                                 <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                             </div>
-                                            <div className="d-flex justify-content-between mb-3" id="discountRow" style={{ display: couponDiscount > 0 ? 'flex' : 'none' }}>
+                                            <div className="d-flex justify-content-between mb-3" id="discountRow"
+                                                 style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
                                                 <h6 className="text-muted">Discount</h6>
                                                 <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                             <div className="d-grid gap-2">
-                                                <select className="form-select mb-4 pb-2" aria-label="Default select example">
+                                                <select className="form-select mb-4 pb-2"
+                                                        aria-label="Default select example">
                                                     <option selected>결제 방법 선택</option>
                                                     <option value="1">신용카드</option>
                                                     <option value="2">토스</option>
@@ -261,16 +267,24 @@ function CartApp() {
                                             <h5 className="text-uppercase mb-2">쿠폰</h5>
                                             <div className="mb-2">
                                                 <div className="form-outline d-flex">
-                                                    <input type="text" id="form3Examplea2" className="form-control form-control-md" />
-                                                    <button type="button" className="btn btn-dark btn-md ms-2 align-self-end" onClick={handleCouponApply}>apply</button>
+                                                    <input type="text" id="form3Examplea2"
+                                                           className="form-control form-control-md"/>
+                                                    <button type="button"
+                                                            className="btn btn-dark btn-md ms-2 align-self-end"
+                                                            onClick={handleCouponApply}>apply
+                                                    </button>
                                                 </div>
                                             </div>
-                                            <hr className="my-4" />
+                                            <hr className="my-4"/>
                                             <form id="checkoutForm" action="/public" method="POST">
                                                 <div id="itemDetailsContainer"></div>
-                                                <input type="hidden" id="totalPriceInput" name="totalPrice" value={previousTotal} />
-                                                <input type="hidden" id="itemCountInput" name="itemCount" value={itemCount} />
-                                                <button type="submit" className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기</button>
+                                                <input type="hidden" id="totalPriceInput" name="totalPrice"
+                                                       value={previousTotal}/>
+                                                <input type="hidden" id="itemCountInput" name="itemCount"
+                                                       value={itemCount}/>
+                                                <button type="submit"
+                                                        className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기
+                                                </button>
                                             </form>
                                         </div>
                                     </div>

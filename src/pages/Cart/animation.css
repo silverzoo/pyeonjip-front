@@ -68,6 +68,7 @@ button {
     display: inline-block; /* 인라인 블록으로 설정 */
     position: relative; /* 포지션 설정 */
     cursor: pointer; /* 포인터 커서 */
+    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
 }
 
 /* 체크 표시 */
@@ -83,6 +84,10 @@ button {
     border-radius: 2px; /* 체크 표시 둥글게 */
 }
 
+.custom-checkbox:hover {
+    padding: 2px 7px; /* 호버 시 패딩 증가 */
+    background-color: #eaeaea; /* 회색 배경 추가 */
+}
 
 
 /* 수량 입력 필드 스타일 */
@@ -101,6 +106,7 @@ button {
 
     appearance: none; /* 기본 스타일 제거 */
 }
+
 .quantity::-webkit-inner-spin-button,
 .quantity::-webkit-outer-spin-button {
     -webkit-appearance: none; /* Chrome 및 Safari에서 스피너 제거 */
@@ -115,21 +121,25 @@ button {
 
 /* 수량 조절 버튼 스타일 */
 .quantity-button {
-    background-color: #282828; /* 배경 색상 */
-    font-size: small;
-    color: white; /* 글자 색상 */
-    border: none; /* 테두리 제거 */
-    border-radius: 4px; /* 둥근 모서리 */
-    padding: 1px 7px; /* 안쪽 여백 */
-    cursor: pointer; /* 포인터 커서 */
-    transition: background-color 0.3s ease; /* 배경 색상 트랜지션 */
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 없애기 */
+    padding: 2px 7px; /* 원하는 크기의 패딩 적용 */
+    cursor: pointer; /* 커서 포인터 적용 */
+    font-size: 1rem; /* 버튼 크기 조정 */
+
+    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
+    border-radius: 4px; /* 라운드 모서리 추가 */
 }
 
-/* 버튼 호버 효과 */
 .quantity-button:hover {
-    background-color: #676767; /* 호버 시 색상 변경 */
+    padding: 2px 7px; /* 호버 시 패딩 증가 */
+    background-color: rgba(0, 0, 0, 0.1); /* 회색 배경 추가 */
 }
 
+
+.quantity-button:disabled {
+    cursor: not-allowed; /* 비활성화된 버튼의 커서 모양 */
+}
 
 
 .back-button {
