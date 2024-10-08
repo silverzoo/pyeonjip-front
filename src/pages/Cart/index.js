@@ -53,7 +53,7 @@ function CartApp() {
     };
 
     const animateTotalPrice = (newTotal, discount) => {
-        const duration = 200; // 애니메이션 지속 시간 (ms)
+        const duration = 400; // 애니메이션 지속 시간 (ms)
         const startTime = performance.now();
         const startValue = animatedTotal;
         const startDiscountValue = animatedDiscountedPrice;
@@ -83,25 +83,16 @@ function CartApp() {
         const coupon = coupons.find(c => c.code === couponCode);
 
         if (!coupon) {
-            alert('유효하지 않은 쿠폰 코드입니다.');
-            return;
+            return alert('유효하지 않은 쿠폰 코드입니다.');
+        }
+        if (!coupon.active) {
+            return alert('이미 사용한 쿠폰입니다.');
         }
 
-        if (coupon.active === false) {
-            setCouponDiscount(0);
-            setIsCouponApplied(false);
-            alert('이미 사용한 쿠폰입니다.');
-            return;
-        }
-
-        // 쿠폰의 유효기간 검사
         const expiryDate = new Date(coupon.expiryDate);
         const currentDate = new Date();
         if (currentDate > expiryDate) {
-            setCouponDiscount(0);
-            setIsCouponApplied(false);
-            alert('만료된 쿠폰입니다.');
-            return;
+            return alert('만료된 쿠폰입니다.');
         }
 
         setCouponDiscount(coupon.discount);
@@ -142,9 +133,10 @@ function CartApp() {
         setTimeout(() => {
             const updatedCartItems = cartItems.filter((_, i) => i !== index);
             setCartItems(updatedCartItems);
+
             localStorage.setItem('cart', JSON.stringify(updatedCartItems));
             setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
-        }, 500); // 애니메이션 지속 시간에 맞춤
+        }, 400); // 애니메이션 지속 시간에 맞춤
     };
 
     const handleCouponApply = () => {
