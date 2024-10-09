@@ -149,159 +149,168 @@ function CartApp() {
     };
 
     return (
-        <section className="h-100 h-custom" style={{backgroundColor: '#ffffff'}}>
-            <div className="container h-100">
-                <div className="row d-flex justify-content-between align-items-end h-100">
-                    <div className="col-12 col-xl-12">
-                        <div className="card border-1 card-registration card-registration-2">
-                            <div className="card-body p-0">
-                                <div className="row g-1">
-                                    <div className="col-lg-8 col-xl-8">
-                                        <div className="p-5">
-                                            <div className="d-flex justify-content-between align-items-center mb-2">
-                                                <div
-                                                    className="cart-header d-flex justify-content-between align-items-center">
-                                                    <h1 className="fw-bold mb-0">장바구니</h1>
-                                                    <i className="bi bi-cart3 mx-3" style={{fontSize: '2rem'}}></i>
-                                                </div>
-                                                <h6 className="mb-0 text-muted">{itemCount}개 아이템</h6>
+        <section className="container-fluid" style={{width: '120%', marginTop: '10vh'}}>
+            <div className="row d-flex justify-content-between align-items-end h-100">
+                <div className="col-12 col-xl-12">
+                    <div className="card border-1 card-registration card-registration-2">
+                        <div className="card-body p-0">
+                            <div className="row g-1">
+                                <div className=" col-xl-8">
+                                    <div className="p-5">
+                                        <div className="d-flex justify-content-between align-items-center mb-2">
+                                            <div
+                                                className="cart-header d-flex justify-content-between align-items-center">
+                                                <h2 className="fw-bold mb-0">장바구니</h2>
+                                                <i className="bi bi-cart3 mx-3" style={{fontSize: '2rem'}}></i>
                                             </div>
-                                            <hr className="my-3"/>
+                                            <h6 className="mb-0 text-muted">{itemCount}개 아이템</h6>
+                                        </div>
+                                        <hr className="my-3"/>
+
+                                        {cartItems.length === 0 ? (
+
+                                            <div className="text-center my-5">
+                                                <i className="bi bi-emoji-frown my-5" style={{fontSize: '4rem'}}></i>
+                                                <h3 className="my-4 bold">장바구니가 비어 있습니다.</h3>
+                                                <h6 className="text-muted">장바구니에 추가한 아이템이 보이지 않으면 로그인 해주세요.</h6>
+                                            </div>
+                                        ) : (
+
                                             <div id="cartItemsContainer">
-                                                {cartItems.map((item, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
-                                                    >
-                                                        <div className="form-check col-md-1 col-lg-1">
-                                                            <input
-                                                                className="checkbox"
-                                                                type="checkbox"
-                                                                checked={item.check}
-                                                                onChange={() => handleCheckboxChange(index)}
-                                                                id={`checkbox-${index}`} // 각 체크박스에 고유 ID 추가
-                                                            />
-                                                            <label
-                                                                htmlFor={`checkbox-${index}`}
-                                                                className={`custom-checkbox ${item.check ? 'checked' : ''}`}></label>
-                                                        </div>
-
-                                                        <div className="col-md-2 col-lg-2 col-xl-2 ">
-                                                            <a href='/cart/sandbox'>
-                                                                <img src={item.url} className="img-fluid rounded-3"
-                                                                     alt={item.name}/>
-                                                            </a>
-
-                                                        </div>
-                                                        <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                            <a href='/cart/sandbox' style={{
-                                                                textDecoration: 'none',
-                                                                color: 'inherit',
-                                                                textAlign: 'left'
-                                                            }}>
-                                                                <h6 className="text-muted">{item.optionName}</h6>
-                                                                <h6 className="mb-0">{item.name}</h6>
-                                                            </a>
-                                                        </div>
-                                                        <div
-                                                            className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
-                                                            <button
-                                                                className="quantity-button"
-                                                                onClick={() => validateQuantity(index, item.quantity - 1)}
-                                                                disabled={item.quantity <= 1} // 최소 수량 1
-                                                            >
-                                                                -
-                                                            </button>
-                                                            <input
-                                                                type="number"
-                                                                className="form-control quantity mx-2" // mx-2는 양쪽 여백 추가
-                                                                value={item.quantity}
-                                                                min="1" // 최소 수량 1
-                                                                onChange={(e) => validateQuantity(index, e.target.value)}
-                                                            />
-                                                            <button
-                                                                className="quantity-button"
-                                                                onClick={() => validateQuantity(index, item.quantity + 1)}
-                                                            >
-                                                                +
-                                                            </button>
-                                                        </div>
-
-                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                            <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
-                                                        </div>
-                                                        <div className="col-md-1 col-lg-1">
-                                                            <button className="delete-button"
-                                                                    onClick={() => handleDeleteItem(index)}>
-                                                                <i className="bi bi-trash3"></i>
-                                                            </button>
-                                                        </div>
-                                                        <hr className="my-3"/>
-                                                    </div>
-                                                ))}
-
-                                            </div>
-                                            <div className="back-button-container d-flex justify-content-start">
-                                                <h6
-                                                    className="mb-0 text-muted back-button"
-                                                    onClick={() => navigate(-1)}
-                                                    style={{cursor: 'pointer'}}
+                                            {cartItems.map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
                                                 >
-                                                    <i className="bi bi-arrow-left"></i> 뒤로가기
-                                                </h6>
-                                            </div>
+                                                    <div className="form-check col-md-1 col-lg-1">
+                                                        <input
+                                                            className="checkbox"
+                                                            type="checkbox"
+                                                            checked={item.check}
+                                                            onChange={() => handleCheckboxChange(index)}
+                                                            id={`checkbox-${index}`} // 각 체크박스에 고유 ID 추가
+                                                        />
+                                                        <label
+                                                            htmlFor={`checkbox-${index}`}
+                                                            className={`custom-checkbox ${item.check ? 'checked' : ''}`}></label>
+                                                    </div>
 
-                                        </div>
-                                    </div>
-                                    <div className="col-lg-4 bg-body-tertiary">
-                                        <div className="p-5">
-                                            <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
-                                            <hr className="my-3"/>
-                                            <div className="d-flex justify-content-between mb-3">
-                                                <h5 className="text-uppercase">Total price</h5>
-                                                <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
-                                            </div>
-                                            <div className="d-flex justify-content-between mb-3 my-4" id="discountRow"
-                                                 style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
-                                                <h6 className="text-muted">Discount</h6>
-                                                <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
-                                            </div>
-                                            <div className="d-grid gap-2">
-                                                <select className="form-select mb-4 pb-2 my-3"
-                                                        aria-label="Default select example">
-                                                    <option selected>결제 방법 선택</option>
-                                                    <option value="1">신용카드</option>
-                                                    <option value="2">토스</option>
-                                                    <option value="3">카카오 페이</option>
-                                                    <option value="4">무통장 입금</option>
-                                                </select>
-                                            </div>
+                                                    <div className="col-md-2 col-lg-2 col-xl-2 ">
+                                                        <a href='/cart/sandbox'>
+                                                            <img src={item.url} className="img-fluid rounded-3"
+                                                                 alt={item.name}/>
+                                                        </a>
 
+                                                    </div>
+                                                    <div className="col-md-3 col-lg-3 col-xl-3 ">
+                                                        <a href='/cart/sandbox' style={{
+                                                            textDecoration: 'none',
+                                                            color: 'inherit',
+                                                            textAlign: 'left'
+                                                        }}>
+                                                            <h6 className="text-muted">{item.optionName}</h6>
+                                                            <h6 className="mb-0">{item.name}</h6>
+                                                        </a>
+                                                    </div>
+                                                    <div
+                                                        className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
+                                                        <button
+                                                            className="quantity-button"
+                                                            onClick={() => validateQuantity(index, item.quantity - 1)}
+                                                            disabled={item.quantity <= 1} // 최소 수량 1
+                                                        >
+                                                            -
+                                                        </button>
+                                                        <input
+                                                            type="number"
+                                                            className="form-control quantity mx-2"  // mx-2는 양쪽 여백 추가
+                                                            value={item.quantity}
+                                                            min="1" // 최소 수량 1
+                                                            onChange={(e) => validateQuantity(index, e.target.value)}
+                                                        />
+                                                        <button
+                                                            className="quantity-button"
+                                                            onClick={() => validateQuantity(index, item.quantity + 1)}
+                                                        >
+                                                            +
+                                                        </button>
+                                                    </div>
 
-                                            <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
-                                            <div className="mb-2">
-                                                <div className="form-outline d-flex">
-                                                    <input type="text" id="form3Examplea2"
-                                                           className="form-control form-control-md"/>
-                                                    <button type="button"
-                                                            className="btn btn-dark btn-md ms-2 align-self-end"
-                                                            onClick={handleCouponApply}>apply
-                                                    </button>
+                                                    <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                        <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
+                                                    </div>
+                                                    <div className="col-md-1 col-lg-1">
+                                                        <button className="delete-button"
+                                                                onClick={() => handleDeleteItem(index)}>
+                                                            <i className="bi bi-trash3" style={{fontSize: '1.2rem'}}></i>
+                                                        </button>
+                                                    </div>
+                                                    <hr className="my-3"/>
                                                 </div>
-                                            </div>
+                                            ))}
 
-                                            <hr className="my-4"/>
-                                            <form id="checkoutForm" action="/public" method="POST">
-                                                <div id="itemDetailsContainer"></div>
-                                                <input type="hidden" id="totalPriceInput" name="totalPrice"
-                                                       value={previousTotal}/>
-                                                <input type="hidden" id="itemCountInput" name="itemCount"
-                                                       value={itemCount}/>
-                                                <button type="submit"
-                                                        className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기
-                                                </button>
-                                            </form>
                                         </div>
+                                            )}
+                                        <div className="back-button-container d-flex justify-content-start">
+                                            <h5
+                                                className="mb-0 text-muted back-button"
+                                                onClick={() => navigate(-1)}
+                                                style={{cursor: 'pointer'}}
+                                            >
+                                                <i className="bi bi-arrow-left"></i> 뒤로가기
+                                            </h5>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div className="col-xl-4 bg-body-tertiary">
+                                    <div className="p-5">
+                                        <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
+                                        <hr className="my-3"/>
+                                        <div className="d-flex justify-content-between mb-3">
+                                            <h5 className="text-uppercase">Total price</h5>
+                                            <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
+                                        </div>
+                                        <div className="d-flex justify-content-between mb-3 my-4" id="discountRow"
+                                             style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
+                                            <h6 className="text-muted">Discount</h6>
+                                            <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
+                                        </div>
+                                        <div className="d-grid gap-2">
+                                            <select className="form-select mb-4 pb-2 my-3"
+                                                    aria-label="Default select example">
+                                                <option selected>결제 방법 선택</option>
+                                                <option value="1">신용카드</option>
+                                                <option value="2">토스</option>
+                                                <option value="3">카카오 페이</option>
+                                                <option value="4">무통장 입금</option>
+                                            </select>
+                                        </div>
+
+
+                                        <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
+                                        <div className="mb-2">
+                                            <div className="form-outline d-flex">
+                                                <input type="text" id="form3Examplea2"
+                                                       className="form-control form-control-md"/>
+                                                <button type="button"
+                                                        className="btn btn-dark btn-md ms-2 align-self-end"
+                                                        onClick={handleCouponApply}>apply
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <hr className="my-4"/>
+                                        <form id="checkoutForm" action="/public" method="POST">
+                                            <div id="itemDetailsContainer"></div>
+                                            <input type="hidden" id="totalPriceInput" name="totalPrice"
+                                                   value={previousTotal}/>
+                                            <input type="hidden" id="itemCountInput" name="itemCount"
+                                                   value={itemCount}/>
+                                            <button type="submit"
+                                                    className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </div>

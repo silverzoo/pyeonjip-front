@@ -57,7 +57,7 @@ function SandboxApp() {
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
                         <div className="row g-0">
-                            <div className="col-lg-8">
+                            <div className="col-lg-12">
                                 <div className="p-5">
                                     <div className="row">
                                         {items.map((item) => (
