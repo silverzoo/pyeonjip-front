@@ -14,26 +14,33 @@ const SidePanelApp = () => {
     useEffect(() => {
         const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(storedCartItems);
-        calculateTotalPrice(storedCartItems);
+        updateTotalPrice(storedCartItems);
     }, []);
 
     // 총 가격 계산 함수
-    const calculateTotalPrice = (items) => {
+    const updateTotalPrice = (items) => {
         const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
         setTotalPrice(total);
     };
 
     // 수량 조절 로직 (validation 포함)
-    const updateQuantity = (index, newQuantity) => {
+    const validateQuantity = (index, value) => {
+        const min = 0;
+        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
+
         const updatedItems = [...cartItems];
-        if (newQuantity < 1) {
+        if (value < 1) {
             alert("수량은 최소 1개 이상이어야 합니다.");
             return;
         }
-        updatedItems[index].quantity = newQuantity;
+        else if (value > maxQuantity) {
+            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
+            value = maxQuantity;
+        }
+        updatedItems[index].quantity = value;
         setCartItems(updatedItems);
         localStorage.setItem('cart', JSON.stringify(updatedItems));
-        calculateTotalPrice(updatedItems);
+        updateTotalPrice(updatedItems);
     };
 
     // 아이템 삭제 로직
@@ -41,7 +48,7 @@ const SidePanelApp = () => {
         const updatedItems = cartItems.filter((_, i) => i !== index);
         setCartItems(updatedItems);
         localStorage.setItem('cart', JSON.stringify(updatedItems));
-        calculateTotalPrice(updatedItems);
+        updateTotalPrice(updatedItems);
     };
 
     // 사이드 패널 열기/닫기
@@ -88,7 +95,7 @@ const SidePanelApp = () => {
                 }}
             >
                 <div className="offcanvas-header">
-                    <h5 className="offcanvas-title">장바구니</h5>
+                    <h2 className="offcanvas-title">장바구니</h2>
                     <button type="button" className="btn-close" onClick={toggleCart}></button>
                 </div>
 
@@ -108,9 +115,9 @@ const SidePanelApp = () => {
                                         </div>
                                         <div className="quantity-controls">
                                             <button className="quantity-button"
-                                                    onClick={() => updateQuantity(index, item.quantity - 1)}>-</button>
+                                                    onClick={() => validateQuantity(index, item.quantity - 1)}>-</button>
                                             <span className="quantity">{item.quantity}</span>
-                                            <button className="quantity-button" onClick={() => updateQuantity(index, item.quantity + 1)}>+</button>
+                                            <button className="quantity-button" onClick={() => validateQuantity(index, item.quantity + 1)}>+</button>
                                         </div>
                                         <button className="delete-button"
                                                 onClick={() => removeItem(index)}>
