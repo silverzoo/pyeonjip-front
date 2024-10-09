@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './SidePanel.css';
 
@@ -8,6 +8,7 @@ const SidePanelApp = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation(); // 현재 경로를 가져옴
 
     // 로컬스토리지에서 장바구니 아이템 불러오기 및 총 가격 계산
     useEffect(() => {
@@ -50,8 +51,8 @@ const SidePanelApp = () => {
 
     // 장바구니 페이지로 이동
     const goToCartPage = () => {
-        toggleCart();
-        navigate('/cart');
+        toggleCart(); // 사이드 패널 닫기
+        navigate('/cart'); // 장바구니 페이지로 이동
     };
 
     // 로그인 페이지로 이동
@@ -63,14 +64,16 @@ const SidePanelApp = () => {
         <div className="App">
             <div>
                 {/* 로그인 버튼 */}
-                <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '125px', width: '90px' }}onClick={goToLoginPage}>
+                <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '125px', width: '90px' }} onClick={goToLoginPage}>
                     로그인
                 </button>
 
-                {/* 장바구니 버튼 */}
-                <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '170px', width: '90px' }} onClick={toggleCart}>
-                    장바구니
-                </button>
+                {/* 장바구니 버튼: 현재 경로가 '/cart'가 아닐 때만 표시 */}
+                {location.pathname !== '/cart' && (
+                    <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '170px', width: '90px' }} onClick={toggleCart}>
+                        장바구니
+                    </button>
+                )}
             </div>
 
             {/* 토글형 사이드바 */}
@@ -79,60 +82,44 @@ const SidePanelApp = () => {
                 tabIndex="-1"
                 style={{
                     visibility: isCartOpen ? 'visible' : 'hidden',
-                    width: '600px',
-                    borderRadius: '10px 0 0 30px',
+                    width: '500px',
+                    borderRadius: '10px 0 0 10px',
                     transition: 'transform 0.3s ease',
                 }}
             >
                 <div className="offcanvas-header">
-                    <div className="container d-flex justify-content-end">
-                        <button type="button" className="btn-close" onClick={toggleCart}></button>
-
-                    </div>
-
-
+                    <h5 className="offcanvas-title">장바구니</h5>
+                    <button type="button" className="btn-close" onClick={toggleCart}></button>
                 </div>
 
                 <div className="offcanvas-body">
                     {/* 장바구니 아이템 표시 */}
-                    <h2 className="offcanvas-title mx-2">장바구니에 추가된 제품</h2>
                     {cartItems.length === 0 ? (
-                        <div>
-                            <div className="text-center my-5">
-                                <i className="bi bi-emoji-frown my-5" style={{fontSize: '5rem'}}></i>
-                                <h3 className="my-4 bold">장바구니가 비어 있어요.</h3>
-                                <h6 className="text-muted">장바구니에 추가한 아이템이 보이지 않으면 로그인 해주세요.</h6>
-                            </div>
-                        </div>
+                        <p>장바구니가 비어 있습니다.</p>
                     ) : (
                         <div>
                             {cartItems.map((item, index) => (
                                 <div key={index} className="cart-item mb-3 m-4 mx-5">
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <img src={item.url} alt={item.name} className="img-fluid rounded-2"
-                                             style={{width: '100px'}}/>
+                                        <img src={item.url} alt={item.name} className="img-fluid rounded-2" style={{ width: '90px' }} />
                                         <div>
-                                            <h5 className="">{item.name}</h5>
-                                            <h6 className="text-muted">₩ {item.price.toLocaleString()}</h6>
+                                            <h6 className="mb-1">{item.name}</h6>
+                                            <small>₩ {item.price.toLocaleString()}</small>
                                         </div>
                                         <div className="quantity-controls">
                                             <button className="quantity-button"
-                                                    onClick={() => updateQuantity(index, item.quantity - 1)}>-
-                                            </button>
+                                                    onClick={() => updateQuantity(index, item.quantity - 1)}>-</button>
                                             <span className="quantity">{item.quantity}</span>
-                                            <button className="quantity-button"
-                                                    onClick={() => updateQuantity(index, item.quantity + 1)}>+
-                                            </button>
+                                            <button className="quantity-button" onClick={() => updateQuantity(index, item.quantity + 1)}>+</button>
                                         </div>
                                         <button className="delete-button"
                                                 onClick={() => removeItem(index)}>
-                                            <i className="bi bi-trash3" style={{fontSize: '1.2rem'}}></i>
+                                            <i className="bi bi-trash3" style={{ fontSize: '1.2rem' }}></i>
                                         </button>
                                     </div>
-                                    <hr/>
+                                    <hr />
                                 </div>
                             ))}
-
                         </div>
                     )}
                 </div>
@@ -145,7 +132,7 @@ const SidePanelApp = () => {
                     </div>
                     <div className="d-flex justify-content-center">
                         <button className="btn btn-dark btn-primary btn-md col-xl-11 my-4"
-                                style={{borderRadius: '20px'}}
+                                style={{ borderRadius: '20px' }}
                                 onClick={goToCartPage}>
                             장바구니로 가기
                         </button>
