@@ -149,14 +149,14 @@ function CartApp() {
     };
 
     return (
-        <section className="container-fluid" style={{width: '120%', marginTop: '10vh'}}>
+        <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
             <div className="row d-flex justify-content-between align-items-end h-100">
                 <div className="col-12 col-xl-12">
                     <div className="card border-1 card-registration card-registration-2">
-                        <div className="card-body p-0">
+                        <div className="card-body p-1">
                             <div className="row g-1">
                                 <div className=" col-xl-8">
-                                    <div className="p-5">
+                                    <div className="p-4">
                                         <div className="d-flex justify-content-between align-items-center mb-2">
                                             <div
                                                 className="cart-header d-flex justify-content-between align-items-center">

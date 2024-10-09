@@ -79,10 +79,10 @@ const Header = () => {
                     )}
                 </div>
             </div>
-            <div className='right'>
-                <div>로그인</div>
-                <div>장바구니</div>
-            </div>
+            {/*<div className='right'>*/}
+            {/*    <div>로그인</div>*/}
+            {/*    <div>장바구니</div>*/}
+            {/*</div>*/}
         </div>
     );
 };

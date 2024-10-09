@@ -1,0 +1,163 @@
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+#totalPriceDisplay,
+#discountedPriceDisplay {
+    animation: fadeIn 0.5s ease-in-out; /* 애니메이션 추가 */
+    transition: all 1.8s ease; /* 부드러운 전환 효과 추가 */
+}
+
+button {
+    border: none; /* 테두리 제거 */
+    background: transparent; /* 배경 투명하게 */
+    cursor: pointer; /* 클릭 가능한 포인터 */
+}
+
+
+/* 페이드 아웃 애니메이션 */
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+/* 삭제될 때 적용되는 클래스 */
+.fade-out {
+    animation: fadeOut 0.5s forwards; /* 애니메이션 지속 시간 조정 */
+}
+
+/* animation.css */
+
+/* 기본 스타일 */
+.delete-button {
+    padding: 6px 10px; /* 기본 패딩 */
+    border: none; /* 기본 테두리 제거 */
+    background-color: transparent; /* 기본 배경 제거 */
+    cursor: pointer; /* 커서를 포인터로 변경 */
+    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
+    border-radius: 4px; /* 라운드 모서리 추가 */
+}
+
+/* 호버 효과 */
+.delete-button:hover {
+    padding: 6px 10px; /* 호버 시 패딩 증가 */
+    background-color: rgba(0, 0, 0, 0.1); /* 회색 배경 추가 */
+}
+
+
+/* 체크박스 숨기기 */
+.checkbox {
+    display: none; /* 기본 체크박스 숨기기 */
+}
+
+/* 커스텀 체크박스 스타일 */
+.custom-checkbox {
+    width: 20px; /* 체크박스 크기 */
+    height: 20px; /* 체크박스 크기 */
+    border: 1.5px solid #000; /* 테두리 색상 */
+    border-radius: 4px; /* 모서리 둥글게 */
+    display: inline-block; /* 인라인 블록으로 설정 */
+    position: relative; /* 포지션 설정 */
+    cursor: pointer; /* 포인터 커서 */
+    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
+}
+
+/* 체크 표시 */
+.custom-checkbox.checked::after {
+    content: ''; /* 빈 콘텐츠 */
+    position: absolute; /* 절대 위치 */
+    width: 10px; /* 체크 표시 크기 */
+    height: 10px; /* 체크 표시 크기 */
+    background-color: #000; /* 체크 표시 색상 */
+    top: 50%; /* 중앙 정렬 */
+    left: 50%; /* 중앙 정렬 */
+    transform: translate(-50%, -50%); /* 중앙으로 이동 */
+    border-radius: 2px; /* 체크 표시 둥글게 */
+}
+
+.custom-checkbox:hover {
+    padding: 2px 7px; /* 호버 시 패딩 증가 */
+    background-color: #eaeaea; /* 회색 배경 추가 */
+}
+
+
+/* 수량 입력 필드 스타일 */
+.quantity {
+
+    width: 60px; /* 너비 조정 */
+    height: 30px; /* 높이 조정 */
+    padding: 7px; /* 안쪽 여백 */
+    border: 1.5px solid #000000; /* 테두리 색상 */
+    border-radius: 5px; /* 둥근 모서리 */
+    font-size: 15px; /* 글자 크기 */
+    text-align: center; /* 중앙 정렬 */
+    transition: border-color 1s ease; /* 테두리 색상 트랜지션 */
+    -moz-appearance: textfield; /* Firefox에서 스피너 제거 */
+    -webkit-appearance: none; /* Chrome 및 Safari에서 스피너 제거 */
+
+    appearance: none; /* 기본 스타일 제거 */
+}
+
+.quantity::-webkit-inner-spin-button,
+.quantity::-webkit-outer-spin-button {
+    -webkit-appearance: none; /* Chrome 및 Safari에서 스피너 제거 */
+    margin: 0; /* 기본 여백 제거 */
+}
+
+/* 포커스 시 테두리 색상 변경 */
+.quantity:focus {
+    border-color: #8d8d8d; /* 포커스 시 색상 변경 */
+    outline: none; /* 기본 아웃라인 제거 */
+}
+
+/* 수량 조절 버튼 스타일 */
+.quantity-button {
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 없애기 */
+    padding: 1px 7px; /* 원하는 크기의 패딩 적용 */
+    cursor: pointer; /* 커서 포인터 적용 */
+    font-size: 1.1rem; /* 버튼 크기 조정 */
+
+    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
+    border-radius: 4px; /* 라운드 모서리 추가 */
+}
+
+.quantity-button:hover {
+    padding: 3px 7px; /* 호버 시 패딩 증가 */
+    background-color: rgba(141, 141, 141, 0.21); /* 회색 배경 추가 */
+}
+
+
+.quantity-button:disabled {
+    cursor: not-allowed; /* 비활성화된 버튼의 커서 모양 */
+}
+
+
+.back-button {
+    padding: 8px 10px; /* 기본 패딩 조정 */
+    border: none; /* 테두리 제거 */
+    background-color: transparent; /* 배경 제거 */
+    cursor: pointer; /* 커서 포인터로 변경 */
+    transition: background-color 0.3s ease; /* 배경 색상 전환 효과 */
+    border-radius: 5px;
+}
+
+.back-button:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* 호버 시 배경 색상 추가 */
+}
+
+/* 클릭 범위 조정 */
+.back-button-container {
+    display: inline-block; /* 클릭 범위 줄이기 위해 인라인 블록 설정 */
+    margin-right: 10px; /* 오른쪽 여백 추가 (필요 시) */
+
+}
