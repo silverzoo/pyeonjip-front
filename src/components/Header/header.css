@@ -1,0 +1,50 @@
+.gnb {
+    display: flex;
+    justify-content: space-between;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: auto;
+}
+
+.logo {
+    margin-bottom: 30px;
+}
+
+.left li {
+    margin-bottom: 7px;
+    font-size: 90%;
+    position: relative;
+}
+
+.dropdown {
+    display: none;
+    position: relative; 
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.left li:hover .dropdown {
+    display: block; /* 마우스를 올리면 드롭다운을 보이게 함 */
+}
+
+.dropdown li {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.dropdown li:hover {
+    background-color: #f0f0f0;
+}
+
+/* 하위 카테고리 스타일 */
+.dropdown ul {
+    padding-left: 0;
+    margin-top: 5px;
+}
+
+.dropdown ul ul {
+    padding-left: 0;
+}

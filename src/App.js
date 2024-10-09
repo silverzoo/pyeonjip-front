@@ -1,19 +1,26 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
-import AppRouter from "./pages/router";
+import AppRouter from './pages/router';
+import Footer from './components/Footer/footer';
+import Header from './components/Header/header';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          편안하게 집을 편집하다 : 가구 쇼핑몰 편집
-        </p>
-      </header>
+      <div className="App">
+        <div className='header'>
+          <Header />
+        </div>
+        <div className="content">
+          <AppRouter />
+        </div>
+        <div>
+          <Footer />
+        </div>
+      </div>
 
-        <AppRouter />
-    </div>
+    
+    
+    
   );
 }
 export default App;
