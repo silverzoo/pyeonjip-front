@@ -14,17 +14,6 @@ function SandboxApp() {
             .catch(error => console.error('Error fetching data:', error));
     }, []);
 
-    useEffect(() => {
-        items.forEach(item => {
-            fetch(`http://localhost:8080/cart/checkDuplicate?userId=${item.userId}&optionId=${item.optionId}`)
-                .then(response => response.json())
-                .then(exists => {
-                    setItemExistsInDB(prev => ({ ...prev, [item.optionId]: exists }));
-                })
-                .catch(error => console.error('Error checking existence:', error));
-        });
-    }, [items]);
-
     // 로컬스토리지 초기화
     const resetStorage = () => {
         localStorage.clear();
