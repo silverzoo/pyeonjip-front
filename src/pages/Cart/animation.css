@@ -63,7 +63,7 @@ button {
 .custom-checkbox {
     width: 20px; /* 체크박스 크기 */
     height: 20px; /* 체크박스 크기 */
-    border: 1px solid #000; /* 테두리 색상 */
+    border: 1.5px solid #000; /* 테두리 색상 */
     border-radius: 4px; /* 모서리 둥글게 */
     display: inline-block; /* 인라인 블록으로 설정 */
     position: relative; /* 포지션 설정 */
@@ -75,8 +75,8 @@ button {
 .custom-checkbox.checked::after {
     content: ''; /* 빈 콘텐츠 */
     position: absolute; /* 절대 위치 */
-    width: 12px; /* 체크 표시 크기 */
-    height: 12px; /* 체크 표시 크기 */
+    width: 10px; /* 체크 표시 크기 */
+    height: 10px; /* 체크 표시 크기 */
     background-color: #000; /* 체크 표시 색상 */
     top: 50%; /* 중앙 정렬 */
     left: 50%; /* 중앙 정렬 */
@@ -96,9 +96,9 @@ button {
     width: 60px; /* 너비 조정 */
     height: 40px; /* 높이 조정 */
     padding: 10px; /* 안쪽 여백 */
-    border: 2px solid #000000; /* 테두리 색상 */
+    border: 1.5px solid #000000; /* 테두리 색상 */
     border-radius: 5px; /* 둥근 모서리 */
-    font-size: 20px; /* 글자 크기 */
+    font-size: 18px; /* 글자 크기 */
     text-align: center; /* 중앙 정렬 */
     transition: border-color 1s ease; /* 테두리 색상 트랜지션 */
     -moz-appearance: textfield; /* Firefox에서 스피너 제거 */
@@ -123,17 +123,17 @@ button {
 .quantity-button {
     background-color: transparent; /* 배경 투명 */
     border: none; /* 테두리 없애기 */
-    padding: 2px 7px; /* 원하는 크기의 패딩 적용 */
+    padding: 1px 11px; /* 원하는 크기의 패딩 적용 */
     cursor: pointer; /* 커서 포인터 적용 */
-    font-size: 1rem; /* 버튼 크기 조정 */
+    font-size: 1.1rem; /* 버튼 크기 조정 */
 
     transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
     border-radius: 4px; /* 라운드 모서리 추가 */
 }
 
 .quantity-button:hover {
-    padding: 2px 7px; /* 호버 시 패딩 증가 */
-    background-color: rgba(0, 0, 0, 0.1); /* 회색 배경 추가 */
+    padding: 3px 11px; /* 호버 시 패딩 증가 */
+    background-color: rgba(141, 141, 141, 0.21); /* 회색 배경 추가 */
 }
 
 

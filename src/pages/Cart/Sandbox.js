@@ -22,10 +22,12 @@ function SandboxApp() {
     // 장바구니에 아이템 추가
     const addToCart = (item) => {
         const cartItem = {
-            id: item.id,
+            userId: item.userId,
+            productId: item.productId,
+            optionId: item.optionId,
             name: item.name,
             optionName: item.optionName,
-            price: item.optionPrice,
+            price: item.price,
             quantity: item.quantity,
             maxQuantity: item.maxQuantity,
             url: item.url,
@@ -40,7 +42,7 @@ function SandboxApp() {
             cart = JSON.parse(cart);
         }
 
-        const itemExists = cart.some(cartItem => cartItem.id === item.id);
+        const itemExists = cart.some(cartItem => cartItem.optionId === item.optionId);
 
         if (itemExists) {
             alert(`이미 장바구니에 존재합니다.`);
@@ -57,16 +59,16 @@ function SandboxApp() {
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
                         <div className="row g-0">
-                            <div className="col-lg-8">
+                            <div className="col-lg-12">
                                 <div className="p-5">
                                     <div className="row">
                                         {items.map((item) => (
-                                            <div className="col-md-3" key={item.id}>
+                                            <div className="col-md-3" key={item.optionId}>
                                                 <div className="card mb-2">
                                                     <img src={item.url} className="card-img-top" alt="Item Image" />
                                                     <div className="card-body">
                                                         <h5 className="card-title">{item.name}</h5>
-                                                        {/*<p className="card-text">{item.optionPrice} 원</p>*/}
+                                                        <p className="card-text">{item.price} 원</p>
                                                         {/*<p className="card-text">{item.category}</p>*/}
 
                                                         <button className="btn btn-dark btn-block btn-lg gap-4 m-2"
