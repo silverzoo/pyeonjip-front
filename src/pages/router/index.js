@@ -5,6 +5,9 @@ import Cart from "../Cart/index";
 import Home from "../Home/home";
 import AdminCategory from "../Admin/category";
 import AdminOrder from "../Admin/order";
+import Login from "../User/login";
+import Signup from '../User/signup';
+import Logout from '../User/logout';
 
 function AppRouter() {
     return (
@@ -14,6 +17,9 @@ function AppRouter() {
             <Route path="/" element={<Home />} />
             <Route path="/admin/category" element={<AdminCategory />} />
             <Route path="/admin/order" element={<AdminOrder />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/signup" element={<Signup />} />
         </Routes>
     );
 }
