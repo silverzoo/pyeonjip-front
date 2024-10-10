@@ -23,11 +23,10 @@ function SandboxApp() {
         showModalMessage('장바구니 초기화');
     };
 
-
-    const toggleLogin = () => {
+    const handleLoginToggle = () => {
         setIsLogin(prev => {
             const newLoginStatus = !prev;
-            showModalMessage(newLoginStatus ? `로그인` : `로그아웃`);
+            showModalMessage(newLoginStatus ? `로그인 완료` : `로그아웃 완료`);
 
             if (newLoginStatus) {
                 // 로그인 시 서버에서 장바구니 데이터를 가져와 로컬 스토리지와 동기화
@@ -42,14 +41,10 @@ function SandboxApp() {
         });
     };
 
-    const loginStatus = () => {
-        showModalMessage(`${isLogin}`)
-    }
-
     const showModalMessage = (message) => {
         setModalMessage(message);
         setShowModal(true);
-        setTimeout(() => setShowModal(false), 500);
+        setTimeout(() => setShowModal(false), 1500);
     };
 
     const addToCart = (item) => {
@@ -127,7 +122,6 @@ function SandboxApp() {
             });
     };
 
-
     // 로컬스토리지에서 항목 삭제
     const removeFromLocalStorage = (optionId) => {
         const updatedCart = cart.filter(item => item.optionId !== optionId);
@@ -136,9 +130,8 @@ function SandboxApp() {
         if (isLogin) {
             syncWithLocal(updatedCart); // Sync changes to the server
         }
-        showModalMessage(`옵션 ID ${optionId}가 로컬스토리지에서 삭제되었습니다.`);
+        showModalMessage(`장바구니에서 삭제되었습니다. ${optionId}`);
     };
-
 
     return (
         <section>
@@ -163,11 +156,6 @@ function SandboxApp() {
                                                             Add
                                                         </button>
 
-                                                        {/*<button className="btn btn-dark btn-block btn-md gap-4 m-2"*/}
-                                                        {/*        onClick={() => saveToDB(item)}>*/}
-                                                        {/*    Add to DB*/}
-                                                        {/*</button>*/}
-
                                                         {/* 개별 항목 삭제 버튼 추가 */}
                                                         <button className="btn btn-dark btn-block btn-md gap-4 m-2"
                                                                 onClick={() => removeFromLocalStorage(item.optionId)}>
@@ -188,15 +176,9 @@ function SandboxApp() {
                                         LS 초기화
                                     </button>
 
-                                    {/*<button className="btn btn-dark btn-block btn-lg gap-4 m-2" >*/}
-                                    {/*    DB 초기화*/}
-                                    {/*</button>*/}
-
-                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={toggleLogin}>
-                                        로그인 토글
-                                    </button>
-                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={loginStatus}>
-                                        로그인 확인
+                                    {/* 로그인 토글 및 상태 확인 버튼 */}
+                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={handleLoginToggle}>
+                                        {isLogin ? '로그아웃' : '로그인'}
                                     </button>
                                 </div>
                             </div>

@@ -16,7 +16,8 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [testUserId, setTestUserId] = useState(1); // 더미데이터
     useEffect(() => {
         fetch('http://localhost:8080/cart')
             .then(response => response.json())
@@ -114,10 +115,13 @@ function CartApp() {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
-        const newCartItems = [...cartItems];
-        newCartItems[index].quantity = validatedValue;
-        setCartItems(newCartItems);
-        localStorage.setItem('cart', JSON.stringify(newCartItems));
+        const updatedCartItems = [...cartItems];
+        updatedCartItems[index].quantity = validatedValue;
+        setCartItems(updatedCartItems);
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        if(isLogin){
+            syncWithLocal(updatedCartItems, updatedCartItems[0].userId);
+        }
         //updateTotalPrice(newCartItems);
     };
 
@@ -139,6 +143,12 @@ function CartApp() {
             setCartItems(updatedCartItems);
 
             localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+
+            if (isLogin && cartItems.length > 0) {  // 배열이 비어 있지 않은 경우에만 동기화
+                syncWithLocal(updatedCartItems, cartItems[0].userId);
+            }
+
+
             setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
         }, 400); // 애니메이션 지속 시간에 맞춤
     };
@@ -146,6 +156,30 @@ function CartApp() {
     const handleCouponApply = () => {
         const couponCode = document.getElementById('form3Examplea2').value;
         applyCouponDiscount(couponCode);
+    };
+
+    // 서버와 동기화 함수 추가
+    const syncWithLocal = (cart, userId) => {
+
+        fetch(`http://localhost:8080/cart/syncLocal?userId=${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(cart),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status); // 응답 상태 코드 추가
+                }
+                return response.json(); // JSON 파싱
+            })
+            .then(data => {
+                console.log('동기화 완료:', data);
+            })
+            .catch(error => {
+                console.error('동기화 에러:', error);
+            });
     };
 
     return (
