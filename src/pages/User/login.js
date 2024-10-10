@@ -48,7 +48,7 @@ function Login() {
     };
 
     return (
-        <div className="container h-100 d-flex justify-content-center align-items-center">
+        <div className="container-user h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-1">LOGIN</h3>
@@ -84,12 +84,12 @@ function Login() {
                     
                     <div className="d-flex justify-content-between align-items-center">
                         <div className="user-link">
-                            <a href="/find-account" className="text-muted me-3">계정 찾기</a>
-                            <a href="/reset-password" className="text-muted me-3">비밀번호 재설정</a>
-                            <a href="/signup" className="text-muted">회원가입</a>
+                            <a href="/find-account">계정 찾기</a>
+                            <a href="/reset-password">비밀번호 재설정</a>
+                            <a href="/signup">회원가입</a>
                         </div>
                         <div>
-                            <button type="submit" className="btn btn-sm btn-user">로그인</button>
+                            <button type="submit" className="btn-user btn-sm user-btn">로그인</button>
                         </div>
                     </div>
                 </form>

@@ -40,7 +40,7 @@ function Signup() {
     };
 
     return (
-        <div className="container h-100 d-flex justify-content-center align-items-center">
+        <div className="container-user h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">회원가입</h3>
@@ -117,7 +117,7 @@ function Signup() {
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}
-                    <button type="submit" className="btn btn-sm btn-user btn-dark">회원가입</button>
+                    <button type="submit" className="btn btn-sm user-btn btn-dark">회원가입</button>
                 </form>
             </div>
         </div>

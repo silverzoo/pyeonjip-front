@@ -18,7 +18,7 @@ h2 {
     z-index: 10;
 }
 
-.container {
+.container-user {
     margin-top: 200px;
 }
 
@@ -30,7 +30,7 @@ h2 {
     margin-top: 20px;
 }
 
-.btn-user {
+.user-btn {
     width: 100%;
     padding: 5px;
     border-radius: 5px;
