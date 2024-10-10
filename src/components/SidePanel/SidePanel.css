@@ -36,6 +36,35 @@ button {
 }
 
 /* animation.css */
+.offcanvas {
+    transition: transform 0.8s ease;
+    transform: translateX(100%); /* 사이드 패널을 오른쪽으로 이동 */
+}
+
+.offcanvas.show {
+    transform: translateX(0); /* 사이드 패널이 보이는 상태 */
+}
+
+.offcanvas-backdrop {
+    transition: opacity 0.8s ease; /* 배경의 애니메이션 효과 */
+    opacity: 0; /* 초기 상태는 불투명도 0 */
+    z-index: 1040; /* z-index 설정 */
+}
+
+.offcanvas-backdrop.show {
+    opacity: 0.3;
+    transition: opacity 0.8s ease;
+    z-index: 1040; /* z-index 설정 */
+}
+
+.cart-item {
+    transition: opacity 0.4s ease, transform 0.4s ease; /* 애니메이션 효과 추가 */
+}
+
+.cart-item.removing {
+    opacity: 0; /* 사라지는 효과 */
+    transform: translateX(20px); /* 오른쪽으로 이동하는 효과 */
+}
 
 /* 기본 스타일 */
 .delete-button {
@@ -95,10 +124,10 @@ button {
 
     width: 60px; /* 너비 조정 */
     height: 30px; /* 높이 조정 */
-    padding: 7px; /* 안쪽 여백 */
+    padding: 10px; /* 안쪽 여백 */
     border: 1.5px solid #000000; /* 테두리 색상 */
     border-radius: 5px; /* 둥근 모서리 */
-    font-size: 15px; /* 글자 크기 */
+    font-size: 13px; /* 글자 크기 */
     text-align: center; /* 중앙 정렬 */
     transition: border-color 1s ease; /* 테두리 색상 트랜지션 */
     -moz-appearance: textfield; /* Firefox에서 스피너 제거 */
