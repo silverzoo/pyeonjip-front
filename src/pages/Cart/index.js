@@ -18,8 +18,6 @@ function CartApp() {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
-    const [cart, setCart] = useState([]);
-
     useEffect(() => {
         fetch('http://localhost:8080/cart')
             .then(response => response.json())
@@ -117,10 +115,13 @@ function CartApp() {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
-        const newCartItems = [...cartItems];
-        newCartItems[index].quantity = validatedValue;
-        setCartItems(newCartItems);
-        localStorage.setItem('cart', JSON.stringify(newCartItems));
+        const updatedCartItems = [...cartItems];
+        updatedCartItems[index].quantity = validatedValue;
+        setCartItems(updatedCartItems);
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        if(isLogin){
+            syncWithLocal(updatedCartItems, updatedCartItems[0].userId);
+        }
         //updateTotalPrice(newCartItems);
     };
 
@@ -141,7 +142,6 @@ function CartApp() {
             const updatedCartItems = cartItems.filter((_, i) => i !== index);
             setCartItems(updatedCartItems);
 
-
             localStorage.setItem('cart', JSON.stringify(updatedCartItems));
 
             if (isLogin && cartItems.length > 0) {  // 배열이 비어 있지 않은 경우에만 동기화
@@ -160,6 +160,7 @@ function CartApp() {
 
     // 서버와 동기화 함수 추가
     const syncWithLocal = (cart, userId) => {
+
         fetch(`http://localhost:8080/cart/syncLocal?userId=${userId}`, {
             method: 'POST',
             headers: {
