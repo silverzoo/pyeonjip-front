@@ -57,6 +57,7 @@ function SandboxApp() {
             quantity: 1, // Default quantity
             maxQuantity: item.maxQuantity,
             url: item.url,
+            check: true,
         };
 
         let currentCart = JSON.parse(localStorage.getItem('cart')) || [];

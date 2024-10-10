@@ -134,27 +134,31 @@ function CartApp() {
     };
 
     const handleDeleteItem = (index) => {
-        // 애니메이션 클래스 추가
-        setAnimatedItems((prev) => [...prev, index]); // 애니메이션 적용할 항목 인덱스 추가
+        // 삭제할 항목에 애니메이션 적용
+        setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
 
-        // 애니메이션이 끝난 후 아이템을 삭제
+        // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
-            const updatedCartItems = cartItems.filter((_, i) => i !== index);
+            // 선택한 인덱스와 일치하지 않는 항목들만 유지
+            const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
             setCartItems(updatedCartItems);
 
+            // 로컬 스토리지에 업데이트된 장바구니 저장
             localStorage.setItem('cart', JSON.stringify(updatedCartItems));
 
-            if (isLogin && cartItems.length > 0) {  // 배열이 비어 있지 않은 경우에만 동기화
+            // 로그인 상태이고 장바구니가 비어 있지 않으면 서버와 동기화
+            const shouldSyncWithServer = isLogin && updatedCartItems.length > 0;
+            if (shouldSyncWithServer) {
                 syncWithLocal(updatedCartItems, cartItems[0].userId);
             }
 
-
-            setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
+            // 애니메이션 적용 목록에서 삭제한 항목 제거
+            setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
         }, 400); // 애니메이션 지속 시간에 맞춤
     };
 
     const handleCouponApply = () => {
-        const couponCode = document.getElementById('form3Examplea2').value;
+        const couponCode = document.getElementById('couponApply').value;
         applyCouponDiscount(couponCode);
     };
 
@@ -313,7 +317,7 @@ function CartApp() {
                                         <div className="d-grid gap-2">
                                             <select className="form-select mb-4 pb-2 my-3"
                                                     aria-label="Default select example">
-                                                <option selected>결제 방법 선택</option>
+                                                {/*<option selected>결제 방법 선택</option>*/}
                                                 <option value="1">신용카드</option>
                                                 <option value="2">토스</option>
                                                 <option value="3">카카오 페이</option>
@@ -325,7 +329,7 @@ function CartApp() {
                                         <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
                                         <div className="mb-2">
                                             <div className="form-outline d-flex">
-                                                <input type="text" id="form3Examplea2"
+                                                <input type="text" id="couponApply"
                                                        className="form-control form-control-md"/>
                                                 <button type="button"
                                                         className="btn btn-dark btn-md ms-2 align-self-end"
