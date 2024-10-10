@@ -1,17 +1,10 @@
-/* 모든 요소 초기화 */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 /* 리스트의 기본 스타일 제거 */
-ul, ol {
+#root ul, ol {
   list-style: none;
 }
 
 /* 링크 기본 스타일 제거 */
-a {
+#root a {
   text-decoration: none;
   color: black;
 }
