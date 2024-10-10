@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import { Modal } from 'react-bootstrap';
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
     const [itemExistsInDB, setItemExistsInDB] = useState({});
+    const [showModal, setShowModal] = useState(false); // 모달 상태 추가
+    const [modalMessage, setModalMessage] = useState(''); // 모달 메시지 상태 추가
 
     // 데이터 가져오는 함수
     useEffect(() => {
@@ -18,6 +21,13 @@ function SandboxApp() {
     const resetStorage = () => {
         localStorage.clear();
         alert('장바구니 초기화');
+    };
+
+    // 모달 표시 함수
+    const showModalMessage = (message) => {
+        setModalMessage(message);
+        setShowModal(true);
+        setTimeout(() => setShowModal(false), 2000); // 2초 후 모달 닫기
     };
 
     // 로컬스토리지에 아이템 추가
@@ -44,11 +54,11 @@ function SandboxApp() {
         const itemExists = cart.some(cartItem => cartItem.optionId === item.optionId);
 
         if (itemExists) {
-            alert(`이미 장바구니에 존재합니다.`);
+            showModalMessage(`이미 장바구니에 존재합니다.`);
         } else {
             cart.push(cartItem);
             localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`장바구니에 추가되었습니다. ${item.name}`);
+            showModalMessage(`${item.name}이(가) 장바구니에 추가되었습니다.`);
             updateDBStatus();
         }
     };
@@ -130,7 +140,7 @@ function SandboxApp() {
     };
 
     return (
-        <section >
+        <section>
             <div className="container h-100">
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
@@ -160,7 +170,7 @@ function SandboxApp() {
                                                         {itemExistsInDB[item.optionId] ? ( // DB에 항목이 존재하면 버튼 표시
                                                             <button className="btn btn-dark btn-block btn-md gap-4 m-2"
                                                                     onClick={() => deleteFromDB(item)}>
-                                                                Remove to DB
+                                                                Remove from DB
                                                             </button>
                                                         ) : null}
                                                     </div>
@@ -188,6 +198,17 @@ function SandboxApp() {
                     </div>
                 </div>
             </div>
+
+            {/* 모달 컴포넌트 */}
+            <Modal
+                show={showModal}
+                onHide={() => setShowModal(false)}
+                backdrop={false}
+            >
+                <Modal.Body className="bg-dark text-white">
+                    {modalMessage}
+                </Modal.Body>
+            </Modal>
         </section>
     );
 }
