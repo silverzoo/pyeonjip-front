@@ -82,12 +82,12 @@ const SidePanelApp = () => {
     return (
         <div className="App">
             <div>
-                <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '125px', width: '90px' }} onClick={goToLoginPage}>
+                <button className="btn btn-dark btn-primary position-fixed end-0 m-3" style={{ top: '125px', width: '85px'}} onClick={goToLoginPage}>
                     로그인
                 </button>
 
                 {location.pathname !== '/cart' && (
-                    <button className="btn btn-dark btn-primary position-fixed end-0 m-5" style={{ top: '170px', width: '90px' }} onClick={toggleCart}>
+                    <button className="btn btn-dark btn-primary position-fixed end-0 m-3" style={{ top: '170px', width: '85px'}} onClick={toggleCart}>
                         장바구니
                     </button>
                 )}
@@ -105,12 +105,14 @@ const SidePanelApp = () => {
                 <div className="offcanvas-header">
 
                     <div className="container d-flex justify-content-end">
+                        <h2 className="offcanvas-title mx-2">장바구니</h2>
                         <button type="button" className="btn-close" onClick={toggleCart}></button>
+
                     </div>
                 </div>
 
                 <div className="offcanvas-body">
-                    <h2 className="offcanvas-title mx-2">장바구니에 추가된 제품</h2>
+
                     {cartItems.length === 0 ? (
                         <div>
                             <div className="text-center my-5 ">
@@ -123,7 +125,7 @@ const SidePanelApp = () => {
                     ) : (
                         <div>
                             {cartItems.map((item, index) => (
-                                <div key={index} className={`cart-item mb-3 m-4 mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
+                                <div key={index} className={`cart-item mb-3  mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
                                     <div className="d-flex justify-content-between align-items-center">
                                         <img src={item.url} alt={item.name} className="img-fluid rounded-2 col-xl-2" style={{ width: '120px' }} />
                                         <div className="col-xl-3">
@@ -146,14 +148,14 @@ const SidePanelApp = () => {
                     )}
                 </div>
 
-                <div className="offcanvas-footer">
+                <div className="offcanvas-footer my-4">
                 <div className="total-price d-flex justify-content-between mx-4">
-                        <h4>총 주문금액:</h4>
+                        <h4 >총 주문금액:</h4>
                         <h4>₩ {totalPrice.toLocaleString()}</h4>
                     </div>
                     <div className="d-flex justify-content-center">
-                        <button className="btn btn-dark btn-primary btn-lg col-xl-11 my-5"
-                                style={{ borderRadius: '20px' }}
+                        <button className="btn btn-dark btn-primary btn-lg col-xl-11"
+                                style={{ borderRadius: '10px' }}
                                 onClick={goToCartPage}>
                             장바구니로 가기
                         </button>
