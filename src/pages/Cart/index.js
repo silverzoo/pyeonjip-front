@@ -1,10 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import './animation.css';
 import {useNavigate} from 'react-router-dom';
-import {syncWithLocal} from "../../utils/cartUtils";
+import {syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
+const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
@@ -19,13 +20,14 @@ function CartApp() {
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
-    const [testUserId, setTestUserId] = useState(1); // 더미데이터
+
+
+
     useEffect(() => {
         fetch('http://localhost:8080/cart')
             .then(response => response.json())
             .then(data => setCoupons(data))
             .catch(error => console.error('Error fetching data:', error));
-
         const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
         setCartItems(storedCartItems);
         updateTotalPrice(storedCartItems);
@@ -35,8 +37,28 @@ function CartApp() {
         if (cartItems.length > 0) {
             updateTotalPrice(cartItems);
         }
-    }, [cartItems, couponDiscount, isCouponApplied]);
+    }, [cartItems, isCouponApplied]);
 
+    const validateQuantity = (index, value) => {
+        const min = 0;
+        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
+
+        let validatedValue = parseInt(value, 10);
+        if (isNaN(validatedValue) || validatedValue < min) {
+            validatedValue = 1;
+        } else if (validatedValue > maxQuantity) {
+            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
+            validatedValue = maxQuantity;
+        }
+        const updatedItems = [...cartItems];
+        updatedItems[index].quantity = validatedValue;
+        setCartItems(updatedItems);
+        updateLocalStorage(updatedItems);
+        if(isLogin){
+            syncWithLocal(updatedItems, updatedItems[0].userId);
+        }
+
+    };
 
     const updateTotalPrice = (items) => {
         let total = 0;
@@ -45,20 +67,17 @@ function CartApp() {
                 total += item.price * item.quantity;
             }
         });
-
+        // 할인 적용
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
         const discountedTotal = total - discount;
-
-        // 애니메이션
         animateTotalPrice(discountedTotal, discount);
-
         // 상태 업데이트
-        setPreviousTotal(total); // 실제 총 금액을 저장합니다 (할인 전 금액).
+        setPreviousTotal(total);
         setItemCount(items.filter(item => item.check).length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
-        const duration = 400; // 애니메이션 지속 시간 (ms)
+        const duration = ANIMATION_DURATION; // 애니메이션 지속 시간 (ms)
         const startTime = performance.now();
         const startValue = animatedTotal;
         const startDiscountValue = animatedDiscountedPrice;
@@ -106,33 +125,12 @@ function CartApp() {
     };
 
 
-    const validateQuantity = (index, value) => {
-        const min = 0;
-        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
-
-        let validatedValue = parseInt(value, 10);
-        if (isNaN(validatedValue) || validatedValue < min) {
-            validatedValue = 1;
-        } else if (validatedValue > maxQuantity) {
-            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
-            validatedValue = maxQuantity;
-        }
-        const updatedCartItems = [...cartItems];
-        updatedCartItems[index].quantity = validatedValue;
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        if(isLogin){
-            syncWithLocal(updatedCartItems, updatedCartItems[0].userId);
-        }
-        //updateTotalPrice(newCartItems);
-    };
 
     const handleCheckboxChange = (index) => {
         const newCartItems = [...cartItems];
         newCartItems[index].check = !newCartItems[index].check;
         setCartItems(newCartItems);
-        localStorage.setItem('cart', JSON.stringify(newCartItems));
-        //updateTotalPrice(newCartItems);
+        updateLocalStorage(newCartItems);
     };
 
     const handleDeleteItem = (index) => {
@@ -156,7 +154,7 @@ function CartApp() {
 
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
-        }, 400); // 애니메이션 지속 시간에 맞춤
+        }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
     };
 
     const handleCouponApply = () => {
@@ -204,7 +202,7 @@ function CartApp() {
                                                             type="checkbox"
                                                             checked={item.check}
                                                             onChange={() => handleCheckboxChange(index)}
-                                                            id={`checkbox-${index}`} // 각 체크박스에 고유 ID 추가
+                                                            id={`checkbox-${index}`}
                                                         />
                                                         <label
                                                             htmlFor={`checkbox-${index}`}
@@ -239,9 +237,9 @@ function CartApp() {
                                                         </button>
                                                         <input
                                                             type="number"
-                                                            className="form-control quantity mx-2"  // mx-2는 양쪽 여백 추가
+                                                            className="form-control quantity mx-2"
                                                             value={item.quantity}
-                                                            min="1" // 최소 수량 1
+                                                            min="1"
                                                             onChange={(e) => validateQuantity(index, e.target.value)}
                                                         />
                                                         <button
@@ -287,11 +285,14 @@ function CartApp() {
                                             <h5 className="text-uppercase">Total price</h5>
                                             <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                         </div>
-                                        <div className="d-flex justify-content-between mb-3 my-4" id="discountRow"
-                                             style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
-                                            <h6 className="text-muted">Discount</h6>
-                                            <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
-                                        </div>
+
+                                        {couponDiscount > 0 && (
+                                            <div className="d-flex justify-content-between mb-3 my-4" id="discountRow">
+                                                <h6 className="text-muted">Discount</h6>
+                                                <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
+                                            </div>
+                                        )}
+
                                         <div className="d-grid gap-2">
                                             <select className="form-select mb-4 pb-2 my-3"
                                                     aria-label="Default select example">

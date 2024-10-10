@@ -1,5 +1,6 @@
 
-// 서버와 동기화 함수 추가
+
+// 로컬스토리지 -> 서버
 export const syncWithLocal = (cart, userId) => {
 
     fetch(`http://localhost:8080/cart/syncLocal?userId=${userId}`, {
@@ -11,9 +12,9 @@ export const syncWithLocal = (cart, userId) => {
     })
         .then(response => {
             if (!response.ok) {
-                throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status); // 응답 상태 코드 추가
+                throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
             }
-            return response.json(); // JSON 파싱
+            return response.json();
         })
         .then(data => {
             console.log('동기화 완료:', data);
@@ -21,4 +22,9 @@ export const syncWithLocal = (cart, userId) => {
         .catch(error => {
             console.error('동기화 에러:', error);
         });
+};
+
+// 로컬스토리지 업데이트
+export const updateLocalStorage = (items) => {
+    localStorage.setItem('cart', JSON.stringify(items));
 };

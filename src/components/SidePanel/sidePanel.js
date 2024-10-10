@@ -4,14 +4,17 @@ import {syncWithLocal} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './SidePanel.css';
 
+const ANIMATION_DURATION = 400;
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const navigate = useNavigate();
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
-    const location = useLocation();
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
+
+    const navigate = useNavigate();
+    const location = useLocation();
+
 
     useEffect(() => {
         const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -29,17 +32,18 @@ const SidePanelApp = () => {
         const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
-        const updatedItems = [...cartItems];
+
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 1;
         } else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
+        const updatedItems = [...cartItems];
         updatedItems[index].quantity = validatedValue;
         setCartItems(updatedItems);
         localStorage.setItem('cart', JSON.stringify(updatedItems));
-        if(isLogin){
+        if (isLogin) {
             syncWithLocal(updatedItems, updatedItems[0].userId);
         }
 
@@ -63,14 +67,14 @@ const SidePanelApp = () => {
             updateTotalPrice(updatedCartItems);
 
             setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
-        }, 400); // 애니메이션 지속 시간에 맞춤
+        }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
     };
 
     const toggleCart = () => {
         if (isCartOpen) {
             document.querySelector('.offcanvas').classList.remove('show');
             document.querySelector('.offcanvas-backdrop').classList.remove('show');
-            setTimeout(() => setCartOpen(false), 300);
+            setTimeout(() => setCartOpen(false), ANIMATION_DURATION);
         } else {
             const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
             setCartItems(storedCartItems);  // 최신화된 장바구니 항목을 설정
