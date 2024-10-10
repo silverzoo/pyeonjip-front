@@ -117,7 +117,7 @@ function Signup() {
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}
-                    <button type="submit" className="btn btn-sm btn-primary btn-dark">회원가입</button>
+                    <button type="submit" className="btn btn-sm btn-user btn-dark">회원가입</button>
                 </form>
             </div>
         </div>

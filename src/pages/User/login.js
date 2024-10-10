@@ -89,7 +89,7 @@ function Login() {
                             <a href="/signup" className="text-muted">회원가입</a>
                         </div>
                         <div>
-                            <button type="submit" className="btn btn-sm btn-primary">로그인</button>
+                            <button type="submit" className="btn btn-sm btn-user">로그인</button>
                         </div>
                     </div>
                 </form>
