@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { syncWithLocal, syncWithServer, fetchCartDetails } from "../../utils/cartUtils";
+import { syncWithLocal, syncWithServer, fetchCartDetails, addServerCart} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Modal } from 'react-bootstrap';
@@ -36,13 +36,14 @@ function SandboxApp() {
             showModalMessage(newLoginStatus ? `로그인 완료` : `로그아웃 완료`);
 
             if (newLoginStatus) {
-                syncWithServer(testUserId);
-                let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
-                syncWithLocal(currentCart, testUserId);
-            } else {
+                // 로그인 : DB에 몰빵
                 let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
                 syncWithLocal(currentCart, testUserId);
                 localStorage.clear();
+
+            } else {
+                // 로그아웃 : 로컬에 몰빵
+                syncWithServer(testUserId);
             }
             return newLoginStatus; // 새 로그인 상태 반환
         });
@@ -60,23 +61,24 @@ function SandboxApp() {
             quantity: item.quantity,
             //isChecked: true,
         };
-
-        let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
-        const itemIndex = currentCart.findIndex(cartItem => cartItem.optionId === item.optionId);
-
-        if (itemIndex !== -1) {
-            // 이미 장바구니에 존재할 경우 수량을 1 늘림
-            currentCart[itemIndex].quantity += 1;
-            showModalMessage(`장바구니에 ${item.name}의 수량이 1 증가했습니다.`);
-        } else {
-            currentCart.push(cartItem);
-            showModalMessage(`${item.name}이(가) 장바구니에 추가되었습니다.`);
+        if(isLogin){
+            addServerCart(cartItem, testUserId);
         }
 
-        localStorage.setItem('cart', JSON.stringify(currentCart));
+        else {
+            let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+            const itemIndex = currentCart.findIndex(cartItem => cartItem.optionId === item.optionId);
 
-        if (isLogin) {
-            syncWithLocal(currentCart, testUserId); // 로그인 상태일 때만 동기화
+            if (itemIndex !== -1) {
+                // 이미 장바구니에 존재할 경우 수량을 1 늘림
+                currentCart[itemIndex].quantity += 1;
+                showModalMessage(`장바구니에 ${item.name}의 수량이 1 증가했습니다.`);
+            } else {
+                currentCart.push(cartItem);
+                showModalMessage(`${item.name}이(가) 장바구니에 추가되었습니다.`);
+            }
+
+            localStorage.setItem('cart', JSON.stringify(currentCart));
         }
     };
 

@@ -1,5 +1,21 @@
 
-
+export const addServerCart = (cart, userId) => {
+// 로그인 상태: 서버로 장바구니 항목 추가
+fetch(`http://localhost:8080/cart/add?userId=${userId}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(cart),
+})
+    .then(response => response.json())
+    .then(data => {
+        console.log('데이터 Add 완료', data);
+    })
+    .catch(error => {
+        console.error('Error adding item to server cart:', error);
+    });
+};
 
 // 로컬스토리지 -> 서버
 export const syncWithLocal = (cart, userId) => {
