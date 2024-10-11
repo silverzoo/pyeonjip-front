@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {syncWithLocal} from "../../utils/cartUtils";
+import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './SidePanel.css';
 
@@ -10,63 +10,99 @@ const SidePanelApp = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
-    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [isLogin, setIsLogin] = useState(false); // 더미데이터
 
     const navigate = useNavigate();
     const location = useLocation();
 
 
+    // 최초화면 로드 세팅
     useEffect(() => {
-        const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItems(storedCartItems);
-        updateTotalPrice(storedCartItems);
-    }, []);
+        // 로그인
+        if (isLogin) {
+            // todo 컨트롤러 개발 및 URL 수정
+            fetch('http://localhost:8080/cart')
+                .then(response => response.json())
+                .then(serverDetails => {
+                    setCartItems(serverDetails);
+                    updateTotalPrice(serverDetails);
+                    console.log(serverDetails)
+                })
+                .catch(error => console.error('Error fetching cart data from server:', error));
+        }
+        // 비 로그인
+        else {
+            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (localCart.length === 0) {
+                console.log("장바구니가 비어 있습니다.");
+                return;
+            }
+            fetchCartDetails(localCart)
+                .then(localDetails => {
+                    setCartItems(localDetails);
+                    console.log(localDetails);
+                    updateTotalPrice(cartItems);
+                })
+        }
+    }, [isCartOpen]);
 
     const updateTotalPrice = (items) => {
-        const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        let total = 0;
+        items.forEach(item => {
+            total += item.price * item.quantity;
+        });
         setTotalPrice(total);
     };
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
+        const maxQuantity = cartItems[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
 
         if (isNaN(validatedValue) || validatedValue < min) {
-            validatedValue = 1;
-        } else if (validatedValue > maxQuantity) {
+            validatedValue = 0;
+        }
+        else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
         const updatedItems = [...cartItems];
         updatedItems[index].quantity = validatedValue;
         setCartItems(updatedItems);
-        localStorage.setItem('cart', JSON.stringify(updatedItems));
-        if (isLogin) {
-            syncWithLocal(updatedItems, updatedItems[0].userId);
-        }
 
-        updateTotalPrice(updatedItems);
+        if (isLogin) {
+            // todo 해당 로직 구현
+            // syncWithLocal(updatedItems, updatedItems[0].userId);
+        }
+        else {
+            updateLocalStorage(updatedItems);
+        }
     };
 
     const removeItem = (index) => {
-        setAnimatedItems((prev) => [...prev, index]); // 애니메이션 적용할 항목 인덱스 추가
+        // 삭제할 항목에 애니메이션 적용
+        setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
 
+        // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
+            // 선택한 인덱스와 일치하지 않는 항목들만 유지
             const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
             setCartItems(updatedCartItems);
-            localStorage.setItem('cart', JSON.stringify(updatedCartItems));
 
-            // 로그인 상태이고 장바구니가 비어 있지 않으면 서버와 동기화
-            const shouldSyncWithServer = isLogin && updatedCartItems.length > 0;
-            if (shouldSyncWithServer) {
-                syncWithLocal(updatedCartItems, cartItems[0].userId);
+            if(updatedCartItems.length <= 0){
+                return;
             }
-
-            updateTotalPrice(updatedCartItems);
-
-            setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
+            else if(isLogin === false) {
+                // 로컬 스토리지에 업데이트된 장바구니 저장
+                updateLocalStorage(updatedCartItems);
+            }
+            else if(isLogin){
+                //todo
+                //syncWithLocal(updatedCartItems, cartItems[0].userId);
+            }
+            // 애니메이션 적용 목록에서 삭제한 항목 제거
+            setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
         }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
     };
 
@@ -76,9 +112,9 @@ const SidePanelApp = () => {
             document.querySelector('.offcanvas-backdrop').classList.remove('show');
             setTimeout(() => setCartOpen(false), ANIMATION_DURATION);
         } else {
-            const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            setCartItems(storedCartItems);  // 최신화된 장바구니 항목을 설정
-            updateTotalPrice(storedCartItems);  // 총 금액 업데이트
+            //const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
+            //setCartItems(storedCartItems);  // 최신화된 장바구니 항목을 설정
+            //updateTotalPrice(storedCartItems);  // 총 금액 업데이트
             setCartOpen(true);
             setTimeout(() => {
                 document.querySelector('.offcanvas').classList.add('show');
@@ -147,11 +183,11 @@ const SidePanelApp = () => {
                                 <div key={index}
                                      className={`cart-item mb-3  mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
                                     <div className="d-flex justify-content-between align-items-center">
-                                        <img src={item.url} alt={item.name} className="img-fluid rounded-2 col-xl-2"
-                                             style={{width: '120px'}}/>
+                                        <img src={item.url} className="img-fluid rounded-2 col-xl-2"
+                                             style={{width: '100px'}}/>
                                         <div className="col-xl-3">
-                                            <h6 className="mb-1">{item.name}</h6>
-                                            <small>₩ {item.price.toLocaleString()}</small>
+                                            <h5 className="mb-1">{item.name}</h5>
+                                            <h6>₩ {item.price}</h6>
                                         </div>
                                         <div className="quantity-controls col-xl-3">
                                             <button className="quantity-button"

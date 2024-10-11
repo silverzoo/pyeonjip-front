@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import './animation.css';
+import './Cart.css';
 import {useNavigate} from 'react-router-dom';
 import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -221,19 +221,28 @@ function CartApp() {
                                                     >
                                                         <div className="col-md-2 col-lg-2 col-xl-2">
                                                             <a href='/cart/sandbox'>
-                                                                <img src={item.url} className="img-fluid rounded-3"
-                                                                     alt={item.name}/>
+                                                                <img src={item.url} className="img-fluid rounded-3"/>
                                                             </a>
 
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                            <a href='/cart/sandbox' style={{
+                                                            <a href='/cart/sandbox'
+                                                               style={{
                                                                 textDecoration: 'none',
                                                                 color: 'inherit',
                                                                 textAlign: 'left'
-                                                            }}>
-                                                                <h6 className="text-muted">{item.optionName}</h6>
-                                                                <h6 className="mb-0">{item.name}</h6>
+                                                            }}
+                                                            >
+                                                                <h6 className="text-muted"
+                                                                    style={{
+                                                                        fontSize: '0.8rem',
+                                                                    }}
+                                                                >{item.optionName}</h6>
+                                                                <h5 className="mb-0"
+                                                                    style={{
+                                                                        fontSize: '1.1rem',
+                                                                    }}
+                                                                >{item.name}</h5>
                                                             </a>
                                                         </div>
                                                         <div
@@ -247,7 +256,7 @@ function CartApp() {
                                                             </button>
                                                             <input
                                                                 type="number"
-                                                                className="form-control quantity mx-2"
+                                                                className="form-control quantity mx-2 my-1"
                                                                 value={item.quantity}
                                                                 min="1"
                                                                 onChange={(e) => validateQuantity(index, e.target.value)}

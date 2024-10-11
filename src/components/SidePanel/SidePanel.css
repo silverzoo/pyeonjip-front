@@ -35,7 +35,7 @@ button {
     animation: fadeOut 0.5s forwards; /* 애니메이션 지속 시간 조정 */
 }
 
-/* animation.css */
+/* Cart.css */
 .offcanvas {
     transition: transform 0.8s ease;
     transform: translateX(100%); /* 사이드 패널을 오른쪽으로 이동 */
@@ -82,52 +82,14 @@ button {
     background-color: rgba(0, 0, 0, 0.1); /* 회색 배경 추가 */
 }
 
-
-/* 체크박스 숨기기 */
-.checkbox {
-    display: none; /* 기본 체크박스 숨기기 */
-}
-
-/* 커스텀 체크박스 스타일 */
-.custom-checkbox {
-    width: 20px; /* 체크박스 크기 */
-    height: 20px; /* 체크박스 크기 */
-    border: 1.5px solid #000; /* 테두리 색상 */
-    border-radius: 4px; /* 모서리 둥글게 */
-    display: inline-block; /* 인라인 블록으로 설정 */
-    position: relative; /* 포지션 설정 */
-    cursor: pointer; /* 포인터 커서 */
-    transition: padding 0.5s ease, background-color 0.5s ease; /* 패딩과 배경 색상에 대한 트랜지션 설정 */
-}
-
-/* 체크 표시 */
-.custom-checkbox.checked::after {
-    content: ''; /* 빈 콘텐츠 */
-    position: absolute; /* 절대 위치 */
-    width: 10px; /* 체크 표시 크기 */
-    height: 10px; /* 체크 표시 크기 */
-    background-color: #000; /* 체크 표시 색상 */
-    top: 50%; /* 중앙 정렬 */
-    left: 50%; /* 중앙 정렬 */
-    transform: translate(-50%, -50%); /* 중앙으로 이동 */
-    border-radius: 2px; /* 체크 표시 둥글게 */
-}
-
-.custom-checkbox:hover {
-    padding: 2px 7px; /* 호버 시 패딩 증가 */
-    background-color: #eaeaea; /* 회색 배경 추가 */
-}
-
-
 /* 수량 입력 필드 스타일 */
 .quantity {
-
-    width: 60px; /* 너비 조정 */
-    height: 30px; /* 높이 조정 */
+    width: 40px; /* 너비 조정 */
+    height: 35px; /* 높이 조정 */
     padding: 10px; /* 안쪽 여백 */
-    border: 1.5px solid #000000; /* 테두리 색상 */
+    border: 2px solid #000000; /* 테두리 색상 */
     border-radius: 5px; /* 둥근 모서리 */
-    font-size: 13px; /* 글자 크기 */
+    font-size: 15px; /* 글자 크기 */
     text-align: center; /* 중앙 정렬 */
     transition: border-color 1s ease; /* 테두리 색상 트랜지션 */
     -moz-appearance: textfield; /* Firefox에서 스피너 제거 */
