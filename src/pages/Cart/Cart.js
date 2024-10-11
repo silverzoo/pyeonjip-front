@@ -78,8 +78,7 @@ function CartApp() {
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 0;
-        }
-        else if (validatedValue > maxQuantity) {
+        } else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
@@ -88,11 +87,32 @@ function CartApp() {
         setItems(updatedItems);
 
 
-        if (isLogin) {
-            // todo 해당 로직 구현
-            // syncWithLocal(updatedItems, updatedItems[0].userId);
-        }
-        else {
+        if (isLogin) {// 로그인 상태일 때 수량 변경 API 호출
+            const cartItem = {
+                optionId: updatedItems[index].optionId,
+                quantity: updatedItems[index].quantity,
+            };
+            fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${cartItem.optionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cartItem),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+                }
+                return response.json();
+            })
+                .then(data => {
+                    console.log('수량 변경 동기화 완료:', data);
+                })
+                .catch(error => {
+                    console.error('동기화 에러:', error);
+                });
+
+        } else {
             updateLocalStorage(updatedItems);
         }
     };
@@ -100,7 +120,7 @@ function CartApp() {
     const updateTotalPrice = (items) => {
         let total = 0;
         items.forEach(item => {
-                total += item.price * item.quantity;
+            total += item.price * item.quantity;
         });
         // 할인 적용
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
@@ -166,19 +186,37 @@ function CartApp() {
         // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
             // 선택한 인덱스와 일치하지 않는 항목들만 유지
+            const targetOptionId = items[index].optionId;
             const updatedCartItems = items.filter((item, itemIndex) => itemIndex !== index);
             setItems(updatedCartItems);
 
-            if(updatedCartItems.length <= 0){
+            if (updatedCartItems.length < 0) {
                 return;
-            }
-            else if(isLogin === false) {
+            } else if (isLogin === false) {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
-            }
-            else if(isLogin){
-                //todo
-                //syncWithLocal(updatedCartItems, cartItems[0].userId);
+            } else if (isLogin) {
+                fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${targetOptionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+                        }
+                        if (response.status === 204) {
+                            return null; // 응답 본문이 없는 경우
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('삭제 동기화 완료:', data);
+                    })
+                    .catch(error => {
+                        console.error('동기화 에러:', error);
+                    });
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -233,10 +271,10 @@ function CartApp() {
                                                         <div className="col-md-3 col-lg-3 col-xl-3 ">
                                                             <a href='/cart/sandbox'
                                                                style={{
-                                                                textDecoration: 'none',
-                                                                color: 'inherit',
-                                                                textAlign: 'left'
-                                                            }}
+                                                                   textDecoration: 'none',
+                                                                   color: 'inherit',
+                                                                   textAlign: 'left'
+                                                               }}
                                                             >
                                                                 <h6 className="text-muted"
                                                                     style={{
