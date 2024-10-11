@@ -21,36 +21,44 @@ function CartApp() {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(false); // 더미데이터
 
+
+    // 최초화면 로드 세팅
     useEffect(() => {
-        // 로그인 상태에 따라 데이터를 가져오는 로직
+        // 로그인
         if (isLogin) {
-            // 로그인 상태일 때 서버에서 장바구니 데이터 가져오기
+            // todo 컨트롤러 개발 및 URL 수정
             fetch('http://localhost:8080/cart')
                 .then(response => response.json())
-                .then(data => {
-                    setCartItems(data);
-                    updateTotalPrice(data);
+                .then(serverDetails => {
+                    setCartItems(serverDetails);
+                    updateTotalPrice(serverDetails);
+                    console.log(serverDetails)
                 })
                 .catch(error => console.error('Error fetching cart data from server:', error));
-        } else {
-            // 비로그인 상태일 때 로컬 스토리지에서 데이터 가져오기
+        }
+        // 비 로그인
+        else {
             const localCart = JSON.parse(localStorage.getItem('cart')) || [];
             if (localCart.length === 0) {
                 console.log("장바구니가 비어 있습니다.");
                 return;
             }
             fetchCartDetails(localCart)
-                .then(cartDetails => {
-                    setCartItems(cartDetails);
+                .then(localDetails => {
+                    setCartItems(localDetails);
+                    console.log(localDetails);
                     updateTotalPrice(cartItems);
                 })
         }
         // 쿠폰 가져오기
         fetch('http://localhost:8080/coupon')
             .then(response => response.json())
-            .then(data => setCoupons(data))
+            .then(coupons => {
+                setCoupons(coupons);
+                console.log(coupons);
+            })
             .catch(error => console.error('Error fetching data:', error));
-    }, [isLogin]);
+    }, []);
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -60,12 +68,13 @@ function CartApp() {
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
+        const maxQuantity = cartItems[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 0;
-        } else if (validatedValue > maxQuantity) {
+        }
+        else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
@@ -73,12 +82,14 @@ function CartApp() {
         updatedItems[index].quantity = validatedValue;
         setCartItems(updatedItems);
 
-        if (isLogin) {
-            syncWithLocal(updatedItems, updatedItems[0].userId);
-        } else {
-            updateLocalStorage(updatedItems);  // Update using CartDto
-        }
 
+        if (isLogin) {
+            // todo 해당 로직 구현
+            // syncWithLocal(updatedItems, updatedItems[0].userId);
+        }
+        else {
+            updateLocalStorage(updatedItems);
+        }
     };
 
     const updateTotalPrice = (items) => {
@@ -92,7 +103,7 @@ function CartApp() {
         animateTotalPrice(discountedTotal, discount);
         // 상태 업데이트
         setPreviousTotal(total);
-        setItemCount(items.filter(item => item.isChecked).length);
+        setItemCount(cartItems.length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
@@ -143,8 +154,6 @@ function CartApp() {
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
     };
 
-
-
     const handleDeleteItem = (index) => {
         // 삭제할 항목에 애니메이션 적용
         setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
@@ -163,7 +172,8 @@ function CartApp() {
                 updateLocalStorage(updatedCartItems);
             }
             else if(isLogin){
-                syncWithLocal(updatedCartItems, cartItems[0].userId);
+                //todo
+                //syncWithLocal(updatedCartItems, cartItems[0].userId);
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -293,11 +303,11 @@ function CartApp() {
                                                 <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                         )}
-
                                         <div className="d-grid gap-2">
                                             <select className="form-select mb-4 pb-2 my-3"
                                                     aria-label="Default select example">
                                                 {/*<option selected>결제 방법 선택</option>*/}
+                                                <option value="0">결제 방식 선택</option>
                                                 <option value="1">신용카드</option>
                                                 <option value="2">토스</option>
                                                 <option value="3">카카오 페이</option>
