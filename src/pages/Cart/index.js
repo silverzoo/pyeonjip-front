@@ -21,10 +21,8 @@ function CartApp() {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
 
-
-
     useEffect(() => {
-        fetch('http://localhost:8080/cart')
+        fetch('http://localhost:8080/coupon')
             .then(response => response.json())
             .then(data => setCoupons(data))
             .catch(error => console.error('Error fetching data:', error));

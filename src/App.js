@@ -12,7 +12,7 @@ function App() {
           <Header />
         </div>
         <div className='sidePannel'>
-            <SidePanel />
+            {/*<SidePanel />*/}
         </div>
         <div className="content">
           <AppRouter />
