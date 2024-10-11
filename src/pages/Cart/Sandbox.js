@@ -8,7 +8,7 @@ function SandboxApp() {
     const [items, setItems] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
     const MODAL_DURATION = 500
@@ -19,7 +19,10 @@ function SandboxApp() {
             .then(response => response.json())
             .then(cartDtos => {
                 fetchCartDetails(cartDtos)
-                    .then(cartDetails => setItems(cartDetails)) // CartDetailDto 데이터를 items 상태로 설정
+                    .then(cartDetails => {
+                        setItems(cartDetails)
+                        console.log('서버 불러오기 완료', cartDetails);
+                    }) // CartDetailDto 데이터를 items 상태로 설정
                     .catch(error => console.error('Error fetching CartDetailDto:', error));
             })
             .catch(error => console.error('Error fetching CartDto:', error));

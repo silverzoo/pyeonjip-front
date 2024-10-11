@@ -9,7 +9,7 @@ const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
-    const [cartItems, setCartItems] = useState([]);
+    const [items, setItems] = useState([]);
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -19,22 +19,27 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
 
     // 최초화면 로드 세팅
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            // todo 컨트롤러 개발 및 URL 수정
-            fetch('http://localhost:8080/cart')
+            // Fetch cart items from the server when logged in
+            fetch(`http://localhost:8080/cart/${testUserId}`)
                 .then(response => response.json())
-                .then(serverDetails => {
-                    setCartItems(serverDetails);
-                    updateTotalPrice(serverDetails);
-                    console.log(serverDetails)
+                .then(cartDtos => {
+                    fetchCartDetails(cartDtos)
+                        .then(cartDetails => {
+                            setItems(cartDetails);
+                            console.log('서버 불러오기 완료', cartDetails);
+
+                        })
+                        .catch(error => console.error('Error fetching CartDetailDto:', error));
                 })
-                .catch(error => console.error('Error fetching cart data from server:', error));
+                .catch(error => console.error('Error fetching cart items:', error));
         }
         // 비 로그인
         else {
@@ -45,9 +50,9 @@ function CartApp() {
             }
             fetchCartDetails(localCart)
                 .then(localDetails => {
-                    setCartItems(localDetails);
+                    setItems(localDetails);
                     console.log(localDetails);
-                    updateTotalPrice(cartItems);
+                    updateTotalPrice(items);
                 })
         }
         // 쿠폰 가져오기
@@ -61,14 +66,14 @@ function CartApp() {
     }, []);
 
     useEffect(() => {
-        if (cartItems.length > 0) {
-            updateTotalPrice(cartItems);
+        if (items.length > 0) {
+            updateTotalPrice(items);
         }
-    }, [cartItems, isCouponApplied]);
+    }, [items, isCouponApplied]);
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const maxQuantity = cartItems[index].maxQuantity;
+        const maxQuantity = items[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
@@ -78,9 +83,9 @@ function CartApp() {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
-        const updatedItems = [...cartItems];
+        const updatedItems = [...items];
         updatedItems[index].quantity = validatedValue;
-        setCartItems(updatedItems);
+        setItems(updatedItems);
 
 
         if (isLogin) {
@@ -103,7 +108,7 @@ function CartApp() {
         animateTotalPrice(discountedTotal, discount);
         // 상태 업데이트
         setPreviousTotal(total);
-        setItemCount(cartItems.length);
+        setItemCount(items.length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
@@ -161,8 +166,8 @@ function CartApp() {
         // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
             // 선택한 인덱스와 일치하지 않는 항목들만 유지
-            const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
-            setCartItems(updatedCartItems);
+            const updatedCartItems = items.filter((item, itemIndex) => itemIndex !== index);
+            setItems(updatedCartItems);
 
             if(updatedCartItems.length <= 0){
                 return;
@@ -204,7 +209,7 @@ function CartApp() {
                                         </div>
                                         <hr className="my-3"/>
 
-                                        {cartItems.length === 0 ? (
+                                        {items.length === 0 ? (
 
                                             <div className="text-center my-5">
                                                 <i className="bi bi-emoji-frown my-5" style={{fontSize: '4rem'}}></i>
@@ -214,7 +219,7 @@ function CartApp() {
                                         ) : (
 
                                             <div id="cartItemsContainer">
-                                                {cartItems.map((item, index) => (
+                                                {items.map((item, index) => (
                                                     <div
                                                         key={index}
                                                         className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
