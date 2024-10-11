@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './animation.css';
 import {useNavigate} from 'react-router-dom';
-import {syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
+import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -19,17 +19,38 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [isLogin, setIsLogin] = useState(false); // 더미데이터
 
     useEffect(() => {
+        // 로그인 상태에 따라 데이터를 가져오는 로직
+        if (isLogin) {
+            // 로그인 상태일 때 서버에서 장바구니 데이터 가져오기
+            fetch('http://localhost:8080/cart')
+                .then(response => response.json())
+                .then(data => {
+                    setCartItems(data);
+                    updateTotalPrice(data);
+                })
+                .catch(error => console.error('Error fetching cart data from server:', error));
+        } else {
+            // 비로그인 상태일 때 로컬 스토리지에서 데이터 가져오기
+            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (localCart.length === 0) {
+                console.log("장바구니가 비어 있습니다.");
+                return;
+            }
+            fetchCartDetails(localCart)
+                .then(cartDetails => {
+                    setCartItems(cartDetails);
+                    updateTotalPrice(cartItems);
+                })
+        }
+        // 쿠폰 가져오기
         fetch('http://localhost:8080/coupon')
             .then(response => response.json())
             .then(data => setCoupons(data))
             .catch(error => console.error('Error fetching data:', error));
-        const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItems(storedCartItems);
-        updateTotalPrice(storedCartItems);
-    }, []);
+    }, [isLogin]);
 
     useEffect(() => {
         if (cartItems.length > 0) {
@@ -43,7 +64,7 @@ function CartApp() {
 
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
-            validatedValue = 1;
+            validatedValue = 0;
         } else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
@@ -51,9 +72,11 @@ function CartApp() {
         const updatedItems = [...cartItems];
         updatedItems[index].quantity = validatedValue;
         setCartItems(updatedItems);
-        updateLocalStorage(updatedItems);
-        if(isLogin){
+
+        if (isLogin) {
             syncWithLocal(updatedItems, updatedItems[0].userId);
+        } else {
+            updateLocalStorage(updatedItems);  // Update using CartDto
         }
 
     };
@@ -61,9 +84,7 @@ function CartApp() {
     const updateTotalPrice = (items) => {
         let total = 0;
         items.forEach(item => {
-            if (item.check) {
                 total += item.price * item.quantity;
-            }
         });
         // 할인 적용
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
@@ -71,7 +92,7 @@ function CartApp() {
         animateTotalPrice(discountedTotal, discount);
         // 상태 업데이트
         setPreviousTotal(total);
-        setItemCount(items.filter(item => item.check).length);
+        setItemCount(items.filter(item => item.isChecked).length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
@@ -124,13 +145,6 @@ function CartApp() {
 
 
 
-    const handleCheckboxChange = (index) => {
-        const newCartItems = [...cartItems];
-        newCartItems[index].check = !newCartItems[index].check;
-        setCartItems(newCartItems);
-        updateLocalStorage(newCartItems);
-    };
-
     const handleDeleteItem = (index) => {
         // 삭제할 항목에 애니메이션 적용
         setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
@@ -141,15 +155,16 @@ function CartApp() {
             const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
             setCartItems(updatedCartItems);
 
-            // 로컬 스토리지에 업데이트된 장바구니 저장
-            localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-
-            // 로그인 상태이고 장바구니가 비어 있지 않으면 서버와 동기화
-            const shouldSyncWithServer = isLogin && updatedCartItems.length > 0;
-            if (shouldSyncWithServer) {
+            if(updatedCartItems.length <= 0){
+                return;
+            }
+            else if(isLogin === false) {
+                // 로컬 스토리지에 업데이트된 장바구니 저장
+                updateLocalStorage(updatedCartItems);
+            }
+            else if(isLogin){
                 syncWithLocal(updatedCartItems, cartItems[0].userId);
             }
-
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
         }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
@@ -189,80 +204,68 @@ function CartApp() {
                                         ) : (
 
                                             <div id="cartItemsContainer">
-                                            {cartItems.map((item, index) => (
-                                                <div
-                                                    key={index}
-                                                    className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
-                                                >
-                                                    <div className="form-check col-md-1 col-lg-1">
-                                                        <input
-                                                            className="checkbox"
-                                                            type="checkbox"
-                                                            checked={item.check}
-                                                            onChange={() => handleCheckboxChange(index)}
-                                                            id={`checkbox-${index}`}
-                                                        />
-                                                        <label
-                                                            htmlFor={`checkbox-${index}`}
-                                                            className={`custom-checkbox ${item.check ? 'checked' : ''}`}></label>
-                                                    </div>
-
-                                                    <div className="col-md-2 col-lg-2 col-xl-2 ">
-                                                        <a href='/cart/sandbox'>
-                                                            <img src={item.url} className="img-fluid rounded-3"
-                                                                 alt={item.name}/>
-                                                        </a>
-
-                                                    </div>
-                                                    <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                        <a href='/cart/sandbox' style={{
-                                                            textDecoration: 'none',
-                                                            color: 'inherit',
-                                                            textAlign: 'left'
-                                                        }}>
-                                                            <h6 className="text-muted">{item.optionName}</h6>
-                                                            <h6 className="mb-0">{item.name}</h6>
-                                                        </a>
-                                                    </div>
+                                                {cartItems.map((item, index) => (
                                                     <div
-                                                        className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
-                                                        <button
-                                                            className="quantity-button"
-                                                            onClick={() => validateQuantity(index, item.quantity - 1)}
-                                                            disabled={item.quantity <= 1} // 최소 수량 1
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <input
-                                                            type="number"
-                                                            className="form-control quantity mx-2"
-                                                            value={item.quantity}
-                                                            min="1"
-                                                            onChange={(e) => validateQuantity(index, e.target.value)}
-                                                        />
-                                                        <button
-                                                            className="quantity-button"
-                                                            onClick={() => validateQuantity(index, item.quantity + 1)}
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
+                                                        key={index}
+                                                        className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
+                                                    >
+                                                        <div className="col-md-2 col-lg-2 col-xl-2">
+                                                            <a href='/cart/sandbox'>
+                                                                <img src={item.url} className="img-fluid rounded-3"
+                                                                     alt={item.name}/>
+                                                            </a>
 
-                                                    <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                        <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
-                                                    </div>
-                                                    <div className="col-md-1 col-lg-1">
-                                                        <button className="delete-button"
-                                                                onClick={() => handleDeleteItem(index)}>
-                                                            <i className="bi bi-trash3" style={{fontSize: '1.2rem'}}></i>
-                                                        </button>
-                                                    </div>
-                                                    <hr className="my-3"/>
-                                                </div>
-                                            ))}
+                                                        </div>
+                                                        <div className="col-md-3 col-lg-3 col-xl-3 ">
+                                                            <a href='/cart/sandbox' style={{
+                                                                textDecoration: 'none',
+                                                                color: 'inherit',
+                                                                textAlign: 'left'
+                                                            }}>
+                                                                <h6 className="text-muted">{item.optionName}</h6>
+                                                                <h6 className="mb-0">{item.name}</h6>
+                                                            </a>
+                                                        </div>
+                                                        <div
+                                                            className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity - 1)}
+                                                                disabled={item.quantity <= 0} // 최소 수량 1
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                className="form-control quantity mx-2"
+                                                                value={item.quantity}
+                                                                min="1"
+                                                                onChange={(e) => validateQuantity(index, e.target.value)}
+                                                            />
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity + 1)}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
 
-                                        </div>
-                                            )}
+                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                            <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
+                                                        </div>
+                                                        <div className="col-md-1 col-lg-1">
+                                                            <button className="delete-button"
+                                                                    onClick={() => handleDeleteItem(index)}>
+                                                                <i className="bi bi-trash3"
+                                                                   style={{fontSize: '1.2rem'}}></i>
+                                                            </button>
+                                                        </div>
+                                                        <hr className="my-3"/>
+                                                    </div>
+                                                ))}
+
+                                            </div>
+                                        )}
                                         <div className="back-button-container d-flex justify-content-start">
                                             <h5
                                                 className="mb-0 text-muted back-button"

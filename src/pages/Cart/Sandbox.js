@@ -11,6 +11,8 @@ function SandboxApp() {
     const [isLogin, setIsLogin] = useState(false); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
+    const MODAL_DURATION = 500
+
     // CartDto 먼저 가져오기
     useEffect(() => {
         fetch('http://localhost:8080/cart/sandbox')
@@ -49,14 +51,14 @@ function SandboxApp() {
     const showModalMessage = (message) => {
         setModalMessage(message);
         setShowModal(true);
-        setTimeout(() => setShowModal(false), 1500);
+        setTimeout(() => setShowModal(false), MODAL_DURATION);
     };
 
     const addToCart = (item) => {
         const cartItem = {
             optionId: item.optionId,
             quantity: item.quantity,
-            check: true,
+            //isChecked: true,
         };
 
         let currentCart = JSON.parse(localStorage.getItem('cart')) || [];

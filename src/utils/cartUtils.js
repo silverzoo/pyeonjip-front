@@ -66,7 +66,12 @@ export const syncWithServer = async (userId) => {
 
 // 로컬스토리지 장바구니 업데이트
 export const updateLocalStorage = (items) => {
-    localStorage.setItem('cart', JSON.stringify(items));
+    const target = items.map(item => ({
+        optionId: item.optionId,
+        quantity: item.quantity,
+        //isChecked: item.isChecked
+    }));
+    localStorage.setItem('cart', JSON.stringify(target));
 };
 
 
