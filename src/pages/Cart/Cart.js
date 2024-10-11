@@ -27,7 +27,6 @@ function CartApp() {
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            // Fetch cart items from the server when logged in
             fetch(`http://localhost:8080/cart/${testUserId}`)
                 .then(response => response.json())
                 .then(cartDtos => {
@@ -99,12 +98,12 @@ function CartApp() {
                 },
                 body: JSON.stringify(cartItem),
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
-                }
-                return response.json();
-            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log('수량 변경 동기화 완료:', data);
                 })
@@ -355,29 +354,18 @@ function CartApp() {
                                                 <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                         )}
-                                        <div className="d-grid gap-2">
-                                            <select className="form-select mb-4 pb-2 my-3"
-                                                    aria-label="Default select example">
-                                                {/*<option selected>결제 방법 선택</option>*/}
-                                                <option value="0">결제 방식 선택</option>
-                                                <option value="1">신용카드</option>
-                                                <option value="2">토스</option>
-                                                <option value="3">카카오 페이</option>
-                                                <option value="4">무통장 입금</option>
-                                            </select>
-                                        </div>
 
+                                        <h5 className="text-uppercase mb-2  d-flex justify-content-between">쿠폰</h5>
 
-                                        <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
-                                        <div className="mb-2">
-                                            <div className="form-outline d-flex">
-                                                <input type="text" id="couponApply"
-                                                       className="form-control form-control-md"/>
-                                                <button type="button"
-                                                        className="btn btn-dark btn-md ms-2 align-self-end"
-                                                        onClick={handleCouponApply}>apply
-                                                </button>
-                                            </div>
+                                        <div className="form-outline d-flex ">
+                                            <input type="text" id="couponApply"
+                                                   className="form-control form-control-md my-1"
+                                                   style={{height: '38px'}}
+                                            />
+                                            <button type="button"
+                                                    className="btn btn-dark btn-md ms-2 align-self-end my-1"
+                                                    onClick={handleCouponApply}>apply
+                                            </button>
                                         </div>
 
                                         <hr className="my-4"/>

@@ -7,10 +7,11 @@ import './SidePanel.css';
 const ANIMATION_DURATION = 400;
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
-    const [cartItems, setCartItems] = useState([]);
+    const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -20,15 +21,18 @@ const SidePanelApp = () => {
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            // todo 컨트롤러 개발 및 URL 수정
-            fetch('http://localhost:8080/cart')
+            fetch(`http://localhost:8080/cart/${testUserId}`)
                 .then(response => response.json())
-                .then(serverDetails => {
-                    setCartItems(serverDetails);
-                    updateTotalPrice(serverDetails);
-                    console.log(serverDetails)
+                .then(cartDtos => {
+                    fetchCartDetails(cartDtos)
+                        .then(cartDetails => {
+                            setItems(cartDetails);
+                            console.log('서버 불러오기 완료', cartDetails);
+
+                        })
+                        .catch(error => console.error('Error fetching CartDetailDto:', error));
                 })
-                .catch(error => console.error('Error fetching cart data from server:', error));
+                .catch(error => console.error('Error fetching cart items:', error));
         }
         // 비 로그인
         else {
@@ -39,9 +43,9 @@ const SidePanelApp = () => {
             }
             fetchCartDetails(localCart)
                 .then(localDetails => {
-                    setCartItems(localDetails);
+                    setItems(localDetails);
                     console.log(localDetails);
-                    updateTotalPrice(cartItems);
+                    updateTotalPrice(items);
                 })
         }
     }, [isCartOpen]);
@@ -56,7 +60,7 @@ const SidePanelApp = () => {
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const maxQuantity = cartItems[index].maxQuantity;
+        const maxQuantity = items[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
 
@@ -67,13 +71,34 @@ const SidePanelApp = () => {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
-        const updatedItems = [...cartItems];
+        const updatedItems = [...items];
         updatedItems[index].quantity = validatedValue;
-        setCartItems(updatedItems);
+        setItems(updatedItems);
 
         if (isLogin) {
-            // todo 해당 로직 구현
-            // syncWithLocal(updatedItems, updatedItems[0].userId);
+            const cartItem = {
+                optionId: updatedItems[index].optionId,
+                quantity: updatedItems[index].quantity,
+            };
+            fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${cartItem.optionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(cartItem),
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('수량 변경 동기화 완료:', data);
+                })
+                .catch(error => {
+                    console.error('동기화 에러:', error);
+                });
         }
         else {
             updateLocalStorage(updatedItems);
@@ -87,10 +112,11 @@ const SidePanelApp = () => {
         // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
             // 선택한 인덱스와 일치하지 않는 항목들만 유지
-            const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
-            setCartItems(updatedCartItems);
+            const targetOptionId = items[index].optionId;
+            const updatedCartItems = items.filter((item, itemIndex) => itemIndex !== index);
+            setItems(updatedCartItems);
 
-            if(updatedCartItems.length <= 0){
+            if(updatedCartItems.length < 0){
                 return;
             }
             else if(isLogin === false) {
@@ -98,8 +124,27 @@ const SidePanelApp = () => {
                 updateLocalStorage(updatedCartItems);
             }
             else if(isLogin){
-                //todo
-                //syncWithLocal(updatedCartItems, cartItems[0].userId);
+                fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${targetOptionId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+                        }
+                        if (response.status === 204) {
+                            return null; // 응답 본문이 없는 경우
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('삭제 동기화 완료:', data);
+                    })
+                    .catch(error => {
+                        console.error('동기화 에러:', error);
+                    });
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -168,7 +213,7 @@ const SidePanelApp = () => {
 
                 <div className="offcanvas-body">
 
-                    {cartItems.length === 0 ? (
+                    {items.length === 0 ? (
                         <div>
                             <div className="text-center my-5 ">
 
@@ -179,7 +224,7 @@ const SidePanelApp = () => {
                         </div>
                     ) : (
                         <div>
-                            {cartItems.map((item, index) => (
+                            {items.map((item, index) => (
                                 <div key={index}
                                      className={`cart-item mb-3  mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
                                     <div className="d-flex justify-content-between align-items-center">
