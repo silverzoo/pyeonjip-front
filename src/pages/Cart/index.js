@@ -1,8 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import './animation.css';
 import {useNavigate} from 'react-router-dom';
+import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+
+const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
@@ -16,47 +19,95 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true); // 더미데이터
-    const [testUserId, setTestUserId] = useState(1); // 더미데이터
-    useEffect(() => {
-        fetch('http://localhost:8080/cart')
-            .then(response => response.json())
-            .then(data => setCoupons(data))
-            .catch(error => console.error('Error fetching data:', error));
+    const [isLogin, setIsLogin] = useState(false); // 더미데이터
 
-        const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-        setCartItems(storedCartItems);
-        updateTotalPrice(storedCartItems);
+
+    // 최초화면 로드 세팅
+    useEffect(() => {
+        // 로그인
+        if (isLogin) {
+            // todo 컨트롤러 개발 및 URL 수정
+            fetch('http://localhost:8080/cart')
+                .then(response => response.json())
+                .then(serverDetails => {
+                    setCartItems(serverDetails);
+                    updateTotalPrice(serverDetails);
+                    console.log(serverDetails)
+                })
+                .catch(error => console.error('Error fetching cart data from server:', error));
+        }
+        // 비 로그인
+        else {
+            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (localCart.length === 0) {
+                console.log("장바구니가 비어 있습니다.");
+                return;
+            }
+            fetchCartDetails(localCart)
+                .then(localDetails => {
+                    setCartItems(localDetails);
+                    console.log(localDetails);
+                    updateTotalPrice(cartItems);
+                })
+        }
+        // 쿠폰 가져오기
+        fetch('http://localhost:8080/coupon')
+            .then(response => response.json())
+            .then(coupons => {
+                setCoupons(coupons);
+                console.log(coupons);
+            })
+            .catch(error => console.error('Error fetching data:', error));
     }, []);
 
     useEffect(() => {
         if (cartItems.length > 0) {
             updateTotalPrice(cartItems);
         }
-    }, [cartItems, couponDiscount, isCouponApplied]);
+    }, [cartItems, isCouponApplied]);
 
+    const validateQuantity = (index, value) => {
+        const min = 0;
+        const maxQuantity = cartItems[index].maxQuantity;
+
+        let validatedValue = parseInt(value, 10);
+        if (isNaN(validatedValue) || validatedValue < min) {
+            validatedValue = 0;
+        }
+        else if (validatedValue > maxQuantity) {
+            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
+            validatedValue = maxQuantity;
+        }
+        const updatedItems = [...cartItems];
+        updatedItems[index].quantity = validatedValue;
+        setCartItems(updatedItems);
+
+
+        if (isLogin) {
+            // todo 해당 로직 구현
+            // syncWithLocal(updatedItems, updatedItems[0].userId);
+        }
+        else {
+            updateLocalStorage(updatedItems);
+        }
+    };
 
     const updateTotalPrice = (items) => {
         let total = 0;
         items.forEach(item => {
-            if (item.check) {
                 total += item.price * item.quantity;
-            }
         });
-
+        // 할인 적용
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
         const discountedTotal = total - discount;
-
-        // 애니메이션
         animateTotalPrice(discountedTotal, discount);
-
         // 상태 업데이트
-        setPreviousTotal(total); // 실제 총 금액을 저장합니다 (할인 전 금액).
-        setItemCount(items.filter(item => item.check).length);
+        setPreviousTotal(total);
+        setItemCount(cartItems.length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
-        const duration = 400; // 애니메이션 지속 시간 (ms)
+        const duration = ANIMATION_DURATION; // 애니메이션 지속 시간 (ms)
         const startTime = performance.now();
         const startValue = animatedTotal;
         const startDiscountValue = animatedDiscountedPrice;
@@ -103,83 +154,35 @@ function CartApp() {
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
     };
 
-
-    const validateQuantity = (index, value) => {
-        const min = 0;
-        const maxQuantity = JSON.parse(localStorage.getItem('cart'))[index].maxQuantity;
-
-        let validatedValue = parseInt(value, 10);
-        if (isNaN(validatedValue) || validatedValue < min) {
-            validatedValue = 1;
-        } else if (validatedValue > maxQuantity) {
-            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
-            validatedValue = maxQuantity;
-        }
-        const updatedCartItems = [...cartItems];
-        updatedCartItems[index].quantity = validatedValue;
-        setCartItems(updatedCartItems);
-        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        if(isLogin){
-            syncWithLocal(updatedCartItems, updatedCartItems[0].userId);
-        }
-        //updateTotalPrice(newCartItems);
-    };
-
-    const handleCheckboxChange = (index) => {
-        const newCartItems = [...cartItems];
-        newCartItems[index].check = !newCartItems[index].check;
-        setCartItems(newCartItems);
-        localStorage.setItem('cart', JSON.stringify(newCartItems));
-        //updateTotalPrice(newCartItems);
-    };
-
     const handleDeleteItem = (index) => {
-        // 애니메이션 클래스 추가
-        setAnimatedItems((prev) => [...prev, index]); // 애니메이션 적용할 항목 인덱스 추가
+        // 삭제할 항목에 애니메이션 적용
+        setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
 
-        // 애니메이션이 끝난 후 아이템을 삭제
+        // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
-            const updatedCartItems = cartItems.filter((_, i) => i !== index);
+            // 선택한 인덱스와 일치하지 않는 항목들만 유지
+            const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
             setCartItems(updatedCartItems);
 
-            localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-
-            if (isLogin && cartItems.length > 0) {  // 배열이 비어 있지 않은 경우에만 동기화
-                syncWithLocal(updatedCartItems, cartItems[0].userId);
+            if(updatedCartItems.length <= 0){
+                return;
             }
-
-
-            setAnimatedItems((prev) => prev.filter(i => i !== index)); // 애니메이션 목록에서 제거
-        }, 400); // 애니메이션 지속 시간에 맞춤
+            else if(isLogin === false) {
+                // 로컬 스토리지에 업데이트된 장바구니 저장
+                updateLocalStorage(updatedCartItems);
+            }
+            else if(isLogin){
+                //todo
+                //syncWithLocal(updatedCartItems, cartItems[0].userId);
+            }
+            // 애니메이션 적용 목록에서 삭제한 항목 제거
+            setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
+        }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
     };
 
     const handleCouponApply = () => {
-        const couponCode = document.getElementById('form3Examplea2').value;
+        const couponCode = document.getElementById('couponApply').value;
         applyCouponDiscount(couponCode);
-    };
-
-    // 서버와 동기화 함수 추가
-    const syncWithLocal = (cart, userId) => {
-
-        fetch(`http://localhost:8080/cart/syncLocal?userId=${userId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(cart),
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status); // 응답 상태 코드 추가
-                }
-                return response.json(); // JSON 파싱
-            })
-            .then(data => {
-                console.log('동기화 완료:', data);
-            })
-            .catch(error => {
-                console.error('동기화 에러:', error);
-            });
     };
 
     return (
@@ -211,80 +214,68 @@ function CartApp() {
                                         ) : (
 
                                             <div id="cartItemsContainer">
-                                            {cartItems.map((item, index) => (
-                                                <div
-                                                    key={index}
-                                                    className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
-                                                >
-                                                    <div className="form-check col-md-1 col-lg-1">
-                                                        <input
-                                                            className="checkbox"
-                                                            type="checkbox"
-                                                            checked={item.check}
-                                                            onChange={() => handleCheckboxChange(index)}
-                                                            id={`checkbox-${index}`} // 각 체크박스에 고유 ID 추가
-                                                        />
-                                                        <label
-                                                            htmlFor={`checkbox-${index}`}
-                                                            className={`custom-checkbox ${item.check ? 'checked' : ''}`}></label>
-                                                    </div>
-
-                                                    <div className="col-md-2 col-lg-2 col-xl-2 ">
-                                                        <a href='/cart/sandbox'>
-                                                            <img src={item.url} className="img-fluid rounded-3"
-                                                                 alt={item.name}/>
-                                                        </a>
-
-                                                    </div>
-                                                    <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                        <a href='/cart/sandbox' style={{
-                                                            textDecoration: 'none',
-                                                            color: 'inherit',
-                                                            textAlign: 'left'
-                                                        }}>
-                                                            <h6 className="text-muted">{item.optionName}</h6>
-                                                            <h6 className="mb-0">{item.name}</h6>
-                                                        </a>
-                                                    </div>
+                                                {cartItems.map((item, index) => (
                                                     <div
-                                                        className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
-                                                        <button
-                                                            className="quantity-button"
-                                                            onClick={() => validateQuantity(index, item.quantity - 1)}
-                                                            disabled={item.quantity <= 1} // 최소 수량 1
-                                                        >
-                                                            -
-                                                        </button>
-                                                        <input
-                                                            type="number"
-                                                            className="form-control quantity mx-2"  // mx-2는 양쪽 여백 추가
-                                                            value={item.quantity}
-                                                            min="1" // 최소 수량 1
-                                                            onChange={(e) => validateQuantity(index, e.target.value)}
-                                                        />
-                                                        <button
-                                                            className="quantity-button"
-                                                            onClick={() => validateQuantity(index, item.quantity + 1)}
-                                                        >
-                                                            +
-                                                        </button>
-                                                    </div>
+                                                        key={index}
+                                                        className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
+                                                    >
+                                                        <div className="col-md-2 col-lg-2 col-xl-2">
+                                                            <a href='/cart/sandbox'>
+                                                                <img src={item.url} className="img-fluid rounded-3"
+                                                                     alt={item.name}/>
+                                                            </a>
 
-                                                    <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
-                                                        <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
-                                                    </div>
-                                                    <div className="col-md-1 col-lg-1">
-                                                        <button className="delete-button"
-                                                                onClick={() => handleDeleteItem(index)}>
-                                                            <i className="bi bi-trash3" style={{fontSize: '1.2rem'}}></i>
-                                                        </button>
-                                                    </div>
-                                                    <hr className="my-3"/>
-                                                </div>
-                                            ))}
+                                                        </div>
+                                                        <div className="col-md-3 col-lg-3 col-xl-3 ">
+                                                            <a href='/cart/sandbox' style={{
+                                                                textDecoration: 'none',
+                                                                color: 'inherit',
+                                                                textAlign: 'left'
+                                                            }}>
+                                                                <h6 className="text-muted">{item.optionName}</h6>
+                                                                <h6 className="mb-0">{item.name}</h6>
+                                                            </a>
+                                                        </div>
+                                                        <div
+                                                            className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity - 1)}
+                                                                disabled={item.quantity <= 0} // 최소 수량 1
+                                                            >
+                                                                -
+                                                            </button>
+                                                            <input
+                                                                type="number"
+                                                                className="form-control quantity mx-2"
+                                                                value={item.quantity}
+                                                                min="1"
+                                                                onChange={(e) => validateQuantity(index, e.target.value)}
+                                                            />
+                                                            <button
+                                                                className="quantity-button"
+                                                                onClick={() => validateQuantity(index, item.quantity + 1)}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        </div>
 
-                                        </div>
-                                            )}
+                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                            <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
+                                                        </div>
+                                                        <div className="col-md-1 col-lg-1">
+                                                            <button className="delete-button"
+                                                                    onClick={() => handleDeleteItem(index)}>
+                                                                <i className="bi bi-trash3"
+                                                                   style={{fontSize: '1.2rem'}}></i>
+                                                            </button>
+                                                        </div>
+                                                        <hr className="my-3"/>
+                                                    </div>
+                                                ))}
+
+                                            </div>
+                                        )}
                                         <div className="back-button-container d-flex justify-content-start">
                                             <h5
                                                 className="mb-0 text-muted back-button"
@@ -305,15 +296,18 @@ function CartApp() {
                                             <h5 className="text-uppercase">Total price</h5>
                                             <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                         </div>
-                                        <div className="d-flex justify-content-between mb-3 my-4" id="discountRow"
-                                             style={{display: couponDiscount > 0 ? 'flex' : 'none'}}>
-                                            <h6 className="text-muted">Discount</h6>
-                                            <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
-                                        </div>
+
+                                        {couponDiscount > 0 && (
+                                            <div className="d-flex justify-content-between mb-3 my-4" id="discountRow">
+                                                <h6 className="text-muted">Discount</h6>
+                                                <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
+                                            </div>
+                                        )}
                                         <div className="d-grid gap-2">
                                             <select className="form-select mb-4 pb-2 my-3"
                                                     aria-label="Default select example">
-                                                <option selected>결제 방법 선택</option>
+                                                {/*<option selected>결제 방법 선택</option>*/}
+                                                <option value="0">결제 방식 선택</option>
                                                 <option value="1">신용카드</option>
                                                 <option value="2">토스</option>
                                                 <option value="3">카카오 페이</option>
@@ -325,7 +319,7 @@ function CartApp() {
                                         <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
                                         <div className="mb-2">
                                             <div className="form-outline d-flex">
-                                                <input type="text" id="form3Examplea2"
+                                                <input type="text" id="couponApply"
                                                        className="form-control form-control-md"/>
                                                 <button type="button"
                                                         className="btn btn-dark btn-md ms-2 align-self-end"
