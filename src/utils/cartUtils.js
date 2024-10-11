@@ -69,9 +69,9 @@ export const updateLocalStorage = (items) => {
     localStorage.setItem('cart', JSON.stringify(items));
 };
 
-// CartDto를 기반으로 CartDetailDto 불러오기
+
 export const fetchCartDetails = (cartDtos) => {
-    fetch(`http://localhost:8080/cart/detail`, {
+    return fetch(`http://localhost:8080/cart/detail`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -79,10 +79,8 @@ export const fetchCartDetails = (cartDtos) => {
         body: JSON.stringify(cartDtos),
     })
         .then(response => response.json())
-        .then(cartDetails => {
-            setDetails(cartDetails);
-            setItems(cartDetails); // CartDetailDto 데이터를 items 상태로 설정
-        })
-        .catch(error => console.error('Error fetching CartDetailDto:', error));
+        .catch(error => {
+            console.error('Error fetching CartDetailDto:', error);
+            throw error; // 에러 발생 시 호출한 곳에서 처리할 수 있도록 전달
+        });
 };
-

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { syncWithLocal, syncWithServer } from "../../utils/cartUtils";
+import { syncWithLocal, syncWithServer, fetchCartDetails } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { Modal } from 'react-bootstrap';
@@ -8,10 +8,6 @@ function SandboxApp() {
     const [items, setItems] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [cartItems, setCartItems] = useState([]);
-    const [details, setDetails] = useState([]);
-    const [cart, setCart] = useState([]);
-
     const [isLogin, setIsLogin] = useState(false); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
@@ -20,27 +16,12 @@ function SandboxApp() {
         fetch('http://localhost:8080/cart/sandbox')
             .then(response => response.json())
             .then(cartDtos => {
-                fetchCartDetails(cartDtos);
+                fetchCartDetails(cartDtos)
+                    .then(cartDetails => setItems(cartDetails)) // CartDetailDto 데이터를 items 상태로 설정
+                    .catch(error => console.error('Error fetching CartDetailDto:', error));
             })
             .catch(error => console.error('Error fetching CartDto:', error));
     }, []);
-
-    // CartDto를 기반으로 CartDetailDto 불러오기
-    const fetchCartDetails = (cartDtos) => {
-        fetch(`http://localhost:8080/cart/detail`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(cartDtos),
-        })
-            .then(response => response.json())
-            .then(cartDetails => {
-                setDetails(cartDetails);
-                setItems(cartDetails); // CartDetailDto 데이터를 items 상태로 설정
-            })
-            .catch(error => console.error('Error fetching CartDetailDto:', error));
-    };
 
     const resetStorage = () => {
         showModalMessage('장바구니 초기화');
@@ -60,7 +41,6 @@ function SandboxApp() {
                 let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
                 syncWithLocal(currentCart, testUserId);
                 localStorage.clear();
-                setCart([]); // 로그아웃 시 장바구니 초기화
             }
             return newLoginStatus; // 새 로그인 상태 반환
         });
@@ -74,14 +54,8 @@ function SandboxApp() {
 
     const addToCart = (item) => {
         const cartItem = {
-            //userId: item.userId,
             optionId: item.optionId,
-            //name: item.name,
-            //optionName: item.optionName,
-            //price: item.price,
             quantity: item.quantity,
-            //maxQuantity: item.maxQuantity,
-            //url: item.url,
             check: true,
         };
 
@@ -98,7 +72,6 @@ function SandboxApp() {
         }
 
         localStorage.setItem('cart', JSON.stringify(currentCart));
-        setCartItems(currentCart); // CartItems 상태 업데이트
 
         if (isLogin) {
             syncWithLocal(currentCart, testUserId); // 로그인 상태일 때만 동기화
