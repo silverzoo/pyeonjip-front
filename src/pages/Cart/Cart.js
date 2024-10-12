@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import './animation.css';
+import './Cart.css';
 import {useNavigate} from 'react-router-dom';
-import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
+import {fetchCartDetails, updateLocalStorage, deleteCartItem,deleteAllCartItems, updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -9,7 +9,7 @@ const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
-    const [cartItems, setCartItems] = useState([]);
+    const [items, setItems] = useState([]);
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -19,22 +19,26 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [testUserId, setTestUserId] = useState(1); // 더미데이터
 
 
     // 최초화면 로드 세팅
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            // todo 컨트롤러 개발 및 URL 수정
-            fetch('http://localhost:8080/cart')
+            fetch(`http://localhost:8080/cart/${testUserId}`)
                 .then(response => response.json())
-                .then(serverDetails => {
-                    setCartItems(serverDetails);
-                    updateTotalPrice(serverDetails);
-                    console.log(serverDetails)
+                .then(cartDtos => {
+                    fetchCartDetails(cartDtos)
+                        .then(cartDetails => {
+                            setItems(cartDetails);
+                            console.log('서버 불러오기 완료', cartDetails);
+
+                        })
+                        .catch(error => console.error('Error fetching CartDetailDto:', error));
                 })
-                .catch(error => console.error('Error fetching cart data from server:', error));
+                .catch(error => console.error('Error fetching cart items:', error));
         }
         // 비 로그인
         else {
@@ -45,9 +49,9 @@ function CartApp() {
             }
             fetchCartDetails(localCart)
                 .then(localDetails => {
-                    setCartItems(localDetails);
+                    setItems(localDetails);
                     console.log(localDetails);
-                    updateTotalPrice(cartItems);
+                    updateTotalPrice(items);
                 })
         }
         // 쿠폰 가져오기
@@ -61,33 +65,35 @@ function CartApp() {
     }, []);
 
     useEffect(() => {
-        if (cartItems.length > 0) {
-            updateTotalPrice(cartItems);
+        if (items.length > 0) {
+            updateTotalPrice(items);
         }
-    }, [cartItems, isCouponApplied]);
+    }, [items, isCouponApplied]);
 
     const validateQuantity = (index, value) => {
         const min = 0;
-        const maxQuantity = cartItems[index].maxQuantity;
+        const maxQuantity = items[index].maxQuantity;
 
         let validatedValue = parseInt(value, 10);
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 0;
-        }
-        else if (validatedValue > maxQuantity) {
+        } else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
-        const updatedItems = [...cartItems];
+        const updatedItems = [...items];
         updatedItems[index].quantity = validatedValue;
-        setCartItems(updatedItems);
+        setItems(updatedItems);
 
 
-        if (isLogin) {
-            // todo 해당 로직 구현
-            // syncWithLocal(updatedItems, updatedItems[0].userId);
-        }
-        else {
+        if (isLogin) {// 로그인 상태일 때 수량 변경 API 호출
+            const cartItem = {
+                optionId: updatedItems[index].optionId,
+                quantity: updatedItems[index].quantity,
+            };
+            updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
+
+        } else {
             updateLocalStorage(updatedItems);
         }
     };
@@ -95,7 +101,7 @@ function CartApp() {
     const updateTotalPrice = (items) => {
         let total = 0;
         items.forEach(item => {
-                total += item.price * item.quantity;
+            total += item.price * item.quantity;
         });
         // 할인 적용
         const discount = isCouponApplied ? total * (couponDiscount / 100) : 0;
@@ -103,7 +109,7 @@ function CartApp() {
         animateTotalPrice(discountedTotal, discount);
         // 상태 업데이트
         setPreviousTotal(total);
-        setItemCount(cartItems.length);
+        setItemCount(items.length);
     };
 
     const animateTotalPrice = (newTotal, discount) => {
@@ -128,7 +134,6 @@ function CartApp() {
                 setTotalPrice(newTotal);
             }
         };
-
         requestAnimationFrame(animate);
     };
 
@@ -148,7 +153,6 @@ function CartApp() {
         if (currentDate > expiryDate) {
             return alert('만료된 쿠폰입니다.');
         }
-
         setCouponDiscount(coupon.discount);
         setIsCouponApplied(true);
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
@@ -161,19 +165,17 @@ function CartApp() {
         // 애니메이션이 끝난 후 아이템 삭제 처리
         setTimeout(() => {
             // 선택한 인덱스와 일치하지 않는 항목들만 유지
-            const updatedCartItems = cartItems.filter((item, itemIndex) => itemIndex !== index);
-            setCartItems(updatedCartItems);
+            const targetOptionId = items[index].optionId;
+            const updatedCartItems = items.filter((item, itemIndex) => itemIndex !== index);
+            setItems(updatedCartItems);
 
-            if(updatedCartItems.length <= 0){
+            if (updatedCartItems.length < 0) {
                 return;
-            }
-            else if(isLogin === false) {
+            } else if (isLogin === false) {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
-            }
-            else if(isLogin){
-                //todo
-                //syncWithLocal(updatedCartItems, cartItems[0].userId);
+            } else if (isLogin) {
+                deleteCartItem(testUserId, targetOptionId);
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -184,6 +186,26 @@ function CartApp() {
         const couponCode = document.getElementById('couponApply').value;
         applyCouponDiscount(couponCode);
     };
+
+    const deleteAll = () => {
+        // 모든 항목에 대해 애니메이션을 적용
+        setAnimatedItems(items.map((_, index) => index));
+
+        // 애니메이션이 끝난 후 모든 항목을 삭제 처리
+        setTimeout(() => {
+            setItems([]);
+
+            if (isLogin === false) {
+                // 로컬 스토리지에서 장바구니 비우기
+                updateLocalStorage([]);
+            } else {
+                deleteAllCartItems(testUserId);
+            }
+            // 모든 항목의 애니메이션 목록 초기화
+            setAnimatedItems([]);
+        }, ANIMATION_DURATION); // 애니메이션 지속 시간 후에 실행
+    };
+
 
     return (
         <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
@@ -204,7 +226,7 @@ function CartApp() {
                                         </div>
                                         <hr className="my-3"/>
 
-                                        {cartItems.length === 0 ? (
+                                        {items.length === 0 ? (
 
                                             <div className="text-center my-5">
                                                 <i className="bi bi-emoji-frown my-5" style={{fontSize: '4rem'}}></i>
@@ -214,26 +236,35 @@ function CartApp() {
                                         ) : (
 
                                             <div id="cartItemsContainer">
-                                                {cartItems.map((item, index) => (
+                                                {items.map((item, index) => (
                                                     <div
                                                         key={index}
                                                         className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
                                                     >
                                                         <div className="col-md-2 col-lg-2 col-xl-2">
                                                             <a href='/cart/sandbox'>
-                                                                <img src={item.url} className="img-fluid rounded-3"
-                                                                     alt={item.name}/>
+                                                                <img src={item.url} className="img-fluid rounded-3"/>
                                                             </a>
 
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                            <a href='/cart/sandbox' style={{
-                                                                textDecoration: 'none',
-                                                                color: 'inherit',
-                                                                textAlign: 'left'
-                                                            }}>
-                                                                <h6 className="text-muted">{item.optionName}</h6>
-                                                                <h6 className="mb-0">{item.name}</h6>
+                                                            <a href='/cart/sandbox'
+                                                               style={{
+                                                                   textDecoration: 'none',
+                                                                   color: 'inherit',
+                                                                   textAlign: 'left'
+                                                               }}
+                                                            >
+                                                                <h6 className="text-muted"
+                                                                    style={{
+                                                                        fontSize: '0.8rem',
+                                                                    }}
+                                                                >{item.optionName}</h6>
+                                                                <h5 className="mb-0"
+                                                                    style={{
+                                                                        fontSize: '1.1rem',
+                                                                    }}
+                                                                >{item.name}</h5>
                                                             </a>
                                                         </div>
                                                         <div
@@ -247,7 +278,7 @@ function CartApp() {
                                                             </button>
                                                             <input
                                                                 type="number"
-                                                                className="form-control quantity mx-2"
+                                                                className="form-control quantity mx-2 my-1"
                                                                 value={item.quantity}
                                                                 min="1"
                                                                 onChange={(e) => validateQuantity(index, e.target.value)}
@@ -276,7 +307,7 @@ function CartApp() {
 
                                             </div>
                                         )}
-                                        <div className="back-button-container d-flex justify-content-start">
+                                        <div className="back-button-container d-flex justify-content-between">
                                             <h5
                                                 className="mb-0 text-muted back-button"
                                                 onClick={() => navigate(-1)}
@@ -284,6 +315,16 @@ function CartApp() {
                                             >
                                                 <i className="bi bi-arrow-left"></i> 뒤로가기
                                             </h5>
+
+
+                                            <h6 className="delete-button"
+                                                onClick={() => deleteAll()}
+                                            >
+                                                전체삭제 <i className="bi bi-trash3 my-1 "
+                                                   style={{fontSize: '1.2rem'}}></i>
+
+                                            </h6>
+
                                         </div>
 
                                     </div>
@@ -303,29 +344,18 @@ function CartApp() {
                                                 <h6 id="discountedPriceDisplay">₩ {animatedDiscountedPrice.toLocaleString()}</h6>
                                             </div>
                                         )}
-                                        <div className="d-grid gap-2">
-                                            <select className="form-select mb-4 pb-2 my-3"
-                                                    aria-label="Default select example">
-                                                {/*<option selected>결제 방법 선택</option>*/}
-                                                <option value="0">결제 방식 선택</option>
-                                                <option value="1">신용카드</option>
-                                                <option value="2">토스</option>
-                                                <option value="3">카카오 페이</option>
-                                                <option value="4">무통장 입금</option>
-                                            </select>
-                                        </div>
 
+                                        <h5 className="text-uppercase mb-2  d-flex justify-content-between">쿠폰</h5>
 
-                                        <h5 className="text-uppercase mb-2 d-flex justify-content-between">쿠폰</h5>
-                                        <div className="mb-2">
-                                            <div className="form-outline d-flex">
-                                                <input type="text" id="couponApply"
-                                                       className="form-control form-control-md"/>
-                                                <button type="button"
-                                                        className="btn btn-dark btn-md ms-2 align-self-end"
-                                                        onClick={handleCouponApply}>apply
-                                                </button>
-                                            </div>
+                                        <div className="form-outline d-flex ">
+                                            <input type="text" id="couponApply"
+                                                   className="form-control form-control-md my-1"
+                                                   style={{height: '38px'}}
+                                            />
+                                            <button type="button"
+                                                    className="btn btn-dark btn-md ms-2 align-self-end my-1"
+                                                    onClick={handleCouponApply}>apply
+                                            </button>
                                         </div>
 
                                         <hr className="my-4"/>

@@ -1,5 +1,21 @@
 
-
+export const addServerCart = (cart, userId) => {
+// 로그인 상태: 서버로 장바구니 항목 추가
+fetch(`http://localhost:8080/cart/add?userId=${userId}`, {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(cart),
+})
+    .then(response => response.json())
+    .then(data => {
+        console.log('데이터 Add 완료', data);
+    })
+    .catch(error => {
+        console.error('Error adding item to server cart:', error);
+    });
+};
 
 // 로컬스토리지 -> 서버
 export const syncWithLocal = (cart, userId) => {
@@ -89,3 +105,71 @@ export const fetchCartDetails = (cartDtos) => {
             throw error; // 에러 발생 시 호출한 곳에서 처리할 수 있도록 전달
         });
 };
+
+export const updateCartItemQuantity = (userId, quantity, cartItem) => {
+    fetch(`http://localhost:8080/cart/${userId}/cart-items/${cartItem.optionId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cartItem),
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('수량 변경 동기화 완료:', data);
+        })
+        .catch(error => {
+            console.error('동기화 에러:', error);
+        });
+}
+
+
+export const deleteCartItem = (userId, optionId) => {
+    fetch(`http://localhost:8080/cart/${userId}/cart-items/${optionId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+            }
+            if (response.status === 204) {
+                return null; // 응답 본문이 없는 경우
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('서버 해당 항목 삭제 완료');
+        })
+        .catch(error => {
+            console.error('동기화 에러:', error);
+        });
+}
+
+
+export const deleteAllCartItems = (userId) => {
+    fetch(`http://localhost:8080/cart/${userId}/cart-items`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
+            }
+            if (response.status === 204) {
+                console.log('모든 서버 항목 삭제 완료');
+            }
+        })
+        .catch(error => {
+            console.error('서버와 동기화하는 동안 에러가 발생했습니다:', error);
+        });
+}

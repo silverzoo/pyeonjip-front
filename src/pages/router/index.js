@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Sandbox from "../Cart/Sandbox";
-import Cart from "../Cart/index";
+import Cart from "../Cart/Cart";
 import Home from "../Home/home";
 import AdminCategory from "../Admin/category";
 import AdminOrder from "../Admin/order";
