@@ -6,10 +6,14 @@
     top: 0;
     width: 100%;
     height: auto;
+    max-height: 800px;
+    overflow-y: auto;
 }
 
 .logo {
+    margin-top: 30px;
     margin-bottom: 30px;
+    padding-left: 46px;
 }
 
 .left li {
@@ -17,34 +21,31 @@
     font-size: 90%;
     position: relative;
 }
-
-.dropdown {
-    display: none;
-    position: relative; 
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
+.tapMark {
+    font-size: 70%;
 }
 
-.left li:hover .dropdown {
-    display: block; /* 마우스를 올리면 드롭다운을 보이게 함 */
+.categoryContainer {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    overflow-y: auto;
 }
 
-.dropdown li {
-    padding: 5px 10px;
-    cursor: pointer;
+.category {
+    padding-left: 1px;
 }
 
-.dropdown li:hover {
-    background-color: #f0f0f0;
+.category ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    top: 100%;
+    padding-left: 5px;
 }
 
-/* 하위 카테고리 스타일 */
-.dropdown ul {
-    padding-left: 0;
-    margin-top: 5px;
-}
 
-.dropdown ul ul {
-    padding-left: 0;
+.subCategory ul {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    top: 100%;
+    padding-left: 10px;
 }
