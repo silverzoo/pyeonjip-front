@@ -1,56 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { syncWithLocal, syncWithServer, fetchCartDetails, addServerCart} from "../../utils/cartUtils";
+import { syncWithLocal, syncWithServer, fetchCartDetails, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './Sandbox.css';
 import { Modal } from 'react-bootstrap';
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
+    const [selectedOptions, setSelectedOptions] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
+    const [categoryId, setCategoryId] = useState(1); // 더미데이터
 
-    const MODAL_DURATION = 500
+    const MODAL_DURATION = 2500;
 
-    // CartDto 먼저 가져오기
+    // categoryId에 따른 제품 불러오기
     useEffect(() => {
-        fetch('http://localhost:8080/cart/sandbox')
+        fetch(`http://localhost:8080/api/products/category/${categoryId}`)
             .then(response => response.json())
-            .then(cartDtos => {
-                fetchCartDetails(cartDtos)
-                    .then(cartDetails => {
-                        setItems(cartDetails)
-                        console.log('서버 불러오기 완료', cartDetails);
-                    }) // CartDetailDto 데이터를 items 상태로 설정
-                    .catch(error => console.error('Error fetching CartDetailDto:', error));
+            .then(data => {
+                setItems(data);
+                console.log('상품 불러오기 완료:', data);
             })
-            .catch(error => console.error('Error fetching CartDto:', error));
-    }, []);
-
-    const resetStorage = () => {
-        showModalMessage('장바구니 초기화');
-        localStorage.clear(); // 메시지 설정 후 로컬 스토리지 초기화
-    };
-
-    const handleLoginToggle = () => {
-        setIsLogin(prev => {
-            const newLoginStatus = !prev;
-            showModalMessage(newLoginStatus ? `로그인 완료` : `로그아웃 완료`);
-
-            if (newLoginStatus) {
-                // 로그인 : DB에 몰빵
-                let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
-                syncWithLocal(currentCart, testUserId);
-                localStorage.clear();
-
-            } else {
-                // 로그아웃 : 로컬에 몰빵
-                syncWithServer(testUserId);
-            }
-            return newLoginStatus; // 새 로그인 상태 반환
-        });
-    };
+            .catch(error => console.error('Error fetching products:', error));
+    }, [categoryId]);
 
     const showModalMessage = (message) => {
         setModalMessage(message);
@@ -59,76 +34,118 @@ function SandboxApp() {
     };
 
     const addToCart = (item) => {
+        const selectedDetail = selectedOptions[item.id] || item.productDetails[0]; // 선택된 옵션 또는 기본 옵션 사용
         const cartItem = {
-            optionId: item.optionId,
+            optionId: selectedDetail.id,
             quantity: item.quantity,
-            //isChecked: true,
         };
-        if(isLogin){
-            addServerCart(cartItem, testUserId);
-        }
 
-        else {
+        if (isLogin) {
+            addServerCart(cartItem, testUserId);
+        } else {
             let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
-            const itemIndex = currentCart.findIndex(cartItem => cartItem.optionId === item.optionId);
+            const itemIndex = currentCart.findIndex(cartItem => cartItem.optionId === selectedDetail.id);
 
             if (itemIndex !== -1) {
-                // 이미 장바구니에 존재할 경우 수량을 1 늘림
                 currentCart[itemIndex].quantity += 1;
-                showModalMessage(`장바구니에 ${item.name}의 수량이 1 증가했습니다.`);
             } else {
                 currentCart.push(cartItem);
-                showModalMessage(`${item.name}이(가) 장바구니에 추가되었습니다.`);
             }
-
             localStorage.setItem('cart', JSON.stringify(currentCart));
         }
+
+        showModalMessage(`${item.name}의 ${selectedDetail.name}이(가) 장바구니에 추가되었습니다.`);
     };
+
+    // 옵션 썸네일 클릭 시 선택된 옵션 업데이트
+    const handleOptionSelect = (itemId, detail) => {
+        setSelectedOptions(prevOptions => ({
+            ...prevOptions,
+            [itemId]: detail,
+        }));
+    };
+
+    const groupedItems = [];
+    for (let i = 0; i < items.length; i += 4) {
+        groupedItems.push(items.slice(i, i + 4));
+    }
 
     return (
         <section>
-            <div className="container h-100 card">
+            <div className="container" style={{ width: '100%', marginTop: '10vh' }}>
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
                         <div className="row g-0">
                             <div className="col-lg-12">
-                                <div className="p-5">
-                                    <div className="row">
-                                        {items.map((item) => (
-                                            <div className="col-md-3 col-xl-4" key={item.optionId}>
-                                                <div className="card mb-2">
-                                                    <img src={item.url} className="card-img-top" alt="Item Image" />
-                                                    <div className="card-body">
-                                                        <h3 className="card-title">{item.name}</h3>
-                                                        <h6>{item.optionName}</h6>
-                                                        <h6>{item.price}원</h6>
-                                                        <h6>OptionId : {item.optionId}</h6>
-                                                        <div className="d-flex justify-content-center">
-                                                            <button
-                                                                className="btn btn-dark btn-block btn-md col-xl-8 gap-4 m-2"
-                                                                onClick={() => addToCart(item)}>
-                                                                Add
-                                                            </button>
+                                <div className="p-1">
+                                    {groupedItems.map((group, groupIndex) => (
+                                        <React.Fragment key={groupIndex}>
+                                            <div className="row">
+                                                {group.map((item, itemIndex) => {
+                                                    const selectedDetail = selectedOptions[item.id] || item.productDetails[0];
+                                                    return (
+                                                        <div
+                                                            className="card col-md-3 col-xl-3 border-0"
+                                                            key={item.id}
+                                                            style={{ animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s` }}
+                                                        >
+                                                            <div>
+                                                                <img src={selectedDetail.mainImage} className="card-img-top" alt="Item Image" />
+                                                                <div className="card-body">
+                                                                    <a href="/cart/sandbox">
+                                                                        <h6 className="card-title fw-bold">{item.name}</h6>
+                                                                        <h6>{selectedDetail.name}</h6>
+                                                                        <h6>{item.description}</h6>
+                                                                        <h4 className="fw-bolder">
+                                                                            ￦{selectedDetail.price.toLocaleString()}
+                                                                        </h4>
+                                                                    </a>
+                                                                    <h6 style={{ fontSize: '12px' }}>다른 옵션</h6>
+                                                                    <div className="thumbnail-container d-flex mb-3 gap-2">
+                                                                        {item.productDetails.map((detail, index) => {
+                                                                            const isSelected = selectedOptions[item.id]?.id === detail.id;
+                                                                            return (
+                                                                                <div key={index} style={{ position: 'relative' }}>
+                                                                                    <img
+                                                                                        src={detail.mainImage}
+                                                                                        alt={`Thumbnail ${index + 1}`}
+                                                                                        className="thumbnail-image"
+                                                                                        style={{
+                                                                                            width: '50px',
+                                                                                            cursor: 'pointer',
+                                                                                            //border: isSelected ? '2px solid #000000' : 'none',
+                                                                                            borderRadius: '4px',
+                                                                                        }}
+                                                                                        onClick={() => handleOptionSelect(item.id, detail)}
+                                                                                    />
+                                                                                    {isSelected && (
+                                                                                        <div
+                                                                                            style={{
+                                                                                                position: 'absolute',
+                                                                                                bottom: '-3px',
+                                                                                                left: 0,
+                                                                                                right: 0,
+                                                                                                height: '1px',
+                                                                                                backgroundColor: '#afafaf',
+                                                                                            }}
+                                                                                        />
+                                                                                    )}
+                                                                                </div>
+                                                                            );
+                                                                        })}
+                                                                    </div>
+                                                                    <h6 onClick={() => addToCart(item)} className="mx-2">
+                                                                        <i className="bi bi-cart-plus" style={{ fontSize: '1.7rem', cursor: 'pointer' }}></i>
+                                                                    </h6>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    );
+                                                })}
                                             </div>
-                                        ))}
-                                    </div>
-
-                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2"
-                                            onClick={() => window.location.href = '/cart'}>
-                                        장바구니 이동
-                                    </button>
-
-                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2" onClick={resetStorage}>
-                                        LS 초기화
-                                    </button>
-
-                                    <button className="btn btn-dark btn-block btn-lg gap-4 m-2"
-                                            onClick={handleLoginToggle}>
-                                        {isLogin ? '로그아웃' : '로그인'}
-                                    </button>
+                                            {groupIndex < groupedItems.length - 1 && <hr className="my-3" />}
+                                        </React.Fragment>
+                                    ))}
                                 </div>
                             </div>
                         </div>
@@ -136,13 +153,8 @@ function SandboxApp() {
                 </div>
             </div>
 
-            <Modal
-                show={showModal}
-                onHide={() => setShowModal(false)}
-                backdrop={false}>
-                <Modal.Body className="bg-dark text-white">
-                    {modalMessage}
-                </Modal.Body>
+            <Modal show={showModal} onHide={() => setShowModal(false)} backdrop={false}>
+                <Modal.Body className="bg-dark text-white">{modalMessage}</Modal.Body>
             </Modal>
         </section>
     );
