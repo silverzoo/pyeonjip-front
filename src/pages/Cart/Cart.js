@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './Cart.css';
 import {useNavigate} from 'react-router-dom';
-import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
+import {fetchCartDetails, updateLocalStorage, deleteCartItem,deleteAllCartItems, updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -91,25 +91,7 @@ function CartApp() {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
             };
-            fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${cartItem.optionId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cartItem),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('수량 변경 동기화 완료:', data);
-                })
-                .catch(error => {
-                    console.error('동기화 에러:', error);
-                });
+            updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
 
         } else {
             updateLocalStorage(updatedItems);
@@ -152,7 +134,6 @@ function CartApp() {
                 setTotalPrice(newTotal);
             }
         };
-
         requestAnimationFrame(animate);
     };
 
@@ -172,7 +153,6 @@ function CartApp() {
         if (currentDate > expiryDate) {
             return alert('만료된 쿠폰입니다.');
         }
-
         setCouponDiscount(coupon.discount);
         setIsCouponApplied(true);
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
@@ -195,27 +175,7 @@ function CartApp() {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
             } else if (isLogin) {
-                fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${targetOptionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
-                        }
-                        if (response.status === 204) {
-                            return null; // 응답 본문이 없는 경우
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('삭제 동기화 완료:', data);
-                    })
-                    .catch(error => {
-                        console.error('동기화 에러:', error);
-                    });
+                deleteCartItem(testUserId, targetOptionId);
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -226,6 +186,26 @@ function CartApp() {
         const couponCode = document.getElementById('couponApply').value;
         applyCouponDiscount(couponCode);
     };
+
+    const deleteAll = () => {
+        // 모든 항목에 대해 애니메이션을 적용
+        setAnimatedItems(items.map((_, index) => index));
+
+        // 애니메이션이 끝난 후 모든 항목을 삭제 처리
+        setTimeout(() => {
+            setItems([]);
+
+            if (isLogin === false) {
+                // 로컬 스토리지에서 장바구니 비우기
+                updateLocalStorage([]);
+            } else {
+                deleteAllCartItems(testUserId);
+            }
+            // 모든 항목의 애니메이션 목록 초기화
+            setAnimatedItems([]);
+        }, ANIMATION_DURATION); // 애니메이션 지속 시간 후에 실행
+    };
+
 
     return (
         <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
@@ -327,7 +307,7 @@ function CartApp() {
 
                                             </div>
                                         )}
-                                        <div className="back-button-container d-flex justify-content-start">
+                                        <div className="back-button-container d-flex justify-content-between">
                                             <h5
                                                 className="mb-0 text-muted back-button"
                                                 onClick={() => navigate(-1)}
@@ -335,6 +315,16 @@ function CartApp() {
                                             >
                                                 <i className="bi bi-arrow-left"></i> 뒤로가기
                                             </h5>
+
+
+                                            <h6 className="delete-button"
+                                                onClick={() => deleteAll()}
+                                            >
+                                                전체삭제 <i className="bi bi-trash3 my-1 "
+                                                   style={{fontSize: '1.2rem'}}></i>
+
+                                            </h6>
+
                                         </div>
 
                                     </div>

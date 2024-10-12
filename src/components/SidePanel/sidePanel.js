@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {fetchCartDetails, syncWithLocal, updateLocalStorage} from "../../utils/cartUtils";
+import {fetchCartDetails, updateLocalStorage, deleteCartItem,updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './SidePanel.css';
 
@@ -80,25 +80,7 @@ const SidePanelApp = () => {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
             };
-            fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${cartItem.optionId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(cartItem),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('수량 변경 동기화 완료:', data);
-                })
-                .catch(error => {
-                    console.error('동기화 에러:', error);
-                });
+            updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
         }
         else {
             updateLocalStorage(updatedItems);
@@ -124,27 +106,7 @@ const SidePanelApp = () => {
                 updateLocalStorage(updatedCartItems);
             }
             else if(isLogin){
-                fetch(`http://localhost:8080/cart/${testUserId}/cart-items/${targetOptionId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('서버 응답이 좋지 않습니다. 상태 코드: ' + response.status);
-                        }
-                        if (response.status === 204) {
-                            return null; // 응답 본문이 없는 경우
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        console.log('삭제 동기화 완료:', data);
-                    })
-                    .catch(error => {
-                        console.error('동기화 에러:', error);
-                    });
+                deleteCartItem(testUserId, targetOptionId);
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
