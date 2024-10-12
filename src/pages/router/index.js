@@ -1,0 +1,27 @@
+import React from 'react';
+import { Route, Routes } from 'react-router-dom';
+import Sandbox from "../Cart/Sandbox";
+import Cart from "../Cart/Cart";
+import Home from "../Home/home";
+import AdminCategory from "../Admin/category";
+import AdminOrder from "../Admin/order";
+import Login from "../User/login";
+import Signup from '../User/signup';
+import Logout from '../User/logout';
+
+function AppRouter() {
+    return (
+        <Routes>
+            <Route path="/cart/sandbox" element={<Sandbox />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/admin/category" element={<AdminCategory />} />
+            <Route path="/admin/order" element={<AdminOrder />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/signup" element={<Signup />} />
+        </Routes>
+    );
+}
+
+export default AppRouter;

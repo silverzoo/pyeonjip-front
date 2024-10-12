@@ -1,38 +1,52 @@
+/* 리스트의 기본 스타일 제거 */
+#root ul, ol {
+  list-style: none;
+}
+
+/* 링크 기본 스타일 제거 */
+#root a {
+  text-decoration: none;
+  color: black;
+}
+
+.content {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  justify-content: space-between; /* 좌우로 요소들 분배 */
+  width: 100%;
+  min-height: 100vh; /* 페이지 전체 높이 */
 }
 
-.App-link {
-  color: #61dafb;
+.header {
+  width: 200px; /* 고정 너비 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; /* 브라우저 높이에 맞게 고정 */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sidePannel {
+  width: 200px; /* 고정 너비 */
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.content {
+  width: calc(100% - 400px); /* 좌우 사이드바 제외한 가운데 영역 */
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-left: 200px; /* 좌측 사이드바 만큼 여백 */
+  margin-right: 200px; /* 우측 사이드바 만큼 여백 */
+  box-sizing: border-box;
 }
