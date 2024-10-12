@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { syncWithLocal, syncWithServer, fetchCartDetails, addServerCart } from "../../utils/cartUtils";
+import React, {useState, useEffect} from 'react';
+import {addServerCart} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Sandbox.css';
-import { Modal } from 'react-bootstrap';
+import {Modal} from 'react-bootstrap';
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -15,6 +15,7 @@ function SandboxApp() {
     const [categoryId, setCategoryId] = useState(1); // 더미데이터
 
     const MODAL_DURATION = 2500;
+
 
     // categoryId에 따른 제품 불러오기
     useEffect(() => {
@@ -72,7 +73,7 @@ function SandboxApp() {
 
     return (
         <section>
-            <div className="container" style={{ width: '100%', marginTop: '10vh' }}>
+            <div className="container" style={{width: '100%', marginTop: '10vh'}}>
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-0">
                         <div className="row g-0">
@@ -87,10 +88,14 @@ function SandboxApp() {
                                                         <div
                                                             className="card col-md-3 col-xl-3 border-0"
                                                             key={item.id}
-                                                            style={{ animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s` }}
+                                                            style={{animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s`}}
                                                         >
                                                             <div>
-                                                                <img src={selectedDetail.mainImage} className="card-img-top" alt="Item Image" />
+                                                                <div>
+                                                                    <a href="/cart/sandbox">
+                                                                        <img src={selectedDetail.mainImage}
+                                                                             className="card-img-top" alt="Item Image"/></a>
+                                                                </div>
                                                                 <div className="card-body">
                                                                     <a href="/cart/sandbox">
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
@@ -100,42 +105,47 @@ function SandboxApp() {
                                                                             ￦{selectedDetail.price.toLocaleString()}
                                                                         </h4>
                                                                     </a>
-                                                                    <h6 style={{ fontSize: '12px' }}>다른 옵션</h6>
-                                                                    <div className="thumbnail-container d-flex mb-3 gap-2">
-                                                                        {item.productDetails.map((detail, index) => {
-                                                                            const isSelected = selectedOptions[item.id]?.id === detail.id;
-                                                                            return (
-                                                                                <div key={index} style={{ position: 'relative' }}>
-                                                                                    <img
-                                                                                        src={detail.mainImage}
-                                                                                        alt={`Thumbnail ${index + 1}`}
-                                                                                        className="thumbnail-image"
-                                                                                        style={{
-                                                                                            width: '50px',
-                                                                                            cursor: 'pointer',
-                                                                                            //border: isSelected ? '2px solid #000000' : 'none',
-                                                                                            borderRadius: '4px',
-                                                                                        }}
-                                                                                        onClick={() => handleOptionSelect(item.id, detail)}
-                                                                                    />
-                                                                                    {isSelected && (
-                                                                                        <div
+                                                                    <div className="my-3">
+                                                                        <h6 style={{fontSize: '14px'}}>다른 옵션</h6>
+                                                                        <div
+                                                                            className="thumbnail-container d-flex mb-3 gap-2">
+                                                                            {item.productDetails.map((detail, index) => {
+                                                                                const isSelected = selectedOptions[item.id]?.id === detail.id;
+                                                                                return (
+                                                                                    <div key={index}
+                                                                                         style={{position: 'relative'}}>
+                                                                                        <img
+                                                                                            src={detail.mainImage}
+                                                                                            alt={`Thumbnail ${index + 1}`}
+                                                                                            className="thumbnail-image"
                                                                                             style={{
-                                                                                                position: 'absolute',
-                                                                                                bottom: '-3px',
-                                                                                                left: 0,
-                                                                                                right: 0,
-                                                                                                height: '1px',
-                                                                                                backgroundColor: '#afafaf',
+                                                                                                width: '50px',
+                                                                                                cursor: 'pointer'
                                                                                             }}
+                                                                                            onClick={() => handleOptionSelect(item.id, detail)}
                                                                                         />
-                                                                                    )}
-                                                                                </div>
-                                                                            );
-                                                                        })}
+                                                                                        {isSelected && (
+                                                                                            <div
+                                                                                                style={{
+                                                                                                    position: 'absolute',
+                                                                                                    bottom: '-3px',
+                                                                                                    left: 0,
+                                                                                                    right: 0,
+                                                                                                    height: '1px',
+                                                                                                    backgroundColor: '#afafaf',
+                                                                                                }}
+                                                                                            />
+                                                                                        )}
+                                                                                    </div>
+                                                                                );
+                                                                            })}
+                                                                        </div>
                                                                     </div>
-                                                                    <h6 onClick={() => addToCart(item)} className="mx-2">
-                                                                        <i className="bi bi-cart-plus" style={{ fontSize: '1.7rem', cursor: 'pointer' }}></i>
+                                                                    <h6 onClick={() => addToCart(item)}
+                                                                        style={{fontSize: '1rem', cursor: 'pointer'}}>
+                                                                        <i className="bi bi-cart-plus mx-1"
+                                                                           style={{fontSize: '1.4rem'}}></i>
+                                                                        Add Cart
                                                                     </h6>
                                                                 </div>
                                                             </div>
@@ -143,7 +153,7 @@ function SandboxApp() {
                                                     );
                                                 })}
                                             </div>
-                                            {groupIndex < groupedItems.length - 1 && <hr className="my-3" />}
+                                            {groupIndex < groupedItems.length - 1 && <hr className="my-3"/>}
                                         </React.Fragment>
                                     ))}
                                 </div>
