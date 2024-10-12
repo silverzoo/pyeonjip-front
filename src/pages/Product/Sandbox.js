@@ -10,12 +10,14 @@ function SandboxApp() {
     const [selectedOptions, setSelectedOptions] = useState({});
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+    const [hoveredImages, setHoveredImages] = useState({}); // 각 아이템에 대한 호버된 이미지 상태
+    const [fadeOutItems, setFadeOutItems] = useState({}); // 페이드 아웃 상태 관리
+
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
     const [categoryId, setCategoryId] = useState(1); // 더미데이터
 
-    const MODAL_DURATION = 2500;
-
+    const MODAL_DURATION = 1000;
 
     // categoryId에 따른 제품 불러오기
     useEffect(() => {
@@ -71,6 +73,22 @@ function SandboxApp() {
         groupedItems.push(items.slice(i, i + 4));
     }
 
+    // 호버 이벤트 핸들러
+    const handleMouseEnter = (itemId, mainImage) => {
+        setHoveredImages(prevImages => ({
+            ...prevImages,
+            [itemId]: mainImage // 호버된 이미지로 변경
+        }));
+    };
+
+    const handleMouseLeave = (itemId, selectedDetail) => {
+        setHoveredImages(prevImages => {
+            const newImages = {...prevImages};
+            delete newImages[itemId]; // 호버 해제 시 해당 아이템 이미지 삭제
+            return newImages;
+        });
+    };
+
     return (
         <section>
             <div className="container" style={{width: '100%', marginTop: '10vh'}}>
@@ -84,6 +102,8 @@ function SandboxApp() {
                                             <div className="row">
                                                 {group.map((item, itemIndex) => {
                                                     const selectedDetail = selectedOptions[item.id] || item.productDetails[0];
+                                                    const hoveredImage = hoveredImages[item.id] || selectedDetail.mainImage; // 현재 호버된 이미지 또는 기본 이미지
+
                                                     return (
                                                         <div
                                                             className="card col-md-3 col-xl-3 border-0"
@@ -93,8 +113,14 @@ function SandboxApp() {
                                                             <div>
                                                                 <div>
                                                                     <a href="/cart/sandbox">
-                                                                        <img src={selectedDetail.mainImage}
-                                                                             className="card-img-top" alt="Item Image"/></a>
+                                                                        <img
+                                                                            src={hoveredImage}
+                                                                            className="card-img-top"
+                                                                            alt="Item Image"
+                                                                            onMouseEnter={() => handleMouseEnter(item.id, item.productImages[0].imageUrl)} // 호버 시 이미지 변경
+                                                                            onMouseLeave={() => handleMouseLeave(item.id, selectedDetail)} // 호버 해제 시 원래 이미지로 복원
+                                                                        />
+                                                                    </a>
                                                                 </div>
                                                                 <div className="card-body">
                                                                     <a href="/cart/sandbox">

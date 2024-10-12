@@ -177,6 +177,7 @@ function CartApp() {
             } else if (isLogin) {
                 deleteCartItem(testUserId, targetOptionId);
             }
+
             // 애니메이션 적용 목록에서 삭제한 항목 제거
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
         }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
@@ -191,9 +192,11 @@ function CartApp() {
         // 모든 항목에 대해 애니메이션을 적용
         setAnimatedItems(items.map((_, index) => index));
 
+
         // 애니메이션이 끝난 후 모든 항목을 삭제 처리
         setTimeout(() => {
-            setItems([]);
+            const clearedItems = [];
+            setItems(clearedItems);
 
             if (isLogin === false) {
                 // 로컬 스토리지에서 장바구니 비우기
@@ -201,6 +204,7 @@ function CartApp() {
             } else {
                 deleteAllCartItems(testUserId);
             }
+            updateTotalPrice(clearedItems);
             // 모든 항목의 애니메이션 목록 초기화
             setAnimatedItems([]);
         }, ANIMATION_DURATION); // 애니메이션 지속 시간 후에 실행
