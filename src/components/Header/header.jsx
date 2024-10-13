@@ -12,7 +12,12 @@ const Header = () => {
 
     useEffect(() => {
         fetch('http://localhost:8080/api/category')
-            .then(response => response.json())
+            .then(response => response.json(), {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
             .then(data => setCategories(data))
             .catch(error => console.error(error));
     }, []);
@@ -53,7 +58,7 @@ const Header = () => {
                 <div className="menu">
                     {location.pathname.startsWith('/admin') ? (
                         <ul>
-                            <li onclick={handleMenuClick}><Link to="/admin/category">
+                            <li onClick={handleMenuClick}><Link to="/admin/category">
                                 <span className='tapMark'>{showMenus ? '-' : '+'}</span>&nbsp;&nbsp;CATEGORY
                             </Link></li>
                             <li><Link to="/admin/order">
@@ -62,7 +67,7 @@ const Header = () => {
                         </ul>
                     ) : (
                         <ul>
-                            <li onclick={handleMenuClick}><Link to="/">
+                            <li onClick={handleMenuClick}><Link to="/">
                                 <span className='tapMark'>{showMenus ? '-' : '+'}</span>&nbsp;&nbsp;PROMOTION
                             </Link></li>
                             <li onClick={handleShopClick} style={{ cursor: 'pointer', position: 'relative' }}>
@@ -105,7 +110,7 @@ const Header = () => {
                                     </div>
                                 )}
                             </li>
-                            <li onclick={handleMenuClick}><Link to="/admin/order">
+                            <li onClick={handleMenuClick}><Link to="/admin/order">
                                 <span className='tapMark'>{showMenus ? '-' : '+'}</span>&nbsp;&nbsp;ADMIN
                             </Link></li>
                         </ul>
