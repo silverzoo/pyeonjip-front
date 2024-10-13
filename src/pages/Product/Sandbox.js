@@ -181,7 +181,7 @@ function SandboxApp() {
             </div>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} backdrop={false}>
-                <Modal.Body className="bg-dark text-white">{modalMessage}</Modal.Body>
+                <Modal.Body>{modalMessage}</Modal.Body>
             </Modal>
         </section>
     );
