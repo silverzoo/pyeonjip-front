@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Sandbox from "../Cart/Sandbox";
+import Sandbox from "../Product/Sandbox";
 import Cart from "../Cart/Cart";
 import Home from "../Home/home";
 import AdminCategory from "../Admin/category";
@@ -12,7 +12,7 @@ import Logout from '../User/logout';
 function AppRouter() {
     return (
         <Routes>
-            <Route path="/cart/sandbox" element={<Sandbox />} />
+            <Route path="/product" element={<Sandbox />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
             <Route path="/admin/category" element={<AdminCategory />} />

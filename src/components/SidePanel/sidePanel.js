@@ -192,9 +192,9 @@ const SidePanelApp = () => {
                                     <div className="d-flex justify-content-between align-items-center">
                                         <img src={item.url} className="img-fluid rounded-2 col-xl-2"
                                              style={{width: '100px'}}/>
-                                        <div className="col-xl-3">
-                                            <h5 className="mb-1">{item.name}</h5>
-                                            <h6>₩ {item.price}</h6>
+                                        <div className="col-xl-4">
+                                            <h6 className="mb-1" style={{fontSize: '15px'}}>{item.name}</h6>
+                                            <h6>₩ {item.price.toLocaleString()}</h6>
                                         </div>
                                         <div className="quantity-controls col-xl-3">
                                             <button className="quantity-button"
