@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import './Sandbox.css';
+import './Product.css';
 import { Modal } from 'react-bootstrap';
 
 const MODAL_DURATION = 1000; // Modal display duration
