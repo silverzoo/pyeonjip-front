@@ -17,6 +17,18 @@ fetch(`http://localhost:8080/cart/add?userId=${userId}`, {
     });
 };
 
+export const addLocalCart = (cart, selectedDetail) => {
+    let currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+    const itemIndex = currentCart.findIndex(cartItem => cartItem.optionId === selectedDetail.id);
+
+    if (itemIndex !== -1) {
+        currentCart[itemIndex].quantity += 1;
+    } else {
+        currentCart.push({ ...cart, quantity: 1 });
+    }
+    localStorage.setItem('cart', JSON.stringify(currentCart));
+}
+
 // 로컬스토리지 -> 서버
 export const syncWithLocal = (cart, userId) => {
 
