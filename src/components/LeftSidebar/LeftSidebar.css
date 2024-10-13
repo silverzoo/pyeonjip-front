@@ -1,14 +1,14 @@
-.gnb {
-    display: flex;
-    justify-content: space-between;
-    position: fixed;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    max-height: 800px;
-    overflow-y: auto;
-}
+/*.gnb {*/
+/*    display: flex;*/
+/*    justify-content: space-between;*/
+/*    position: fixed;*/
+/*    left: 0;*/
+/*    top: 0;*/
+/*    width: 100%;*/
+/*    height: auto;*/
+/*    max-height: 800px;*/
+/*    overflow-y: auto;*/
+/*}*/
 
 .logo {
     margin-top: 30px;
@@ -16,7 +16,7 @@
     padding-left: 46px;
 }
 
-.left li {
+.container li {
     margin-bottom: 7px;
     font-size: 90%;
     position: relative;

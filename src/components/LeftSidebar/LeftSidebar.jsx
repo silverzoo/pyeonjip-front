@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import logo from '../../logo.svg';
-import './header.css';
+import './LeftSidebar.css';
 
 const Header = () => {
     const location = useLocation();
@@ -50,8 +50,8 @@ const Header = () => {
     };
 
     return (
-        <div className="gnb">
-            <div className='left'>
+        <>
+            <div className='container'>
                 <div className="logo">
                     <Link to="/"><img src={logo} alt="logo" width="86" /></Link>
                 </div>
@@ -121,7 +121,7 @@ const Header = () => {
             {/*    <div>로그인</div>*/}
             {/*    <div>장바구니</div>*/}
             {/*</div>*/}
-        </div>
+        </>
     );
 };
 

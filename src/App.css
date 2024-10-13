@@ -16,14 +16,14 @@
   box-sizing: border-box;
 }
 
-.App {
+.app {
   display: flex;
   justify-content: space-between; /* 좌우로 요소들 분배 */
   width: 100%;
   min-height: 100vh; /* 페이지 전체 높이 */
 }
 
-.header {
+.leftSidebar {
   width: 200px; /* 고정 너비 */
   position: fixed;
   top: 0;
