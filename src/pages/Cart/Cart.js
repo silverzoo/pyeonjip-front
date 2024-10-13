@@ -259,16 +259,16 @@ function CartApp() {
                                                                    textAlign: 'left'
                                                                }}
                                                             >
-                                                                <h6 className="text-muted"
+                                                                <h5 className="mb-0"
+                                                                    style={{
+                                                                        fontSize: '0.9rem',
+                                                                    }}
+                                                                >{item.name}</h5>
+                                                                <h6 className="text-muted my-2"
                                                                     style={{
                                                                         fontSize: '0.8rem',
                                                                     }}
                                                                 >{item.optionName}</h6>
-                                                                <h5 className="mb-0"
-                                                                    style={{
-                                                                        fontSize: '1.1rem',
-                                                                    }}
-                                                                >{item.name}</h5>
                                                             </a>
                                                         </div>
                                                         <div
@@ -295,7 +295,7 @@ function CartApp() {
                                                             </button>
                                                         </div>
 
-                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                        <div className="col-md-3 col-lg-2 col-xl-3 offset-lg-1">
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
@@ -338,7 +338,7 @@ function CartApp() {
                                         <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
                                         <hr className="my-3"/>
                                         <div className="d-flex justify-content-between mb-3">
-                                            <h5 className="text-uppercase">Total price</h5>
+                                            <h5 className="text-uppercase">Total</h5>
                                             <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                         </div>
 
