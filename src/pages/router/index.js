@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import Sandbox from "../Product/Sandbox";
+import Sandbox from "../Product/Product";
 import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
 import Home from "../Home/home";

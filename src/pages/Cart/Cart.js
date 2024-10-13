@@ -1,7 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import './Cart.css';
 import {useNavigate} from 'react-router-dom';
-import {fetchCartDetails, updateLocalStorage, deleteCartItem,deleteAllCartItems, updateCartItemQuantity} from "../../utils/cartUtils";
+import {
+    fetchCartDetails,
+    updateLocalStorage,
+    deleteCartItem,
+    deleteAllCartItems,
+    updateCartItemQuantity
+} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -158,6 +164,13 @@ function CartApp() {
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
     };
 
+    // 쿠폰 적용
+    const handleCouponApply = () => {
+        const couponCode = document.getElementById('couponApply').value;
+        applyCouponDiscount(couponCode);
+    };
+
+    // 개별 삭제
     const handleDeleteItem = (index) => {
         // 삭제할 항목에 애니메이션 적용
         setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
@@ -183,11 +196,7 @@ function CartApp() {
         }, ANIMATION_DURATION); // 애니메이션 지속 시간에 맞춤
     };
 
-    const handleCouponApply = () => {
-        const couponCode = document.getElementById('couponApply').value;
-        applyCouponDiscount(couponCode);
-    };
-
+    // 전체 삭제
     const deleteAll = () => {
         // 모든 항목에 대해 애니메이션을 적용
         setAnimatedItems(items.map((_, index) => index));
@@ -210,7 +219,43 @@ function CartApp() {
         }, ANIMATION_DURATION); // 애니메이션 지속 시간 후에 실행
     };
 
+    // 결제하기
+    const handleCheckout = async (e) => {
+        e.preventDefault(); // 기본 폼 제출 방지
 
+        // 결제 데이터 조합
+        const checkoutData = {
+            userId: isLogin ? testUserId : null,  // 로그인된 사용자 ID (비 로그인일 경우 null)
+            // OrderDetailDto 참고해서 보낼 데이터 작성함
+            orderDetails: items.map(item => ({
+                productName: item.name,
+                productDetailId: item.optionId,
+                quantity: item.quantity,
+                productPrice: item.price
+            })),
+            totalPrice: totalPrice,                   // 단순계산 총 금액
+            disCountedTotalPrice: previousTotal,      // 할인 적용 총 금액 (최종금액)
+            couponDiscountRate: isCouponApplied ? couponDiscount : 0, // 할인률
+        };
+        console.log(checkoutData);
+        // TODO : 데이터 받는 Controller API URL 알맞게 수정
+        const response = await fetch('http://localhost:8080/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(checkoutData),
+        });
+        if (response.ok || response.status === 204) {
+            //const result = await response.json();
+            console.log('체크아웃 완료');
+            // TODO : Order 페이지 URL 알맞게 수정 (프론트 페이지)
+            navigate('/order'); // 결제 페이지로 이동
+        } else {
+            const errorData = await response.json();
+            console.error(`체크아웃 실패 ${errorData}`);
+        }
+    };
     return (
         <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
             <div className="row d-flex justify-content-between align-items-end h-100">
@@ -259,16 +304,16 @@ function CartApp() {
                                                                    textAlign: 'left'
                                                                }}
                                                             >
-                                                                <h6 className="text-muted"
+                                                                <h5 className="mb-0"
+                                                                    style={{
+                                                                        fontSize: '0.9rem',
+                                                                    }}
+                                                                >{item.name}</h5>
+                                                                <h6 className="text-muted my-2"
                                                                     style={{
                                                                         fontSize: '0.8rem',
                                                                     }}
                                                                 >{item.optionName}</h6>
-                                                                <h5 className="mb-0"
-                                                                    style={{
-                                                                        fontSize: '1.1rem',
-                                                                    }}
-                                                                >{item.name}</h5>
                                                             </a>
                                                         </div>
                                                         <div
@@ -295,7 +340,7 @@ function CartApp() {
                                                             </button>
                                                         </div>
 
-                                                        <div className="col-md-3 col-lg-2 col-xl-2 offset-lg-1">
+                                                        <div className="col-md-3 col-lg-2 col-xl-3 offset-lg-1">
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
@@ -325,7 +370,7 @@ function CartApp() {
                                                 onClick={() => deleteAll()}
                                             >
                                                 전체삭제 <i className="bi bi-trash3 my-1 "
-                                                   style={{fontSize: '1.2rem'}}></i>
+                                                        style={{fontSize: '1.2rem'}}></i>
 
                                             </h6>
 
@@ -338,7 +383,7 @@ function CartApp() {
                                         <h3 className="fw-bold mb-2 mt-2 pt-1 d-flex justify-content-between">Summary</h3>
                                         <hr className="my-3"/>
                                         <div className="d-flex justify-content-between mb-3">
-                                            <h5 className="text-uppercase">Total price</h5>
+                                            <h5 className="text-uppercase">Total</h5>
                                             <h5 id="totalPriceDisplay">₩ {animatedTotal.toLocaleString()}</h5>
                                         </div>
 
@@ -369,8 +414,12 @@ function CartApp() {
                                                    value={previousTotal}/>
                                             <input type="hidden" id="itemCountInput" name="itemCount"
                                                    value={itemCount}/>
-                                            <button type="submit"
-                                                    className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12">결제하기
+                                            <button
+                                                type="button"
+                                                className="btn btn-dark btn-lg mb-1 col-lg-10 col-xl-12"
+                                                onClick={handleCheckout}
+                                            >
+                                                주문하기
                                             </button>
                                         </form>
                                     </div>
