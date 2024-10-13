@@ -5,7 +5,7 @@ import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
 import Home from "../Home/home";
 import AdminCategory from "../Admin/category";
-import AdminOrder from "../Admin/order";
+import AdminOrder from "../Admin/Order";
 import Login from "../User/login";
 import Signup from '../User/signup';
 import Logout from '../User/logout';
