@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
-import {fetchCartDetails, updateLocalStorage, deleteCartItem,updateCartItemQuantity} from "../../utils/cartUtils";
+import {fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './SidePanel.css';
 
@@ -16,6 +16,14 @@ const SidePanelApp = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const goToCartPage = () => {
+        toggleCart();
+        navigate('/cart');
+    };
+
+    const goToLoginPage = () => {
+        navigate('/login');
+    };
 
     // 최초화면 로드 세팅
     useEffect(() => {
@@ -50,6 +58,11 @@ const SidePanelApp = () => {
         }
     }, [isCartOpen]);
 
+    // items가 업데이트될 때마다 totalPrice 업데이트
+    useEffect(() => {
+        updateTotalPrice(items);
+    }, [items]);
+
     const updateTotalPrice = (items) => {
         let total = 0;
         items.forEach(item => {
@@ -66,8 +79,7 @@ const SidePanelApp = () => {
 
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 0;
-        }
-        else if (validatedValue > maxQuantity) {
+        } else if (validatedValue > maxQuantity) {
             alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
@@ -81,8 +93,7 @@ const SidePanelApp = () => {
                 quantity: updatedItems[index].quantity,
             };
             updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
-        }
-        else {
+        } else {
             updateLocalStorage(updatedItems);
         }
     };
@@ -98,14 +109,12 @@ const SidePanelApp = () => {
             const updatedCartItems = items.filter((item, itemIndex) => itemIndex !== index);
             setItems(updatedCartItems);
 
-            if(updatedCartItems.length < 0){
+            if (updatedCartItems.length < 0) {
                 return;
-            }
-            else if(isLogin === false) {
+            } else if (isLogin === false) {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
-            }
-            else if(isLogin){
+            } else if (isLogin) {
                 deleteCartItem(testUserId, targetOptionId);
             }
             // 애니메이션 적용 목록에서 삭제한 항목 제거
@@ -130,29 +139,32 @@ const SidePanelApp = () => {
         }
     };
 
-    const goToCartPage = () => {
-        toggleCart();
-        navigate('/cart');
-    };
 
-    const goToLoginPage = () => {
-        navigate('/login');
-    };
 
     return (
         <div className="App">
-            <div>
-                <button className="btn btn-dark btn-primary position-fixed end-0 m-3"
-                        style={{top: '120px', width: '90px'}} onClick={goToLoginPage}>
-                    로그인
-                </button>
+            <div style={{
+                position: 'fixed',
+                right: '30px',
+                top: '150px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '10px'
+            }}>
+        <span
+            className="text-dark"
+            style={{cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold'}}
+            onClick={goToLoginPage}>
+            로그인
+        </span>
 
                 {location.pathname !== '/cart' && (
-                    <button className="btn btn-dark btn-primary position-fixed end-0 m-3"
-                            style={{top: '170px', width: '90px'}} onClick={toggleCart}>
+                    <span
+                        className="text-dark"
+                        style={{cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold'}}
+                        onClick={toggleCart}>
                         장바구니
-                    </button>
-                )}
+                     </span>)}
             </div>
 
             <div
@@ -186,7 +198,7 @@ const SidePanelApp = () => {
                         </div>
                     ) : (
                         <div>
-                            {items.map((item, index) => (
+                            {items && items.map((item, index) => (
                                 <div key={index}
                                      className={`cart-item mb-3  mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
                                     <div className="d-flex justify-content-between align-items-center">

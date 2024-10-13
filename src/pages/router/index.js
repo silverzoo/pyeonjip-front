@@ -1,6 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Sandbox from "../Product/Sandbox";
+import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
 import Home from "../Home/home";
 import AdminCategory from "../Admin/category";
@@ -14,6 +15,7 @@ function AppRouter() {
     return (
         <Routes>
             <Route path="/product" element={<Sandbox />} />
+            <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
             <Route path="/admin/category" element={<AdminCategory />} />

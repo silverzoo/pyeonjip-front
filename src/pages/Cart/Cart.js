@@ -246,7 +246,7 @@ function CartApp() {
                                                         className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
                                                     >
                                                         <div className="col-md-2 col-lg-2 col-xl-2">
-                                                            <a href='/cart/sandbox'>
+                                                            <a href={`product-detail?productId=${item.productId}&optionId=${item.optionId}`}>
                                                                 <img src={item.url} className="img-fluid rounded-3"/>
                                                             </a>
 
@@ -312,13 +312,13 @@ function CartApp() {
                                             </div>
                                         )}
                                         <div className="back-button-container d-flex justify-content-between">
-                                            <h5
+                                            <h6
                                                 className="mb-0 text-muted back-button"
                                                 onClick={() => navigate(-1)}
                                                 style={{cursor: 'pointer'}}
                                             >
                                                 <i className="bi bi-arrow-left"></i> 뒤로가기
-                                            </h5>
+                                            </h6>
 
 
                                             <h6 className="delete-button"
