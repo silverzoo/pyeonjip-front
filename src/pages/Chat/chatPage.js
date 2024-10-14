@@ -49,17 +49,7 @@ const ChatPage = () => {
     }
   }, [location]);
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     socket.onmessage = (event) => {
-  //       const message = JSON.parse(event.data);
-  //       console.log("Received message:", message); // 추가된 로그
-  //       if (message.id && message.text) {
-  //         setMessages((prevMessages) => [...prevMessages, message]);
-  //       }
-  //     };
-  //   }
-  // }, [socket]);
+
 
   const loadChatMessages = async (roomId) => {
     try {
@@ -115,49 +105,7 @@ const ChatPage = () => {
     }
   };
   
-  // const handleSendMessage = async (message) => {
-  //   if (message.trim() && chatRoomId && socket) {
-  //     // WebSocket 객체가 올바른지 확인
-  //     if (socket instanceof WebSocket) {
-  //       const chatMessage = {
-  //         chatRoomId,
-  //         text: message,
-  //       };
-  
-  //       // WebSocket으로 메시지 전송
-  //       socket.send(JSON.stringify(chatMessage));
-  
-  //       // 전송한 메시지를 로컬에서 즉시 업데이트
-  //       setMessages((prevMessages) => [...prevMessages, { id: Date.now(), text: message, sent: true }]);
-  //       setInputValue('');
-  
-  //       // DB에 메시지 저장을 위한 fetch 요청
-  //       try {
-  //         const response = await fetch(`http://localhost:8080/api/chat/message?chatRoomId=${chatRoomId}`, {
-  //           method: 'POST',
-  //           headers: { 'Content-Type': 'text/plain' },
-  //           body: message,
-  //         });
-  //         if (!response.ok) throw new Error('Failed to send message');
-  //         const data = await response.json();
-  
-  //         // 서버에서 응답받은 메시지 id로 로컬 메시지 업데이트
-  //         setMessages((prevMessages) =>
-  //           prevMessages.map((msg) => (msg.id === Date.now() ? { ...msg, id: data.id } : msg))
-  //         );
-  //       } catch (error) {
-  //         console.error('Error saving message to the database:', error);
-  //       }
-  
-  //       // 스크롤 아래로 자동 이동
-  //       if (chatBodyRef.current) {
-  //         chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-  //       }
-  //     } else {
-  //       console.error('socket is not a WebSocket instance.');
-  //     }
-  //   }
-  // };
+
   
   const handleSendMessage = (message) => {
     if (message.trim() && chatRoomId) {
