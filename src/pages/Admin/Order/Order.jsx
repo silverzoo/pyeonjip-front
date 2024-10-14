@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import OrderList from './OrderList';
 import './Order.css'
+import Search from "../Search/Search";
 
 function AdminOrder() {
     const [orders, setOrders] = useState([]);
@@ -16,6 +17,7 @@ function AdminOrder() {
     return (
         <div className="admin-order-container">
             <div className="admin-order-title">주문 관리 페이지</div>
+            <Search/>
             <OrderList orders={orders} />
         </div>
     );
