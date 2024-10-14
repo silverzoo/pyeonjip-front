@@ -3,14 +3,13 @@ import { Route, Routes } from 'react-router-dom';
 import Sandbox from "../Product/Product";
 import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
-import Home from "../Home/home";
+import Home from "../Home/Home";
 import AdminCategory from "../Admin/Category/category";
 import AdminOrder from "../Admin/Order/Order";
 import Login from "../User/login";
 import Signup from '../User/signup';
 import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
-import Main from "../Product/Main";
 import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/ProductAdmin';
 
@@ -18,8 +17,8 @@ import ProductAdmin from '../Admin/ProductAdmin';
 function AppRouter() {
     return (
         <Routes>
-            <Route path="/" element={<Main />} />
             <Route path="/category/:categoryId" element={<Sandbox />} />
+            <Route path="/shop" element={<Sandbox />} />
             <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
@@ -34,3 +33,4 @@ function AppRouter() {
         </Routes>
     );
 }
+export default AppRouter;
