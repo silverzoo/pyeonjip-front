@@ -33,19 +33,15 @@ function CartApp() {
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            fetch(`http://localhost:8080/cart/${testUserId}`)
+            const userId = testUserId;
+            fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`)
                 .then(response => response.json())
-                .then(cartDtos => {
-                    fetchCartDetails(cartDtos)
-                        .then(cartDetails => {
-                            setItems(cartDetails);
-                            console.log('서버 불러오기 완료', cartDetails);
-
-                        })
-                        .catch(error => console.error('Error fetching CartDetailDto:', error));
+                .then(cartDetailDtos => {
+                    setItems(cartDetailDtos);
+                    console.log('(cart)data from server', cartDetailDtos);
                 })
-                .catch(error => console.error('Error fetching cart items:', error));
-        }
+                .catch(error => console.error('Error fetching CartDetailDto:', error));
+                }
         // 비 로그인
         else {
             const localCart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -56,8 +52,7 @@ function CartApp() {
             fetchCartDetails(localCart)
                 .then(localDetails => {
                     setItems(localDetails);
-                    console.log(localDetails);
-                    updateTotalPrice(items);
+                    console.log('(cart)data from local : ', localDetails);
                 })
         }
         // 쿠폰 가져오기
