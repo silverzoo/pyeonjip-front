@@ -1,0 +1,37 @@
+.admin-order-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.admin-order-list {
+    margin: 50px;
+}
+
+.admin-order-title {
+    text-align: center;
+}
+
+.admin-order-item {
+    border: 1px solid #ddd;
+    padding: 16px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+}
+
+.admin-order-item:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 마우스 오버 시 그림자 강화 */
+}
+
+.admin-order-id {
+    font-weight: bold;
+    color: #007bff;
+}
+
+/*.admin-order-item:last-child {*/
+/*    margin-bottom: 0; !* 마지막 아이템에 여백 제거 *!*/
+/*}*/

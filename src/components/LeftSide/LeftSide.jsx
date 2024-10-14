@@ -8,10 +8,17 @@ import Category from "./Category/Category";
 const LeftSide = () => {
     const location = useLocation();
     const [categories, setCategories] = useState([]);
-    const [isShopExpanded, setIsShopExpanded] = useState(false);
+    const [expandedMenus, setExpandedMenus] = useState({
+        PROMOTION: false,
+        SHOP: false,
+        ADMIN: false,
+        CATEGORY: false,
+        ORDER: false,
+        PRODUCT: false,
+    });
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/category')
+        fetch('/api/category')
             .then(response => response.json(), {
                 method: 'GET',
                 headers: {
@@ -22,8 +29,30 @@ const LeftSide = () => {
             .catch(error => console.error(error));
     }, []);
 
-    const handleShopToggle = () => {
-        setIsShopExpanded(prev => !prev);
+    // 어드민페이지로 이동할 때, ORDER 탭을 디폴트로 열기
+    useEffect(() => {
+        if (location.pathname.startsWith('/admin/order')) {
+            setExpandedMenus((prev) => ({
+                ...prev,
+                ADMIN: true,
+                ORDER: true,
+            }));
+        }
+    }, [location]);
+
+    const handleTapToggle = (menuName) => {
+        const currentExpandedState = expandedMenus[menuName];
+
+        // 모든 메뉴 상태 초기화
+        const newExpandedState = Object.keys(expandedMenus).reduce((acc, key) => {
+            acc[key] = false;
+            return acc;
+        }, {});
+
+        // 클릭한 메뉴만 토글
+        newExpandedState[menuName] = !currentExpandedState;
+
+        setExpandedMenus(newExpandedState);
     };
 
     return (
@@ -36,33 +65,51 @@ const LeftSide = () => {
                     <ul>
                         {location.pathname.startsWith('/admin') ? (
                             <>
-                                <ToggleIcon label="CATEGORY" to="/admin/category"/>
-                                <ToggleIcon label="ORDER" to="/admin/order"/>
+                                <ToggleIcon
+                                    label="ORDER"
+                                    to="/admin/order"
+                                    isExpanded={expandedMenus.ORDER}
+                                    onToggle={() => handleTapToggle('ORDER')}
+                                />
+                                <ToggleIcon
+                                    label="PRODUCT"
+                                    to="/admin/product"
+                                    isExpanded={expandedMenus.PRODUCT}
+                                    onToggle={() => handleTapToggle('PRODUCT')}
+                                />
+                                <ToggleIcon
+                                    label="CATEGORY"
+                                    to="/admin/category"
+                                    isExpanded={expandedMenus.CATEGORY}
+                                    onToggle={() => handleTapToggle('CATEGORY')}
+                                />
                             </>
                         ) : (
                             <>
-                                <ToggleIcon label="PROMOTION" to="/"/>
+                                <ToggleIcon
+                                    label="PROMOTION"
+                                    to="/"
+                                    isExpanded={expandedMenus.PROMOTION}
+                                    onToggle={() => handleTapToggle('PROMOTION')}
+                                />
                                 <ToggleIcon
                                     label="SHOP"
                                     to="/"
-                                    isExpanded={isShopExpanded}
-                                    onToggle={handleShopToggle}
+                                    isExpanded={expandedMenus.SHOP}
+                                    onToggle={() => handleTapToggle('SHOP')}
                                 />
-                                {/*<li onClick={handleShopToggle}>*/}
-                                {/*    <span className='tapMark'>{isShopExpanded ? '-' : '+'}</span>*/}
-                                {/*    &nbsp;SHOP*/}
-                                {/*</li>*/}
-                                {isShopExpanded && <Category categories={categories} />}
-                                <ToggleIcon label="ADMIN" to="/admin/order"/>
+                                {expandedMenus.SHOP && <Category categories={categories} />}
+                                <ToggleIcon
+                                    label="ADMIN"
+                                    to="/admin/order"
+                                    isExpanded={expandedMenus.ADMIN}
+                                    onToggle={() => handleTapToggle('ADMIN')}
+                                />
                             </>
                         )}
                     </ul>
                 </div>
             </div>
-            {/*<div className='right'>*/}
-            {/*    <div>로그인</div>*/}
-            {/*    <div>장바구니</div>*/}
-            {/*</div>*/}
         </>
     );
 };
