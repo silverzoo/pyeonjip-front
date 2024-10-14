@@ -6,7 +6,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
 
-function SandboxApp() {
+function MainApp() {
     const [items, setItems] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [showModal, setShowModal] = useState(false);
@@ -14,22 +14,21 @@ function SandboxApp() {
     const [hoveredImages, setHoveredImages] = useState({});
     const [isLogin, setIsLogin] = useState(true); // 더미 데이터
     const [testUserId, setTestUserId] = useState(1); // 더미 데이터
-    // const [categoryId, setCategoryId] = useState();
-    //const [categoryId, setCategoryId] = useState(1); // 더미 데이터
-
-    const { categoryId } = useParams(); // URL의 categoryId 가져오기
+    // // const [categoryId, setCategoryId] = useState();
+    // //const [categoryId, setCategoryId] = useState(1); // 더미 데이터
+    //
+    // const { categoryId } = useParams(); // URL의 categoryId 가져오기
     const MODAL_DURATION = 1000;
 
     useEffect(() => {
-        console.log(`Selected category: ${categoryId}`);
-        fetch(`http://localhost:8080/api/products/category/${categoryId}`)
+        fetch(`http://localhost:8080/api/products/all`)
             .then(response => response.json())
             .then(data => {
                 setItems(data);
                 console.log('상품 불러오기 완료:', data);
             })
             .catch(error => console.error('Error fetching products:', error));
-    }, [categoryId]);
+    }, []);
 
     const showModalMessage = (message) => {
         setModalMessage(message);
@@ -190,4 +189,4 @@ function SandboxApp() {
     );
 }
 
-export default SandboxApp;
+export default MainApp;

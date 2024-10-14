@@ -10,10 +10,12 @@ import Login from "../User/login";
 import Signup from '../User/signup';
 import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
+import Main from "../Product/Main";
 
 function AppRouter() {
     return (
         <Routes>
+            <Route path="/" element={<Main />} />
             <Route path="/category/:categoryId" element={<Sandbox />} />
             <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
