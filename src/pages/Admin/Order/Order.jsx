@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import OrderList from './OrderList';
 import './Order.css'
 
-function Order() {
+function AdminOrder() {
     const [orders, setOrders] = useState([]);
 
     useEffect(() => {
@@ -14,11 +14,11 @@ function Order() {
     }, []);
 
     return (
-        <div className="admin-order-page container">
-            <h1 className="my-4 text-center">주문 관리 페이지</h1>
+        <div className="admin-order-container">
+            <div className="admin-order-title">주문 관리 페이지</div>
             <OrderList orders={orders} />
         </div>
     );
 }
 
-export default Order;
+export default AdminOrder;
