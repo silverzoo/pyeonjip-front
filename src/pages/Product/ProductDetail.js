@@ -18,6 +18,7 @@ function ProductDetail() {
     const [testUserId, setTestUserId] = useState(1); // 더미 데이터
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
+    const [categoryId, setCategoryId] = useState('');
 
     const [product, setProduct] = useState({
         productImages: [],
@@ -38,6 +39,8 @@ function ProductDetail() {
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
+                console.log('(Product)data from server : ', data);
+
                 const option = data.productDetails.find(detail => detail.id === parseInt(optionId));
                 setSelectedOption(option || data.productDetails[0]); // 기본 옵션 설정
 
@@ -87,8 +90,20 @@ function ProductDetail() {
     return (
         <div className="container card border-0" style={{ width: '105%' }}>
             <div className="row">
+
                 <div className=" card border-0 col-xl-6 d-flex flex-column"
                      style={{marginTop: '30px', marginLeft: '30px'}}>
+                    {/*<nav data-mdb-navbar-init className="navbar navbar-expand-lg bg-body-white">*/}
+                    {/*    <div className="container-fluid">*/}
+                    {/*        <nav aria-label="breadcrumb">*/}
+                    {/*            <ol className="breadcrumb">*/}
+                    {/*                <li className="breadcrumb-item"><a href="#">Home</a></li>*/}
+                    {/*                <li className="breadcrumb-item" aria-current="page"><a href=`http://localhost:3000/category/${categoryId}`>Category</a></li>*/}
+                    {/*            </ol>*/}
+                    {/*        </nav>*/}
+                    {/*    </div>*/}
+
+                    {/*</nav>*/}
                     <div style={{marginLeft: '40px', flex: 1}}>
                         <img
                             src={selectedOption.mainImage}
@@ -141,7 +156,7 @@ function ProductDetail() {
                         </div>
                     </div>
 
-                    <button  className="btn btn-dark my-4" onClick={addToCart}>
+                    <button className="btn btn-dark my-4" onClick={addToCart}>
                         <i className="bi bi-cart-plus mx-1" style={{fontSize: '1.4rem'}}></i>
                         장바구니에 담기
                     </button>
