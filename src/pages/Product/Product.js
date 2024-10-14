@@ -21,8 +21,10 @@ function SandboxApp() {
     const MODAL_DURATION = 1000;
 
     useEffect(() => {
+
+
         console.log(`Selected category: ${categoryId}`);
-        fetch(`http://localhost:8080/api/products/category/${categoryId}`)
+        fetch( categoryId? `http://localhost:8080/api/products/category/${categoryId}`:`http://localhost:8080/api/products/all`)
             .then(response => response.json())
             .then(data => {
                 setItems(data);
