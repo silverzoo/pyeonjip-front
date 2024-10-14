@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './SidePanel.css';
+import './RightSide.css';
 
 const ANIMATION_DURATION = 400;
 const SidePanelApp = () => {

@@ -3,7 +3,7 @@ import './App.css';
 import AppRouter from './pages/router';
 import Footer from './components/Footer/Footer';
 import LeftSide from './components/LeftSide/LeftSide';
-import SidePanel from './components/SidePanel/sidePanel'
+import SidePanel from './components/RIghtSide/RightSide'
 
 function App() {
   return (
