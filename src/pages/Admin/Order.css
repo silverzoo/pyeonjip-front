@@ -1,0 +1,35 @@
+/* AdminOrder.css */
+
+/* 주문 관리 페이지 */
+.admin-order-page {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* 주문 목록 스타일 */
+.order-list h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+}
+
+/* 주문 항목 스타일 */
+.list-group-item {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    transition: box-shadow 0.3s ease;
+}
+
+.list-group-item:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-id {
+    font-size: 1.25rem;
+    color: #007bff;
+}
+
+.text-muted {
+    color: #6c757d;
+}
