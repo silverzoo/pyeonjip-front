@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Link 추가
+import { Link, useParams } from 'react-router-dom'; // useParams 추가
 import { addServerCart, addLocalCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -14,11 +14,13 @@ function SandboxApp() {
     const [hoveredImages, setHoveredImages] = useState({});
     const [isLogin, setIsLogin] = useState(true); // 더미 데이터
     const [testUserId, setTestUserId] = useState(1); // 더미 데이터
+    //const [categoryId, setCategoryId] = useState();
     const [categoryId, setCategoryId] = useState(1); // 더미 데이터
 
     const MODAL_DURATION = 1000;
 
     useEffect(() => {
+        console.log(`Selected category: ${categoryId}`);
         fetch(`http://localhost:8080/api/products/category/${categoryId}`)
             .then(response => response.json())
             .then(data => {
@@ -80,7 +82,7 @@ function SandboxApp() {
         <section>
             <div className="container" style={{ width: '100%', marginTop: '10vh' }}>
                 <div className="row d-flex justify-content-center align-items-center h-100">
-                    <div className="card-body p-0">
+                    <div className="card-body p-3">
                         <div className="row g-0">
                             <div className="col-lg-12">
                                 <div className="p-1">

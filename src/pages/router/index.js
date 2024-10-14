@@ -14,7 +14,7 @@ import OrderPage from '../Order/OrderPage';
 function AppRouter() {
     return (
         <Routes>
-            <Route path="/product" element={<Sandbox />} />
+            <Route path="/category/:categoryId" element={<Sandbox />} />
             <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
