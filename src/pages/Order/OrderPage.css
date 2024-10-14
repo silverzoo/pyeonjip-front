@@ -1,0 +1,206 @@
+.order-page {
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.product-list h6 {
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.product-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #ccc;
+}
+
+.product-item img {
+  width: 100px;
+  margin-right: 20px;
+}
+
+.membership,
+.order-summary,
+.delivery-info {
+  margin-bottom: 20px;
+}
+
+.membership h6 {
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.order-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start; /* 상단 정렬로 변경 */
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.order-summary-left {
+  text-align: left;
+  font-weight: bold;
+}
+
+.order-summary-right {
+  text-align: right;
+}
+
+.total-price {
+  display: flex;
+  justify-content: space-between;
+  font-size: 16px;
+  font-weight: bold;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+.total-price span {
+  margin-left: 10px;
+  color: black;
+}
+
+.price-summary-item {
+  display: flex;
+  justify-content: flex-end;
+  gap: 30px; /* 가격과 레이블 사이 간격 */
+  padding: 5px 0;
+}
+
+.price-summary-label {
+  color: gray;
+}
+
+.final-price {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+
+/* 배송 정보 레이아웃 */
+.delivery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.delivery-info label {
+  display: block;
+  font-weight: bold;
+}
+
+/* 입력 필드 스타일 */
+.delivery-info input,
+.delivery-info textarea {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 5px; /* 세로 폭 줄이기 위해 패딩을 줄임 */
+  border: 1px solid #ddd;
+  height: 30px; /* 입력 창의 세로 길이를 직접 조정 */
+}
+
+/* 버튼 배치 수정 */
+.actions {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 20px;
+}
+
+/* 버튼 스타일 */
+.back-button, .submit-button {
+  width: 50%; /* 버튼이 전체 너비를 균등하게 나눔 */
+  padding: 5px; /* 버튼의 패딩을 줄여 세로 길이 축소 */
+  font-size: 12px; /* 글씨 크기를 줄여 버튼이 덜 커 보이도록 조정 */
+  text-align: center;
+  border: 1px solid black;
+  cursor: pointer;
+  box-sizing: border-box; /* 패딩과 테두리를 버튼 너비에 포함 */
+  border-radius: 0; /* 버튼 모서리를 직각으로 */
+  height: 35px; /* 버튼 높이 직접 조정 */
+}
+
+.back-button {
+  background-color: #f1f1f1;
+}
+
+.submit-button {
+  background-color: black;
+  color: white;
+}
+
+/* 페이지 전체 꽉 찬 느낌을 위해 여백 줄이기 */
+.order-page, .content {
+  padding: 0 10px; /* 좌우 여백을 최소화 */
+}
+
+.order-page {
+  flex: 1;
+}
+
+.content {
+  padding: 20px 10px; /* 콘텐츠 영역의 여백을 조정 */
+}
+
+h6, label {
+  margin: 0;
+}
+
+.product-list, .order-summary, .delivery-info, .membership {
+  margin-bottom: 10px;
+}
+
+/* 반응형 미디어 쿼리 */
+@media (max-width: 768px) {
+  .product-item img {
+    width: 80px; /* 화면이 작아지면 이미지 크기 줄이기 */
+  }
+
+  .back-button, .submit-button {
+    width: 100%; /* 작은 화면에서는 버튼이 위아래로 배치 */
+    margin-bottom: 10px;
+  }
+
+  .order-summary {
+    flex-direction: column; /* 작은 화면에서 주문 요약이 세로로 배치 */
+    text-align: left;
+  }
+
+  .order-summary-right {
+    text-align: left;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 10px; /* 화면이 더 작아지면 padding 줄이기 */
+  }
+
+  .product-item img {
+    width: 60px; /* 모바일에서는 이미지 더 줄이기 */
+  }
+
+  .total-price {
+    font-size: 14px; /* 총 금액 텍스트 크기 줄이기 */
+  }
+}
