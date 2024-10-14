@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity} from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './SidePanel.css';
+import './RightSide.css';
 
 const ANIMATION_DURATION = 400;
 const SidePanelApp = () => {
@@ -29,18 +29,14 @@ const SidePanelApp = () => {
     useEffect(() => {
         // 로그인
         if (isLogin) {
-            fetch(`http://localhost:8080/cart/${testUserId}`)
+            const userId = testUserId;
+            fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`)
                 .then(response => response.json())
-                .then(cartDtos => {
-                    fetchCartDetails(cartDtos)
-                        .then(cartDetails => {
-                            setItems(cartDetails);
-                            console.log('서버 불러오기 완료', cartDetails);
-
-                        })
-                        .catch(error => console.error('Error fetching CartDetailDto:', error));
+                .then(cartDetailDtos => {
+                    setItems(cartDetailDtos);
+                    console.log('(side)data from server', cartDetailDtos);
                 })
-                .catch(error => console.error('Error fetching cart items:', error));
+                .catch(error => console.error('Error fetching CartDetailDto:', error));
         }
         // 비 로그인
         else {
@@ -52,7 +48,7 @@ const SidePanelApp = () => {
             fetchCartDetails(localCart)
                 .then(localDetails => {
                     setItems(localDetails);
-                    console.log(localDetails);
+                    console.log('(side)data from local : ', localDetails);
                     updateTotalPrice(items);
                 })
         }
