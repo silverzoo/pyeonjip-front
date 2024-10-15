@@ -14,6 +14,7 @@ import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/ProductAdmin';
 import OptionAdmin from '../Admin/OptionAdmin';
 import OptionEdit from '../Admin/OptionEdit';
+import Coupon from "../Admin/Coupon/Coupon";
 
 function AppRouter() {
     return (
@@ -33,6 +34,8 @@ function AppRouter() {
             <Route path="/admin/product" element={<ProductAdmin />} />
             <Route path="/admin/edit-product/:productId" element={<OptionAdmin />} />
             <Route path="/admin/edit-option/:detailId" element={<OptionEdit />} />
+                <Route path="/coupon" element={<Coupon />} />
+
         </Routes>
     );
 }
