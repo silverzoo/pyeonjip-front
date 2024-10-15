@@ -17,6 +17,7 @@ import FindAccountResult from "../User/FindAccountResult";
 
 import OptionAdmin from '../Admin/OptionAdmin';
 import OptionEdit from '../Admin/OptionEdit';
+import MyPage from "../User/MyPage";
 
 function AppRouter() {
     return (
@@ -33,6 +34,7 @@ function AppRouter() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/find" element={<FindAccount />} />
             <Route path="/found" element={<FindAccountResult />} />
+            <Route path="/mypage" element={<MyPage />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
