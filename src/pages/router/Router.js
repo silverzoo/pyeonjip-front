@@ -7,7 +7,7 @@ import Home from "../Home/Home";
 import AdminCategory from "../Admin/Category/category";
 import AdminOrder from "../Admin/Order/Order";
 import Login from "../User/Login";
-import Signup from '../User/SignUp';
+import SignUp from '../User/SignUp';
 import Logout from '../User/Logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/chatPage';
@@ -28,7 +28,7 @@ function AppRouter() {
             <Route path="/admin/order" element={<AdminOrder />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/find" element={<FindAccount />} />
             <Route path="/found" element={<FindAccountResult />} />
             <Route path="/order" element={<OrderPage />} />
