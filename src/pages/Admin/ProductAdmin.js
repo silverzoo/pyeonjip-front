@@ -25,9 +25,29 @@ function ProductAdmin() {
 
     // 선택된 제품 일괄 삭제
     const handleBulkDelete = () => {
-        console.log('Deleting products with IDs:', selectedProducts);
-        setProducts(products.filter(product => !selectedProducts.includes(product.id)));
-        setSelectedProducts([]);
+        const promises = selectedProducts.map(id =>
+            fetch(`http://localhost:8080/api/products/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete product with ID ' + id);
+                }
+                return response;
+            })
+        );
+
+        // 모든 삭제 요청이 성공한 후 상태 업데이트
+        Promise.all(promises)
+            .then(() => {
+                setProducts(products.filter(product => !selectedProducts.includes(product.id)));
+                setSelectedProducts([]);
+                alert('선택한 제품이 삭제되었습니다.');
+            })
+            .catch(error => {
+                console.error(error);
+                alert('제품 삭제 중 오류가 발생했습니다.');
+            });
     };
 
     return (
