@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import OrderItem from './OrderItem';
 
-function OrderList({ orders }) {
+function OrderList({ orders = [] }) { // 기본값을 빈 배열로 설정
     const [selectedOrders, setSelectedOrders] = useState({});
     const [selectAll, setSelectAll] = useState(false);
 
@@ -41,7 +41,7 @@ function OrderList({ orders }) {
                 </button>
             </div>
             <ul className="admin-order-list-container">
-                {orders && orders.map(order => (
+                {Array.isArray(orders) && orders.map(order => ( // orders가 배열인지 확인
                     <OrderItem
                         key={order.id}
                         order={order}
