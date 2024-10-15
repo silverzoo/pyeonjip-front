@@ -51,3 +51,8 @@
 .user-link a:hover {
     color: #000;
 }
+
+/* 계정 찾기 화면 */
+.found-email {
+    padding: 20px 0;
+}
