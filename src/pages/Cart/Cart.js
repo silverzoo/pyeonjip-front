@@ -58,7 +58,7 @@ function CartApp() {
                 })
         }
         // 쿠폰 가져오기
-        fetch('http://localhost:8080/coupon')
+        fetch('http://localhost:8080/api/coupon')
             .then(response => response.json())
             .then(coupons => {
                 setCoupons(coupons);
