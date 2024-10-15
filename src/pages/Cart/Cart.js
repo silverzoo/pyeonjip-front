@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import './Cart.css';
 import {useNavigate} from 'react-router-dom';
+import { Modal, Button } from 'react-bootstrap';
 import {
     fetchCartDetails,
     updateLocalStorage,
@@ -27,6 +28,7 @@ function CartApp() {
     const navigate = useNavigate();
     const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
+    const [showModal, setShowModal] = useState(false);
 
 
     // 최초화면 로드 세팅
@@ -214,13 +216,21 @@ function CartApp() {
         }, ANIMATION_DURATION); // 애니메이션 지속 시간 후에 실행
     };
 
+    const handleLogin = () => {
+        window.location.href = "/login"; // 로그인 페이지로 이동
+    };
+
     // 결제하기
     const handleCheckout = async (e) => {
         e.preventDefault(); // 기본 폼 제출 방지
 
+        if (!isLogin) {
+            setShowModal(true); // 모달 표시
+            return;
+        }
         // 결제 데이터 조합
         const checkoutData = {
-            userId: isLogin ? testUserId : null,  // 로그인된 사용자 ID (비 로그인일 경우 null)
+            userId: testUserId, // 로그인된 사용자 ID (비 로그인일 경우 null)
             // OrderDetailDto 참고해서 보낼 데이터 작성함
             orderDetails: items.map(item => ({
                 productName: item.name,
@@ -250,8 +260,11 @@ function CartApp() {
             const errorData = await response.json();
             console.error(`체크아웃 실패 ${errorData}`);
         }
+
+
     };
     return (
+        <>
         <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
             <div className="row d-flex justify-content-between align-items-end h-100">
                 <div className="col-12 col-xl-12">
@@ -339,7 +352,7 @@ function CartApp() {
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
-                                                            <button className="delete-button"
+                                                            <button className="hvlo-delete-button"
                                                                     onClick={() => handleDeleteItem(index)}>
                                                                 <i className="bi bi-trash3"
                                                                    style={{fontSize: '1.2rem'}}></i>
@@ -353,7 +366,7 @@ function CartApp() {
                                         )}
                                         <div className="back-button-container d-flex justify-content-between">
                                             <h6
-                                                className="mb-0 text-muted back-button"
+                                                className="mb-0 text-muted hvlo-back-button"
                                                 onClick={() => navigate(-1)}
                                                 style={{cursor: 'pointer'}}
                                             >
@@ -403,6 +416,9 @@ function CartApp() {
                                         </div>
 
                                         <hr className="my-4"/>
+
+
+
                                         <form id="checkoutForm" action="/public" method="POST">
                                             <div id="itemDetailsContainer"></div>
                                             <input type="hidden" id="totalPriceInput" name="totalPrice"
@@ -425,6 +441,24 @@ function CartApp() {
                 </div>
             </div>
         </section>
+    {/* 로그인 모달 */}
+    <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+            <Modal.Title>로그인이 필요합니다</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+            주문을 진행하시려면 로그인이 필요합니다.
+        </Modal.Body>
+        <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+                뒤로가기
+            </Button>
+            <Button variant="primary" className="btn-dark" onClick={handleLogin}>
+                로그인하기
+            </Button>
+        </Modal.Footer>
+    </Modal>
+    </>
     );
 }
 
