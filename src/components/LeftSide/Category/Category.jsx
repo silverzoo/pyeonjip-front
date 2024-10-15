@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 function Category({ categories }) {
     const location = useLocation();
     const [expandedCategories, setExpandedCategories] = useState({});
+    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
     useEffect(() => {
 
@@ -32,10 +33,11 @@ function Category({ categories }) {
         newExpandedState[categoryId] = !currentExpandedState;
 
         setExpandedCategories(newExpandedState);
+        setSelectedCategoryId(categoryId);
     };
 
     return (
-        <ul style={{ paddingLeft: 0 }}>
+        <ul style={{paddingLeft: 0}}>
             {categories.map((category) => (
                 <li key={category.id}>
                     <ToggleIcon
@@ -43,11 +45,11 @@ function Category({ categories }) {
                         to={`/category/${category.id}`}
                         isExpanded={expandedCategories[category.id]}
                         onToggle={() => handleCategoryToggle(category.id)}
+                        isSelected={selectedCategoryId === category.id}
+                        hasChildren={category.children && category.children.length > 0}
                     />
                     {expandedCategories[category.id] && category.children && (
-                        <ul>
-                            <Category categories={category.children} />
-                        </ul>
+                        <Category categories={category.children}/>
                     )}
                 </li>
             ))}
