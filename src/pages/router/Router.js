@@ -12,6 +12,7 @@ import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/ProductAdmin';
+import Coupon from "../Admin/Coupon/Coupon";
 
 
 function AppRouter() {
@@ -30,6 +31,7 @@ function AppRouter() {
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
+            <Route path="/coupon" element={<Coupon />} />
         </Routes>
     );
 }
