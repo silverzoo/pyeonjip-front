@@ -18,7 +18,7 @@ function AppRouter() {
     return (
         <Routes>
             <Route path="/category/:categoryId" element={<Sandbox />} />
-            <Route path="/shop" element={<Sandbox />} />
+            <Route path="/category" element={<Sandbox />} />
             <Route path="/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
@@ -29,7 +29,7 @@ function AppRouter() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
-            <Route path="/admin/products" element={<ProductAdmin />} />
+            <Route path="/admin/product" element={<ProductAdmin />} />
         </Routes>
     );
 }

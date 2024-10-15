@@ -34,7 +34,7 @@ const CategoryList = () => {
         {
             img: 'https://www.ikea.com/kr/ko/images/products/solvinden-led-table-lamp-battery-operated-outdoor-white__1237028_pe917799_s5.jpg?f=xl',
             name: '더 많은 상품',
-            link: '/shop',
+            link: '/category',
         },
     ];
 

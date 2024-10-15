@@ -15,7 +15,7 @@
 }
 
 .search-container select:focus {
-    border-color: #007bff;
+    border-color: #212529;
     outline: none;
 }
 
@@ -31,7 +31,7 @@
 }
 
 .search-container input:focus {
-    border-color: #007bff;
+    border-color: #212529;
     outline: none;
 }
 
@@ -39,7 +39,7 @@
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
-    background-color: #007bff;
+    background-color: #212529;
     color: #fff;
     font-size: 16px;
     cursor: pointer;
@@ -47,5 +47,5 @@
 }
 
 .search-container button:hover {
-    background-color: #0056b3;
+    background-color: #212529;
 }

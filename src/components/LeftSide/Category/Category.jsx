@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ToggleIcon from '../ToggleIcon/ToggleIcon';
+import { useLocation } from 'react-router-dom';
 
 function Category({ categories }) {
+    const location = useLocation();
     const [expandedCategories, setExpandedCategories] = useState({});
+
+    useEffect(() => {
+
+        const pathSegments = location.pathname.split('/');
+        const categoryIdFromPath = pathSegments[pathSegments.length - 1];
+
+        if (!isNaN(categoryIdFromPath)) {
+            setExpandedCategories((prev) => ({
+                ...prev,
+                [categoryIdFromPath]: true,
+            }));
+        }
+    }, [location]);
 
     const handleCategoryToggle = (categoryId) => {
         const currentExpandedState = expandedCategories[categoryId];
@@ -20,7 +35,7 @@ function Category({ categories }) {
     };
 
     return (
-        <ul style={{ paddingLeft:0 }}>
+        <ul style={{ paddingLeft: 0 }}>
             {categories.map((category) => (
                 <li key={category.id}>
                     <ToggleIcon
@@ -30,8 +45,8 @@ function Category({ categories }) {
                         onToggle={() => handleCategoryToggle(category.id)}
                     />
                     {expandedCategories[category.id] && category.children && (
-                        <ul style={{ paddingLeft:15 }}>
-                            <Category categories={category.children}/>
+                        <ul>
+                            <Category categories={category.children} />
                         </ul>
                     )}
                 </li>
