@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './login.css';
+import './User.css';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -48,7 +48,7 @@ function Login() {
     };
 
     return (
-        <div className="container-user h-100 d-flex justify-content-center align-items-center">
+        <div className="user-container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-1">LOGIN</h3>

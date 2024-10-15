@@ -10,19 +10,14 @@ h2 {
     color: #343a40;
 }
 
+/* 입력칸 */
+
 .form-control {
     height: 30px;
     padding: 5px 10px;
     font-size: 14px;
     position: relative;
     z-index: 10;
-}
-
-.container-user {
-    margin-top: 200px;
-}
-
-.form-control {
     margin-bottom: 15px;
 }
 
