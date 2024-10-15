@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import OrderItem from './OrderItem';
 
-function OrderList({ orders = [] }) { // 기본값을 빈 배열로 설정
+function OrderList({ orders = [] }) { // orders를 props로 받아옵니다.
     const [selectedOrders, setSelectedOrders] = useState({});
     const [selectAll, setSelectAll] = useState(false);
 
@@ -15,7 +15,7 @@ function OrderList({ orders = [] }) { // 기본값을 빈 배열로 설정
     const handleSelectAll = () => {
         const newSelectedState = {};
         orders.forEach(order => {
-            newSelectedState[order.id] = !selectAll; // 전체 선택/해제
+            newSelectedState[order.id] = !selectAll;
         });
         setSelectedOrders(newSelectedState);
         setSelectAll(!selectAll);
@@ -25,7 +25,6 @@ function OrderList({ orders = [] }) { // 기본값을 빈 배열로 설정
         const remainingOrders = orders.filter(order => !selectedOrders[order.id]);
         console.log("선택된 주문 삭제:", selectedOrders);
         console.log("남은 주문:", remainingOrders);
-        // 여기서 remainingOrders를 서버에 업데이트하는 API 호출을 추가할 수 있습니다.
     };
 
     return (
@@ -41,14 +40,18 @@ function OrderList({ orders = [] }) { // 기본값을 빈 배열로 설정
                 </button>
             </div>
             <ul className="admin-order-list-container">
-                {Array.isArray(orders) && orders.map(order => ( // orders가 배열인지 확인
-                    <OrderItem
-                        key={order.id}
-                        order={order}
-                        isSelected={!!selectedOrders[order.id]}
-                        onSelect={() => handleSelectOrder(order.id)}
-                    />
-                ))}
+                {Array.isArray(orders) && orders.length > 0 ? (
+                    orders.map(order => (
+                        <OrderItem
+                            key={order.id}
+                            order={order}
+                            isSelected={!!selectedOrders[order.id]}
+                            onSelect={() => handleSelectOrder(order.id)}
+                        />
+                    ))
+                ) : (
+                    <li>주문이 없습니다.</li>
+                )}
             </ul>
         </div>
     );
