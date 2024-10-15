@@ -12,7 +12,8 @@ import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/ProductAdmin';
-
+import OptionAdmin from '../Admin/OptionAdmin';
+import OptionEdit from '../Admin/OptionEdit';
 
 function AppRouter() {
     return (
@@ -30,6 +31,8 @@ function AppRouter() {
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
+            <Route path="/admin/edit-product/:productId" element={<OptionAdmin />} />
+            <Route path="/admin/edit-option/:detailId" element={<OptionEdit />} />
         </Routes>
     );
 }
