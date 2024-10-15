@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Carousel, initMDB } from 'mdb-ui-kit';
 import './Home.css';
 
-initMDB({ Carousel });
-
 const CategoryList = () => {
+    useEffect(() => {
+        initMDB({ Carousel }); // 컴포넌트 마운트 시 초기화
+    }, []);
+
+
     const categories = [
         {
             img: 'https://www.ikea.com/kr/ko/images/products/grimsbu-bed-frame-grey__1101950_pe866876_s5.jpg?f=xl',
@@ -39,7 +42,7 @@ const CategoryList = () => {
     ];
 
     return (
-        <div>
+        <div style={{ paddingTop: '5%', width: '960px' }}>
 
 
             <div
