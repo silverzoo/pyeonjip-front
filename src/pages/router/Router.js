@@ -12,6 +12,8 @@ import Logout from '../User/Logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/ProductAdmin';
+import FindAccount from "../User/FindAccount";
+import FindAccountResult from "../User/FindAccountResult";
 
 
 function AppRouter() {
@@ -27,6 +29,8 @@ function AppRouter() {
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/find" element={<FindAccount />} />
+            <Route path="/found" element={<FindAccountResult />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
