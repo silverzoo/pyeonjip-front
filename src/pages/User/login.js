@@ -47,19 +47,23 @@ function Login() {
         }
     };
 
+    const handleBack = () => {
+        navigate(-1);
+    };
+
     return (
         <div className="user-container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-1">LOGIN</h3>
                     <div className="user-link">
-                        <a href="/" className="text-muted">뒤로가기</a>
+                        <a href="#" onClick={handleBack}>뒤로가기</a>
                     </div>
                 </div>
                 <hr />
                 <form onSubmit={handleLogin}>
                     <div className="form-group mb-3">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">이메일</label>
                         <input
                             type="email"
                             className="form-control"
@@ -70,7 +74,7 @@ function Login() {
                         />
                     </div>
                     <div className="form-group mb-3">
-                        <label htmlFor="password">Password</label>
+                        <label htmlFor="password">비밀번호</label>
                         <input
                             type="password"
                             className="form-control"
@@ -81,7 +85,7 @@ function Login() {
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}
-                    
+
                     <div className="d-flex justify-content-between align-items-center">
                         <div className="user-link">
                             <a href="/find-account">계정 찾기</a>

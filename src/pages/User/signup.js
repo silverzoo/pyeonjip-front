@@ -16,12 +16,10 @@ function Signup() {
     const handleSignup = async (event) => {
         event.preventDefault();
 
-
         if (!email || !name || !password || !passwordHint || !phoneNumber || !address) {
             setErrorMessage('모든 항목을 입력해주세요.');
             return;
         }
-
 
         const response = await fetch('http://localhost:8080/signup', {
             method: 'POST',
@@ -31,12 +29,15 @@ function Signup() {
             body: JSON.stringify({ email, name, password, passwordHint, phoneNumber, address }),
         });
 
-
         if (response.ok) {
             navigate('/');
         } else {
             setErrorMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
         }
+    };
+
+    const handleBack = () => {
+        navigate(-1); // 이전 페이지로 이동
     };
 
     return (
@@ -45,7 +46,7 @@ function Signup() {
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">회원가입</h3>
                     <div className="user-link">
-                        <a>뒤로가기</a>
+                        <a href="#" onClick={handleBack}>뒤로가기</a>
                     </div>
                 </div>
                 <hr />
