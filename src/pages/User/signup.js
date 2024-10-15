@@ -46,7 +46,7 @@ function Signup() {
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">회원가입</h3>
                     <div className="user-link">
-                        <a href="#" onClick={handleBack}>뒤로가기</a>
+                        <a href="#" onClick={handleBack} className="text-muted">뒤로가기</a>
                     </div>
                 </div>
                 <hr />
