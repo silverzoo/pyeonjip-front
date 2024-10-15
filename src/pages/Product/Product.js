@@ -21,18 +21,36 @@ function SandboxApp() {
     const MODAL_DURATION = 1000;
 
     useEffect(() => {
-
-
         console.log(`Selected category: ${categoryId}`);
-        fetch( categoryId? `http://localhost:8080/api/products/category/${categoryId}`:`http://localhost:8080/api/products/all`)
+        if(!categoryId){
+            fetch(`http://localhost:8080/api/products/all`)
             .then(response => response.json())
             .then(data => {
                 setItems(data);
-                console.log('상품 불러오기 완료:', data);
+                console.log('상품 리스트 불러오기 완료:', data);
             })
             .catch(error => console.error('Error fetching products:', error));
-    }, [categoryId]);
 
+        }
+        else {
+            // 첫 번째 API 호출: 카테고리 ID에 따른 leaf 카테고리 가져오기
+            fetch(`http://localhost:8080/api/category/${categoryId}/leaf`)
+                .then(response => response.json())
+                .then(categoryIds => {
+                    console.log('Leaf 카테고리 불러오기 완료:', categoryIds);
+
+                    // 두 번째 API 호출: GET으로 카테고리 ID 리스트 전달
+                    const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
+                    return fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
+                })
+                .then(response => response.json())
+                .then(products => {
+                    setItems(products); // 상품 리스트 상태에 저장
+                    console.log('상품 리스트 불러오기 완료:', products);
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+    }, [categoryId]); // categoryId 변경 시 useEffect 재실행
     const showModalMessage = (message) => {
         setModalMessage(message);
         setShowModal(true);

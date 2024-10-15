@@ -14,7 +14,7 @@ const CouponComponent = () => {
     const fetchCoupons = async () => {
         // Fetch coupons logic here
         try {
-            const response = await fetch('http://localhost:8080/coupons'); // Fetch coupons from the backend
+            const response = await fetch('http://localhost:8080/api/coupon'); // Fetch coupons from the backend
             if (!response.ok) {
                 throw new Error('쿠폰 목록을 불러오는 데 실패했습니다.');
             }
@@ -29,7 +29,7 @@ const CouponComponent = () => {
     const createCoupon = async () => {
         setLoading(true); // 로딩 시작
         try {
-            const response = await fetch('http://localhost:8080/coupon', {
+            const response = await fetch('http://localhost:8080/api/coupon?discount=' + discount, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,9 +52,31 @@ const CouponComponent = () => {
         }
     };
 
+    // 쿠폰 삭제
+    const deleteCoupon = async (id) => {
+        if (window.confirm('이 쿠폰을 삭제하시겠습니까?')) {
+            setLoading(true); // 로딩 시작
+            try {
+                const response = await fetch(`http://localhost:8080/api/coupon?id=${id}`, {
+                    method: 'DELETE',
+                });
+
+                if (!response.ok || !response.status === 204) {
+                    throw new Error('쿠폰 삭제에 실패했습니다.');
+                }
+
+                fetchCoupons(); // 쿠폰 목록 갱신
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false); // 로딩 종료
+            }
+        }
+    };
+
     return (
         <div className="container col-xl-12" style={{ width: '900px' }}>
-            <h2>쿠폰 생성 및 조회</h2>
+            <h2>ADMIN - COUPON</h2>
             {error && <div className="alert alert-danger">{error}</div>}
             <Form>
                 <Form.Group controlId="discount">
@@ -67,7 +89,7 @@ const CouponComponent = () => {
                     />
                 </Form.Group>
                 <Button
-                    variant="primary"
+                    className="btn-dark"
                     onClick={createCoupon}
                     disabled={loading} // 로딩 중일 때 비활성화
                 >
@@ -83,6 +105,7 @@ const CouponComponent = () => {
                     <th>할인율</th>
                     <th>상태</th>
                     <th>만료 날짜</th>
+                    <th>작업</th> {/* 작업 열 추가 */}
                 </tr>
                 </thead>
                 <tbody>
@@ -90,9 +113,12 @@ const CouponComponent = () => {
                     <tr key={coupon.id}>
                         <td>{coupon.id}</td>
                         <td>{coupon.code}</td>
-                        <td>{coupon.discount / 100}%</td>
+                        <td>{coupon.discount}%</td>
                         <td>{coupon.active ? '활성' : '비활성'}</td>
                         <td>{new Date(coupon.expiryDate).toLocaleString()}</td>
+                        <td>
+                            <Button className="btn-dark" onClick={() => deleteCoupon(coupon.id)}>삭제</Button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
