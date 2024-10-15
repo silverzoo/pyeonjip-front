@@ -41,7 +41,7 @@ function OrderList({ orders }) {
                 </button>
             </div>
             <ul className="admin-order-list-container">
-                {orders.map(order => (
+                {orders && orders.map(order => (
                     <OrderItem
                         key={order.id}
                         order={order}
