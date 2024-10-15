@@ -26,7 +26,7 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
+    const [isLogin, setIsLogin] = useState(true); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
     const [showModal, setShowModal] = useState(false);
 
@@ -352,7 +352,7 @@ function CartApp() {
                                                             <h6 className="mb-0">₩ {item.price.toLocaleString()}</h6>
                                                         </div>
                                                         <div className="col-md-1 col-lg-1">
-                                                            <button className="delete-button"
+                                                            <button className="hvlo-delete-button"
                                                                     onClick={() => handleDeleteItem(index)}>
                                                                 <i className="bi bi-trash3"
                                                                    style={{fontSize: '1.2rem'}}></i>
@@ -366,7 +366,7 @@ function CartApp() {
                                         )}
                                         <div className="back-button-container d-flex justify-content-between">
                                             <h6
-                                                className="mb-0 text-muted back-button"
+                                                className="mb-0 text-muted hvlo-back-button"
                                                 onClick={() => navigate(-1)}
                                                 style={{cursor: 'pointer'}}
                                             >
