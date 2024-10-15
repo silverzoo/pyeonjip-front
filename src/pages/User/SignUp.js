@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 // import './signup.css';
 
-function Signup() {
+function SignUp() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -126,4 +126,4 @@ function Signup() {
     );
 }
 
-export default Signup;
+export default SignUp;

@@ -55,7 +55,7 @@ function Login() {
         <div className="user-container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
-                    <h3 className="text-left mb-1">LOGIN</h3>
+                    <h3 className="text-left mb-1">로그인</h3>
                     <div className="user-link">
                         <a href="#" onClick={handleBack} className="text-muted">뒤로가기</a>
                     </div>
@@ -88,12 +88,12 @@ function Login() {
 
                     <div className="d-flex justify-content-between align-items-center">
                         <div className="user-link">
-                            <a href="/find-account">계정 찾기</a>
+                            <a href="/find">계정 찾기</a>
                             <a href="/reset-password">비밀번호 재설정</a>
-                            <a href="/signup">회원가입</a>
+                            <a href="/User/SignUp">회원가입</a>
                         </div>
                         <div>
-                            <button type="submit" className="btn-user btn-sm user-btn">로그인</button>
+                            <button type="submit" className="btn-sm user-btn">로그인</button>
                         </div>
                     </div>
                 </form>
