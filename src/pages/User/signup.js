@@ -16,7 +16,7 @@ function Signup() {
     const handleSignup = async (event) => {
         event.preventDefault();
 
-        
+
         if (!email || !name || !password || !passwordHint || !phoneNumber || !address) {
             setErrorMessage('모든 항목을 입력해주세요.');
             return;
@@ -40,7 +40,7 @@ function Signup() {
     };
 
     return (
-        <div className="container-user h-100 d-flex justify-content-center align-items-center">
+        <div className="user-container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">회원가입</h3>
@@ -114,6 +114,7 @@ function Signup() {
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
+                            style={{ marginBottom: '40px' }}
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}

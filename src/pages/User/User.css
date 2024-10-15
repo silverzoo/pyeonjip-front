@@ -1,33 +1,33 @@
-/* form {
-    background-color: #f8f9fa;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-} */
+/*!* form {*/
+/*    background-color: #f8f9fa;*/
+/*    padding: 30px;*/
+/*    border-radius: 10px;*/
+/*    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);*/
+/*} *!*/
 
-h2 {
-    font-weight: bold;
-    color: #343a40;
-}
+/*h2 {*/
+/*    font-weight: bold;*/
+/*    color: #343a40;*/
+/*}*/
 
-/* 입력칸 */
+/*!* 입력칸 *!*/
 
 .form-control {
-    height: 30px;
-    padding: 5px 10px;
+    height: 33px;
+    padding: 10px;
     font-size: 14px;
-    position: relative;
-    z-index: 10;
-    margin-bottom: 15px;
+    /*position: relative;*/
+    /*z-index: 10;*/
+    /*margin-bottom: 15px;*/
 }
 
-.d-grid {
-    margin-top: 20px;
-}
+/*.d-grid {*/
+/*    margin-top: 20px;*/
+/*}*/
 
 .user-btn {
     width: 100%;
-    padding: 5px;
+    padding: 7px;
     border-radius: 5px;
     font-size: 12px;
     background-color: #000;
