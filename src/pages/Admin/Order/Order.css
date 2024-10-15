@@ -1,0 +1,71 @@
+.admin-order-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.admin-order-page * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.admin-order-list {
+    margin: 20px;
+    width: 100%;
+}
+
+.admin-order-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.admin-order-delete-button {
+    padding: 8px 12px;
+    background-color: #212529;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.admin-order-delete-button:hover {
+    background-color: #212529;
+}
+
+.admin-order-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.admin-order-item.selected {
+    /*background-color: rgba(33, 37, 41, 0.03);*/
+    border-color: #212529;
+}
+
+.admin-order-item.selected p {
+    font-weight: bold;
+}
+
+input[type="checkbox"] {
+    width: 20px;
+    cursor: pointer;
+    accent-color: gray;
+}
+
+input[type="checkbox"]:checked {
+    accent-color: #212529;
+}
+
+input[type="checkbox"]:checked::before {
+    content: "";
+    background-color: gray;
+}

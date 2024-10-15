@@ -12,6 +12,22 @@
 .content {
   width: 100%;
   max-width: 960px;
-  margin: 0 auto;
+  margin: 30px 200px 0;
+  box-sizing: border-box;
 }
 
+.app {
+  display: flex;
+  justify-content: space-between; /* 좌우로 요소들 분배 */
+  width: 100%;
+  min-height: 100vh; /* 페이지 전체 높이 */
+}
+
+.leftSide {
+  width: 200px; /* 고정 너비 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh; /* 브라우저 높이에 맞게 고정 */
+  box-sizing: border-box;
+}
