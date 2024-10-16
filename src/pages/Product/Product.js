@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom'; // useParams 추가
+import { Link, useParams } from 'react-router-dom';
 import { addServerCart, addLocalCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -12,45 +12,44 @@ function SandboxApp() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
-    const [isLogin, setIsLogin] = useState(true); // 더미 데이터
-    const [testUserId, setTestUserId] = useState(1); // 더미 데이터
-    // const [categoryId, setCategoryId] = useState();
-    //const [categoryId, setCategoryId] = useState(1); // 더미 데이터
-
-    const { categoryId } = useParams(); // URL의 categoryId 가져오기
+    const [isLogin, setIsLogin] = useState(true);
+    const [testUserId, setTestUserId] = useState(1);
+    const { categoryId } = useParams();
+    const [animationKey, setAnimationKey] = useState(0); // 애니메이션 키 추가
     const MODAL_DURATION = 1000;
 
     useEffect(() => {
         console.log(`Selected category: ${categoryId}`);
-        if(!categoryId){
-            fetch(`http://localhost:8080/api/products/all`)
-            .then(response => response.json())
-            .then(data => {
-                setItems(data);
-                console.log('상품 리스트 불러오기 완료:', data);
-            })
-            .catch(error => console.error('Error fetching products:', error));
 
-        }
-        else {
-            // 첫 번째 API 호출: 카테고리 ID에 따른 leaf 카테고리 가져오기
-            fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`)
-                .then(response => response.json())
-                .then(categoryIds => {
+        // 카테고리 변경 시 애니메이션 키 업데이트
+        setAnimationKey(prevKey => prevKey + 1);
+
+        const fetchProducts = async () => {
+            try {
+                if (!categoryId) {
+                    const response = await fetch(`http://localhost:8080/api/products/all`);
+                    const data = await response.json();
+                    setItems(data);
+                    console.log('상품 리스트 불러오기 완료:', data);
+                } else {
+                    const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
+                    const categoryIds = await categoryResponse.json();
                     console.log('Leaf 카테고리 불러오기 완료:', categoryIds);
 
-                    // 두 번째 API 호출: GET으로 카테고리 ID 리스트 전달
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
-                    return fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
-                })
-                .then(response => response.json())
-                .then(products => {
-                    setItems(products); // 상품 리스트 상태에 저장
+                    const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
+                    const products = await productResponse.json();
+                    setItems(products);
                     console.log('상품 리스트 불러오기 완료:', products);
-                })
-                .catch(error => console.error('Error fetching products:', error));
-        }
-    }, [categoryId]); // categoryId 변경 시 useEffect 재실행
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        };
+
+        fetchProducts();
+    }, [categoryId]);
+
     const showModalMessage = (message) => {
         setModalMessage(message);
         setShowModal(true);
@@ -100,7 +99,7 @@ function SandboxApp() {
     };
 
     return (
-        <section>
+        <section key={animationKey}> {/* 애니메이션 키를 섹션에 적용 */}
             <div className="container" style={{ width: '100%', marginTop: '10vh' }}>
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-3">
