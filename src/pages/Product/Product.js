@@ -218,8 +218,7 @@ function SandboxApp() {
                                                                     </div>
                                                                     <h6
                                                                         onClick={() => addToCart(item)}
-                                                                        style={{ fontSize: '14px', color: 'black', cursor: 'pointer' }}
-                                                                    >
+                                                                        style={{ fontSize: '14px', color: 'black', cursor: 'pointer' }}>
                                                                         장바구니에 추가
                                                                     </h6>
                                                                 </div>
