@@ -1,21 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ProductAdmin.css';
 
 function CreateProduct() {
     const [productName, setProductName] = useState('');
     const [productDescription, setProductDescription] = useState('');
+    const [category, setCategory] = useState('');
+    const [categories, setCategories] = useState([]);
     const [options, setOptions] = useState([{ name: '', price: '', quantity: '', imageUrl: '' }]);
+    const [productImages, setProductImages] = useState([{ imageUrl: '' }]); // 상품 이미지 관리
 
     // 옵션 필드의 값 변경을 처리하는 함수
     const handleOptionChange = (index, field, value) => {
         const newOptions = [...options];
         newOptions[index][field] = value;
         setOptions(newOptions);
+        console.log("Updated options:", newOptions); // 상태 로그 추가
+    };
+
+    // 이미지 필드의 값 변경을 처리하는 함수
+    const handleImageChange = (index, value) => {
+        const newImages = [...productImages];
+        newImages[index].imageUrl = value;
+        setProductImages(newImages);
+        console.log("Updated images:", newImages); // 상태 로그 추가
     };
 
     // 옵션 추가
     const addOption = () => {
         setOptions([...options, { name: '', price: '', quantity: '', imageUrl: '' }]);
+    };
+
+    // 이미지 추가
+    const addImage = () => {
+        setProductImages([...productImages, { imageUrl: '' }]);
     };
 
     // 옵션 삭제
@@ -24,19 +41,41 @@ function CreateProduct() {
         setOptions(newOptions);
     };
 
+    // 이미지 삭제
+    const removeImage = (index) => {
+        const newImages = productImages.filter((_, idx) => idx !== index);
+        setProductImages(newImages);
+    };
+
+    // 데이터베이스에서 카테고리 목록을 가져오는 함수
+    useEffect(() => {
+        fetch("http://localhost:8080/api/category")
+            .then(response => response.json())
+            .then(data => setCategories(data))
+            .catch(error => console.error('카테고리 불러오기 실패:', error));
+    }, []);
+
     // 폼 제출 처리
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        // 상품 데이터 객체 생성
         const productData = {
             name: productName,
             description: productDescription,
-            productDetails: options.map(option => ({
+            categoryId: category,
+            productDetails: options.length > 0 ? options.map(option => ({
                 name: option.name,
                 price: option.price,
                 quantity: option.quantity,
                 mainImage: option.imageUrl
-            }))
+            })) : [], // 옵션이 없으면 빈 배열로 처리
+            productImages: productImages.length > 0 ? productImages.map(image => ({
+                imageUrl: image.imageUrl
+            })) : [] // 이미지가 없으면 빈 배열로 처리
         };
+
+        console.log("Submitting product data:", productData); // 제출 전 상태 확인
 
         // 상품 생성 요청
         fetch("http://localhost:8080/api/products", {
@@ -86,6 +125,21 @@ function CreateProduct() {
                     />
                 </div>
 
+                <div className="form-group">
+                    <label>카테고리:</label>
+                    <select
+                        className="form-control"
+                        value={category}
+                        onChange={(e) => setCategory(e.target.value)}
+                        required
+                    >
+                        <option value="">카테고리를 선택하세요</option>
+                        {categories.map((cat) => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
+                </div>
+
                 <h3>상품 옵션</h3>
                 {options.map((option, index) => (
                     <div key={index} className="form-group">
@@ -125,6 +179,24 @@ function CreateProduct() {
                     </div>
                 ))}
 
+                <h3>상품 이미지</h3>
+                {productImages.map((image, index) => (
+                    <div key={index} className="form-group">
+                        <label>이미지 {index + 1}</label>
+                        <input
+                            type="text"
+                            placeholder="이미지 URL"
+                            value={image.imageUrl}
+                            onChange={(e) => handleImageChange(index, e.target.value)}
+                            required
+                            className="form-control"
+                        />
+                        <button type="button" onClick={() => removeImage(index)} className="btn btn-danger">이미지 삭제</button>
+                    </div>
+                ))}
+
+                <button type="button" onClick={addImage} className="btn btn-primary">이미지 추가</button>
+
                 <button type="button" onClick={addOption} className="btn btn-primary">옵션 추가</button>
 
                 <div>
@@ -135,4 +207,4 @@ function CreateProduct() {
     );
 }
 
-export default CreateProduct;  // CreateProduct 컴포넌트를 export
+export default CreateProduct;
