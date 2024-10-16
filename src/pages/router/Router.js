@@ -34,7 +34,7 @@ function AppRouter() {
             <Route path="/admin/product" element={<ProductAdmin />} />
             <Route path="/admin/edit-product/:productId" element={<OptionAdmin />} />
             <Route path="/admin/edit-option/:detailId" element={<OptionEdit />} />
-                <Route path="/coupon" element={<Coupon />} />
+            <Route path="/admin/coupon" element={<Coupon />} />
 
         </Routes>
     );
