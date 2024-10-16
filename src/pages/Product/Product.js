@@ -18,19 +18,20 @@ function SandboxApp() {
     const [animationKey, setAnimationKey] = useState(0); // 애니메이션 키 추가
     const MODAL_DURATION = 1000;
 
+    const [currentPage, setCurrentPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+
     useEffect(() => {
         console.log(`Selected category: ${categoryId}`);
-
-        // 카테고리 변경 시 애니메이션 키 업데이트
-        setAnimationKey(prevKey => prevKey + 1);
-
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
-                    const response = await fetch(`http://localhost:8080/api/products/all`);
+                    const response = await fetch(`http://localhost:8080/api/products/all/page?page=${currentPage}&size=8`);
                     const data = await response.json();
-                    setItems(data);
-                    console.log('상품 리스트 불러오기 완료:', data);
+                    setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]); // 기존 아이템과 병합
+                    setHasMore(data.content.length > 0); // 더 많은 상품이 있는지 설정
+                    console.log('상품 리스트 불러오기 완료:', data.content);
                 } else {
                     const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
                     const categoryIds = await categoryResponse.json();
@@ -40,6 +41,8 @@ function SandboxApp() {
                     const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
                     const products = await productResponse.json();
                     setItems(products);
+                    setHasMore(false); // 카테고리 기반 상품 리스트는 더 이상 페이지네이션이 필요 없으므로 false로 설정
+
                     console.log('상품 리스트 불러오기 완료:', products);
                 }
             } catch (error) {
@@ -48,7 +51,41 @@ function SandboxApp() {
         };
 
         fetchProducts();
-    }, [categoryId]);
+    }, [categoryId, currentPage]);
+
+    useEffect(() => {
+        if (currentPage === 0) {
+            // 첫 페이지 로드 시에만 애니메이션 키 업데이트
+            setAnimationKey(prevKey => prevKey + 1);
+        }
+    }, [currentPage]);
+
+    const loadMoreItems = () => {
+        if (hasMore) {
+            setCurrentPage(prevPage => prevPage + 1);
+        }
+    };
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            // Check if the user has scrolled to the bottom
+            if (scrollTop + windowHeight >= documentHeight - 1 && hasMore && !loading) {
+                setLoading(true); // 로딩 시작
+                setTimeout(() => {
+                    loadMoreItems(); // 무한 스크롤 로딩 시 추가 아이템 로드
+                    setLoading(false); // 로딩 종료
+                }, 1000); // 1초 후 페이지 증가
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [hasMore, loading]);
 
     const showModalMessage = (message) => {
         setModalMessage(message);
@@ -99,7 +136,7 @@ function SandboxApp() {
     };
 
     return (
-        <section key={animationKey}> {/* 애니메이션 키를 섹션에 적용 */}
+        <section key={animationKey}>
             <div className="container" style={{ width: '100%', marginTop: '10vh' }}>
                 <div className="row d-flex justify-content-center align-items-center h-100">
                     <div className="card-body p-3">
@@ -181,10 +218,9 @@ function SandboxApp() {
                                                                     </div>
                                                                     <h6
                                                                         onClick={() => addToCart(item)}
-                                                                        style={{ fontSize: '1rem', cursor: 'pointer' }}
+                                                                        style={{ fontSize: '14px', color: 'black', cursor: 'pointer' }}
                                                                     >
-                                                                        <i className="bi bi-cart-plus mx-1" style={{ fontSize: '1.4rem' }}></i>
-                                                                        Add Cart
+                                                                        장바구니에 추가
                                                                     </h6>
                                                                 </div>
                                                             </div>
@@ -192,17 +228,21 @@ function SandboxApp() {
                                                     );
                                                 })}
                                             </div>
-                                            {groupIndex < groupedItems.length - 1 && <hr className="my-3" />}
                                         </React.Fragment>
                                     ))}
                                 </div>
+                                <div className="d-flex justify-content-center align-items-center">
+                                {loading && <div className="spinner-border text-center" role="status">
+                                    <span className="visually-hidden">Loading...</span>
+                                </div>}
+                            </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <Modal show={showModal} onHide={() => setShowModal(false)} backdrop={false}>
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
                 <Modal.Body>{modalMessage}</Modal.Body>
             </Modal>
         </section>
