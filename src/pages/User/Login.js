@@ -37,13 +37,26 @@ function Login() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ email, password }),
-            credentials: 'include'
+            credentials: 'include' // 쿠키 사용 시 필요
         });
 
         if (response.ok) {
-            navigate('/');
+            // 응답 헤더에서 access 토큰 꺼내기
+            const accessToken = response.headers.get('access');
+            if (accessToken) {
+                localStorage.setItem('access', accessToken); // access 토큰 로컬 스토리지에 저장
+                navigate('/');
+            } else {
+                setErrorMessage('Access 토큰을 가져오지 못했습니다.');
+            }
         } else {
-            setErrorMessage('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.');
+            if (response.status === 401) {
+                setErrorMessage('이메일 또는 비밀번호가 잘못되었습니다.');
+            } else if (response.status === 403) {
+                setErrorMessage('접근 권한이 없습니다.');
+            } else {
+                setErrorMessage('로그인에 실패했습니다. 이메일 또는 비밀번호를 확인해 주세요.');
+            }
         }
     };
 
