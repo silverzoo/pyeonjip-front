@@ -147,7 +147,7 @@ function SandboxApp() {
                                                                         </h4>
                                                                     </Link>
                                                                     <div className="my-3">
-                                                                        <h6 style={{ fontSize: '14px' }}>다른 옵션</h6>
+                                                                        <h6 style={{ fontSize: '14px' }}>옵션</h6>
                                                                         <div className="thumbnail-container d-flex mb-3 gap-2">
                                                                             {item.productDetails.map((detail, index) => {
                                                                                 const isSelected = selectedOptions[item.id]?.id === detail.id;

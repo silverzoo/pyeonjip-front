@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Collapse, initMDB } from 'mdb-ui-kit';
 import { useLocation } from 'react-router-dom';
 import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
+initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
 
@@ -32,6 +34,10 @@ function ProductDetail() {
         name: '',
         price: 0,
     });
+
+    useEffect(() => {
+        initMDB({ Collapse }); // 아코디언 초기화
+    }, []);
 
     // Fetch product details by productId and optionId
     useEffect(() => {
@@ -93,17 +99,6 @@ function ProductDetail() {
 
                 <div className=" card border-0 col-xl-6 d-flex flex-column"
                      style={{marginTop: '30px', marginLeft: '30px'}}>
-                    {/*<nav data-mdb-navbar-init className="navbar navbar-expand-lg bg-body-white">*/}
-                    {/*    <div className="container-fluid">*/}
-                    {/*        <nav aria-label="breadcrumb">*/}
-                    {/*            <ol className="breadcrumb">*/}
-                    {/*                <li className="breadcrumb-item"><a href="#">Home</a></li>*/}
-                    {/*                <li className="breadcrumb-item" aria-current="page"><a href=`http://localhost:3000/category/${categoryId}`>Category</a></li>*/}
-                    {/*            </ol>*/}
-                    {/*        </nav>*/}
-                    {/*    </div>*/}
-
-                    {/*</nav>*/}
                     <div style={{marginLeft: '40px', flex: 1}}>
                         <img
                             src={selectedOption.mainImage}
@@ -160,7 +155,100 @@ function ProductDetail() {
                         <i className="bi bi-cart-plus mx-1" style={{fontSize: '1.4rem'}}></i>
                         장바구니에 담기
                     </button>
+                </div>
 
+
+
+                <div className="accordion accordion-flush my-5" id="accordionFlushExample">
+                    {/*1번 아코디언*/}
+                    <div className="accordion-item">
+                        <h2 className="accordion-header" id="flush-headingOne">
+                            <button
+                                data-mdb-collapse-init
+                                className="accordion-button collapsed"
+                                type="button"
+                                style={{fontWeight: 'bold', fontSize: '23px'}}
+                                data-mdb-target="#flush-collapseOne"
+                                aria-expanded="false"
+                                aria-controls="flush-collapseOne"
+                            >
+                                제품 설명
+                            </button>
+                        </h2>
+                        <div
+                            id="flush-collapseOne"
+                            className="accordion-collapse collapse"
+                            aria-labelledby="flush-headingOne"
+                            data-mdb-parent="#accordionFlushExample"
+                        >
+                            <div className="accordion-body" style={{}}>
+                                해당 제품은 공간에 자연스럽게 어우러지는 디자인과 실용성을 갖춘 제품입니다. <br/>
+                                다양한 인테리어 스타일에 매칭하기 좋으며, 일상에서 편안한 사용감을 제공합니다. <br/>
+                                깔끔한 디테일과 다용도로 활용 가능한 구조가 특징이며, 필요에 따라 여러 용도로 사용할 수 있습니다.
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div className="accordion-item">
+                        <h2 className="accordion-header" id="flush-headingTwo">
+                            <button
+                                data-mdb-collapse-init
+                                className="accordion-button collapsed"
+                                type="button"
+                                style={{fontWeight: 'bold', fontSize: '23px'}}
+                                data-mdb-target="#flush-collapseTwo"
+                                aria-expanded="false"
+                                aria-controls="flush-collapseTwo"
+                            >
+                                치수
+                            </button>
+                        </h2>
+                        <div
+                            id="flush-collapseTwo"
+                            className="accordion-collapse collapse"
+                            aria-labelledby="flush-headingTwo"
+                            data-mdb-parent="#accordionFlushExample"
+                        >
+                            <div className="accordion-body">
+                                <h5>{product.description}</h5><br></br>
+                                제품 치수는 측정 방식에 따라 ±1~3cm 오차가 발생할 수 있습니다. 설치 공간을 충분히 확인 후 구매해 주세요.
+
+                            </div>
+                        </div>
+                    </div>
+                    <div className="accordion-item">
+                        <h2 className="accordion-header" id="flush-headingThree">
+                            <button
+                                data-mdb-collapse-init
+                                className="accordion-button collapsed"
+                                type="button"
+                                style={{fontWeight: 'bold', fontSize: '23px'}}
+                                data-mdb-target="#flush-collapseThree"
+                                aria-expanded="false"
+                                aria-controls="flush-collapseThree"
+                            >
+                                리뷰
+                            </button>
+                        </h2>
+                        <div
+                            id="flush-collapseThree"
+                            className="accordion-collapse collapse"
+                            aria-labelledby="flush-headingThree"
+                            data-mdb-parent="#accordionFlushExample"
+                        >
+                            <div className="accordion-body">
+                                {/*   리뷰 바디    */}
+                                <div className="text-center my-2 ">
+                                    <i className="bi bi-emoji-frown  my-5" style={{fontSize: '3rem'}}></i>
+                                    <h3 className="my-4 bold">리뷰가 비어 있어요.</h3>
+                                    <h6 className="text-muted">리뷰를 작성해주시면 더 나은 서비스를 제공하는데 도움이 됩니다.</h6>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <Modal show={showModal} onHide={() => setShowModal(false)} backdrop={false}>
