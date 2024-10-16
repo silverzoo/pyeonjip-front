@@ -66,7 +66,7 @@ function Login() {
                         <label htmlFor="email">이메일</label>
                         <input
                             type="email"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -77,7 +77,7 @@ function Login() {
                         <label htmlFor="password">비밀번호</label>
                         <input
                             type="password"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

@@ -57,7 +57,7 @@ function FindAccount() {
                         <label htmlFor="name">이름</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -68,7 +68,7 @@ function FindAccount() {
                         <label htmlFor="phoneNumber">전화번호</label>
                         <input
                             type="tel"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="phoneNumber"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}

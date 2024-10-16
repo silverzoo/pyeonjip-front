@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-// import './signup.css';
 
 function SignUp() {
     const [email, setEmail] = useState('');
@@ -55,7 +54,7 @@ function SignUp() {
                         <label htmlFor="email">이메일</label>
                         <input
                             type="email"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
@@ -66,7 +65,7 @@ function SignUp() {
                         <label htmlFor="name">이름</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
@@ -77,7 +76,7 @@ function SignUp() {
                         <label htmlFor="password">비밀번호</label>
                         <input
                             type="password"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
@@ -88,7 +87,7 @@ function SignUp() {
                         <label htmlFor="passwordHint">비밀번호 힌트</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="passwordHint"
                             value={passwordHint}
                             onChange={(e) => setPasswordHint(e.target.value)}
@@ -99,7 +98,7 @@ function SignUp() {
                         <label htmlFor="phoneNumber">전화번호</label>
                         <input
                             type="tel"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="phoneNumber"
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
@@ -110,7 +109,7 @@ function SignUp() {
                         <label htmlFor="address">주소</label>
                         <input
                             type="text"
-                            className="form-control"
+                            className="form-control user-form-control"
                             id="address"
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
