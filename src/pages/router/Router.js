@@ -12,10 +12,10 @@ import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/chatPage';
 import ProductAdmin from '../Admin/Product/ProductAdmin';
-import OptionAdmin from '../Admin/Product/ProductOptionAdmin';
-import OptionEdit from '../Admin/Product/ProductOptionEdit';
+import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
+import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';
 import Coupon from "../Admin/Coupon/Coupon";
-import CreateProduct from '../Admin/Product/ProductCreate';
+import ProductCreate from '../Admin/Product/ProductCreate';
 
 function AppRouter() {
     return (
@@ -33,9 +33,9 @@ function AppRouter() {
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
-            <Route path="/admin/edit-product/:productId" element={<OptionAdmin />} />
-            <Route path="/admin/edit-option/:detailId" element={<OptionEdit />} />
-            <Route path="/admin/createProduct" element={<CreateProduct />} />
+            <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
+            <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit />} />
+            <Route path="/admin/createProduct" element={<ProductCreate />} />
                 <Route path="/coupon" element={<Coupon />} />
 
         </Routes>
