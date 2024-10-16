@@ -15,15 +15,16 @@ function SandboxApp() {
     const [isLogin, setIsLogin] = useState(true);
     const [testUserId, setTestUserId] = useState(1);
     const { categoryId } = useParams();
-    const [animationKey, setAnimationKey] = useState(0); // 애니메이션 키 추가
+    const [animationKey, setAnimationKey] = useState(0);
     const MODAL_DURATION = 1000;
 
     const [currentPage, setCurrentPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         console.log(`Selected category: ${categoryId}`);
+        //setAnimationKey(prevKey => prevKey + 1);
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
@@ -59,6 +60,11 @@ function SandboxApp() {
             setAnimationKey(prevKey => prevKey + 1);
         }
     }, [currentPage]);
+
+    useEffect(() => {
+        // 카테고리가 변경될 때마다 애니메이션 키를 업데이트
+        setAnimationKey(prevKey => prevKey + 1);
+    }, [categoryId]);
 
     const loadMoreItems = () => {
         if (hasMore) {
