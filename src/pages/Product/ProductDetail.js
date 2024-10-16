@@ -45,7 +45,7 @@ function ProductDetail() {
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
-                console.log('(Product)data from server : ', data);
+                console.log('제품 상세정보 불러오기 완료 : ', data);
 
                 const option = data.productDetails.find(detail => detail.id === parseInt(optionId));
                 setSelectedOption(option || data.productDetails[0]); // 기본 옵션 설정

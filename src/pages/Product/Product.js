@@ -31,6 +31,7 @@ function SandboxApp() {
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
                     setHasMore(data.content.length > 0);
+
                 } else {
                     const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
                     const categoryIds = await categoryResponse.json();
@@ -44,6 +45,8 @@ function SandboxApp() {
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
+            console.log('데이터 불러오기 완료.', items);
+            console.log('페이지 : ' , currentPage + 1, 'hasMore : ' , hasMore);
         };
 
         fetchProducts();
