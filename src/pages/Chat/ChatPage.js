@@ -3,12 +3,14 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import ChatMessage from './ChatMessage';
 import ChatRoomList from './ChatRoomList';
 import useWebSocket from './UseWebSocket';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Chat.css';
 
 const ChatPage = () => {
   const [chatRoomId, setChatRoomId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [category, setCategory] = useState('');
+  const [chatRoomCategories, setChatRoomCategories] = useState({});
   const [showNoHistoryMessage, setShowNoHistoryMessage] = useState(false);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [showSetup, setShowSetup] = useState(true);
@@ -17,13 +19,14 @@ const ChatPage = () => {
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
   const [chatRooms, setChatRooms] = useState([]);
   const [messageInput, setMessageInput] = useState("");
+  const [isViewingChatRoom, setIsViewingChatRoom] = useState(false);
 
   const categories = [
-    "주문/환불 문의",
-    "배송 문의",
-    "파손 문의",
-    "기타 문의",
-    "이전 문의 내역"
+    { name: "주문/환불 문의", icon: "bi-cash-stack" },
+    { name: "배송 문의", icon: "bi-truck" },
+    { name: "파손 문의", icon: "bi-hammer" },
+    { name: "기타 문의", icon: "bi-person-raised-hand" },
+    { name: "이전 문의 내역", icon: "bi-hourglass-bottom" }
   ];
 
   const handleCategorySelect = async (selectedCategory) => {
@@ -34,14 +37,22 @@ const ChatPage = () => {
       const userId = 1; // 실제 사용자 ID로 변경 필요
       try {
         const response = await fetch(`http://localhost:8080/api/chat/chat-room-list/${userId}`);
-        const chatRooms = await response.json();
-        setChatRooms(chatRooms);
+        const chatRoomsData = await response.json();
+        setChatRooms(chatRoomsData);
+        
+        // 채팅방 ID와 카테고리를 매핑
+        const categories = {};
+        chatRoomsData.forEach(room => {
+          categories[room.id] = room.category;
+        });
+        setChatRoomCategories(categories);
+
         setShowSetup(false);
         setChatRoomId(null);
         setSelectedRoomId(null);
         setMessages([]);
         
-        if (chatRooms.length === 0) {
+        if (chatRoomsData.length === 0) {
           setShowNoHistoryMessage(true);
         } else {
           setShowNoHistoryMessage(false);
@@ -126,6 +137,10 @@ const ChatPage = () => {
   const contextMenuRef = useRef(null);
   const chatBodyRef = useRef(null);
   
+  const handleHomeClick = () => {
+    navigate('/');
+  };
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const roomId = params.get('chatRoomId');
@@ -158,8 +173,17 @@ const ChatPage = () => {
   const handleRoomSelect = async (roomId) => {
     setSelectedRoomId(roomId);
     setChatRoomId(roomId);
-    setCategory('선택된 이전 문의');
+    setCategory(chatRoomCategories[roomId] || '알 수 없는 카테고리');
+    setIsViewingChatRoom(true);
     await loadChatMessages(roomId);
+  };
+
+  const handleBackToList = () => {
+    setIsViewingChatRoom(false);
+    setCategory('이전 문의 내역');
+    setSelectedRoomId(null);
+    setChatRoomId(null);
+    setMessages([]);
   };
   
   const loadChatMessages = async (roomId) => {
@@ -234,6 +258,10 @@ const ChatPage = () => {
     }
   };
 
+  const shouldShowInputContainer = () => {
+    return category !== '이전 문의 내역' && !isViewingChatRoom;
+  };
+
   return (
     <div className='chat-page-container'>
       {showSetup ? (
@@ -242,36 +270,50 @@ const ChatPage = () => {
           <div className="chat-category-buttons">
             {categories.map((cat, index) => (
               <button
-                key={index}
-                onClick={() => handleCategorySelect(cat)}
-                className="chat-category-button"
+              key={index}
+              onClick={() => handleCategorySelect(cat.name)}
+              className="chat-category-button"
               >
-                {cat}
+                <i className={`bi ${cat.icon}`}></i>
+                <span>{cat.name}</span>
               </button>
-            ))}
+              ))}
           </div>
         </div>
       ) : (
         <div className="chat-container">
-          <div className="chat-header">편집에 문의하기</div>
-            <div className="chat-body" ref={chatBodyRef}>
-              {category === '이전 문의 내역' ? (
-                <ChatRoomList 
-                  chatRooms={chatRooms} 
-                  onRoomSelect={handleRoomSelect}
-                  showNoHistoryMessage={showNoHistoryMessage}
+          <div className="chat-header">
+            {isViewingChatRoom && (
+              <button className="chat-back-button" onClick={handleBackToList}>
+                <i className="bi bi-chevron-left"></i>
+              </button>
+            )}
+            <span>{category}</span>
+            {category !== '이전 문의 내역' && (
+              <button className="chat-home-button" onClick={handleHomeClick} aria-label="홈으로 이동">
+                <i className="bi bi-house-fill"></i>
+              </button>
+            )}
+          </div>
+
+          <div className="chat-body" ref={chatBodyRef}>
+            {category === '이전 문의 내역' ? (
+              <ChatRoomList 
+                chatRooms={chatRooms} 
+                onRoomSelect={handleRoomSelect}
+                showNoHistoryMessage={showNoHistoryMessage}
+              />
+            ) : (
+              messages.map((msg, index) => (
+                <ChatMessage
+                  key={msg.id || index}
+                  message={msg}
+                  onContextMenu={handleContextMenu}
                 />
-              ) : (
-                messages.map((msg, index) => (
-                  <ChatMessage
-                    key={msg.id || index}
-                    message={msg}
-                    onContextMenu={handleContextMenu}
-                  />
-                ))
-              )}
-            </div>
-          {category !== '이전 문의 내역' && category !== '선택된 이전 문의' && (
+              ))
+            )}
+          </div>
+          {shouldShowInputContainer() && (
             <div className="chat-input-container">
               <input
                 type="text"
@@ -280,13 +322,19 @@ const ChatPage = () => {
                 onChange={(e) => setMessageInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
-              <button onClick={handleSendMessage}>전송</button>
+              <button 
+                onClick={handleSendMessage} 
+                className="chat-send-button"
+                aria-label="메시지 전송"
+              >
+                <i className="bi bi-send-fill"></i>
+              </button>
             </div>
           )}
           {showContextMenu && (
             <div
               ref={contextMenuRef}
-              className="context-menu"
+              className="chat-context-menu"
               style={{
                 position: 'fixed',
                 top: `${contextMenuPosition.y}px`,
