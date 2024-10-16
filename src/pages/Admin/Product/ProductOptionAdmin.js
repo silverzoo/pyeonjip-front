@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';  // useParams import 추가
-import OptionList from './OptionList';  // OptionList 컴포넌트 import
+import OptionList from './ProductOptionList';  // OptionList 컴포넌트 import
 import './ProductAdmin.css';
 
-function OptionAdmin() {
+function ProductOptionAdmin() {
     const { productId } = useParams();  // URL에서 productId 가져오기
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
@@ -52,4 +52,4 @@ function OptionAdmin() {
     );
 }
 
-export default OptionAdmin;
+export default ProductOptionAdmin;
