@@ -1,3 +1,4 @@
+import { debounce } from 'lodash';
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { addServerCart, addLocalCart } from "../../utils/cartUtils";
@@ -23,48 +24,33 @@ function SandboxApp() {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log(`Selected category: ${categoryId}`);
-        //setAnimationKey(prevKey => prevKey + 1);
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
                     const data = await response.json();
-                    setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]); // 기존 아이템과 병합
-                    setHasMore(data.content.length > 0); // 더 많은 상품이 있는지 설정
-                    console.log('상품 리스트 불러오기 완료:', data.content);
+                    setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
+                    setHasMore(data.content.length > 0);
+
                 } else {
                     const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
                     const categoryIds = await categoryResponse.json();
-                    console.log('Leaf 카테고리 불러오기 완료:', categoryIds);
 
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
                     const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
                     const products = await productResponse.json();
                     setItems(products);
-                    setHasMore(false); // 카테고리 기반 상품 리스트는 더 이상 페이지네이션이 필요 없으므로 false로 설정
-
-                    console.log('상품 리스트 불러오기 완료:', products);
+                    setHasMore(false);
                 }
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
+            console.log('데이터 불러오기 완료.', items);
+            console.log('페이지 : ' , currentPage + 1, 'hasMore : ' , hasMore);
         };
 
         fetchProducts();
     }, [categoryId, currentPage]);
-
-    useEffect(() => {
-        if (currentPage === 0) {
-            // 첫 페이지 로드 시에만 애니메이션 키 업데이트
-            setAnimationKey(prevKey => prevKey + 1);
-        }
-    }, [currentPage]);
-
-    useEffect(() => {
-        // 카테고리가 변경될 때마다 애니메이션 키를 업데이트
-        setAnimationKey(prevKey => prevKey + 1);
-    }, [categoryId]);
 
     const loadMoreItems = () => {
         if (hasMore) {
@@ -72,21 +58,21 @@ function SandboxApp() {
         }
     };
 
-    useEffect(() => {
-        const handleScroll = () => {
-            const scrollTop = window.scrollY;
-            const windowHeight = window.innerHeight;
-            const documentHeight = document.documentElement.scrollHeight;
-            // Check if the user has scrolled to the bottom
-            if (scrollTop + windowHeight >= documentHeight - 1 && hasMore && !loading) {
-                setLoading(true); // 로딩 시작
-                setTimeout(() => {
-                    loadMoreItems(); // 무한 스크롤 로딩 시 추가 아이템 로드
-                    setLoading(false); // 로딩 종료
-                }, 1000); // 1초 후 페이지 증가
-            }
-        };
+    const handleScroll = debounce(() => {
+        const scrollTop = window.scrollY || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
 
+        if (scrollTop + windowHeight >= documentHeight - 10 && hasMore && !loading) {
+            setLoading(true);
+            setTimeout(() => {
+                loadMoreItems();
+                setLoading(false);
+            }, 1000);
+        }
+    }, 1000); // 5초 내에 반복 호출 방지
+
+    useEffect(() => {
         window.addEventListener('scroll', handleScroll);
         return () => {
             window.removeEventListener('scroll', handleScroll);
@@ -163,28 +149,21 @@ function SandboxApp() {
                                                             style={{ animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s` }}
                                                         >
                                                             <div>
-                                                                <div>
-                                                                    <Link
-                                                                        to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}
-                                                                    >
-                                                                        <img
-                                                                            src={hoveredImage}
-                                                                            className="card-img-top"
-                                                                            alt="Item Image"
-                                                                            onMouseEnter={() =>
-                                                                                handleMouseEnter(item.id, item.productImages[0].imageUrl)
-                                                                            }
-                                                                            onMouseLeave={() => handleMouseLeave(item.id)}
-                                                                        />
-                                                                    </Link>
-                                                                </div>
+                                                                <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                    <img
+                                                                        src={hoveredImage}
+                                                                        className="card-img-top"
+                                                                        alt="Item Image"
+                                                                        onMouseEnter={() =>
+                                                                            handleMouseEnter(item.id, item.productImages[0].imageUrl)
+                                                                        }
+                                                                        onMouseLeave={() => handleMouseLeave(item.id)}
+                                                                    />
+                                                                </Link>
                                                                 <div className="card-body">
-                                                                    <Link
-                                                                        to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}
-                                                                    >
+                                                                    <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
                                                                         <h6>{selectedDetail.name}</h6>
-                                                                        <h6>{item.description}</h6>
                                                                         <h4 className="fw-bolder">
                                                                             ￦{selectedDetail.price.toLocaleString()}
                                                                         </h4>
@@ -192,34 +171,19 @@ function SandboxApp() {
                                                                     <div className="my-3">
                                                                         <h6 style={{ fontSize: '14px' }}>옵션</h6>
                                                                         <div className="thumbnail-container d-flex mb-3 gap-2">
-                                                                            {item.productDetails.map((detail, index) => {
-                                                                                const isSelected = selectedOptions[item.id]?.id === detail.id;
-                                                                                return (
-                                                                                    <div key={index} style={{ position: 'relative' }}>
-                                                                                        <img
-                                                                                            src={detail.mainImage}
-                                                                                            alt={`Thumbnail ${index + 1}`}
-                                                                                            className="thumbnail-image"
-                                                                                            style={{ width: '50px', cursor: 'pointer' }}
-                                                                                            onClick={() =>
-                                                                                                handleOptionSelect(item.id, detail)
-                                                                                            }
-                                                                                        />
-                                                                                        {isSelected && (
-                                                                                            <div
-                                                                                                style={{
-                                                                                                    position: 'absolute',
-                                                                                                    bottom: '-3px',
-                                                                                                    left: 0,
-                                                                                                    right: 0,
-                                                                                                    height: '1px',
-                                                                                                    backgroundColor: '#afafaf',
-                                                                                                }}
-                                                                                            />
-                                                                                        )}
-                                                                                    </div>
-                                                                                );
-                                                                            })}
+                                                                            {item.productDetails.map((detail, index) => (
+                                                                                <div key={index} style={{ position: 'relative' }}>
+                                                                                    <img
+                                                                                        src={detail.mainImage}
+                                                                                        alt={`Thumbnail ${index + 1}`}
+                                                                                        className="thumbnail-image"
+                                                                                        style={{ width: '50px', cursor: 'pointer' }}
+                                                                                        onClick={() =>
+                                                                                            handleOptionSelect(item.id, detail)
+                                                                                        }
+                                                                                    />
+                                                                                </div>
+                                                                            ))}
                                                                         </div>
                                                                     </div>
                                                                     <h6
@@ -236,11 +200,13 @@ function SandboxApp() {
                                         </React.Fragment>
                                     ))}
                                 </div>
-                                <div className="d-flex justify-content-center align-items-center">
-                                {loading && <div className="spinner-border text-center" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>}
-                            </div>
+                                {loading && (
+                                    <div className="d-flex justify-content-center align-items-center">
+                                        <div className="spinner-border" role="status">
+                                            <span className="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
