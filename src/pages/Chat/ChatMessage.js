@@ -1,18 +1,15 @@
 import React from 'react';
 
 const ChatMessage = ({ message, onContextMenu }) => {
+  let messageClass = message.sent ? 'chat-message sent' : 'chat-message received';
+  
   return (
     <div 
-      className={`message ${message.sent ? 'sent' : 'received'}`}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        console.log("Context menu triggered for message ID:", message.id);
-        onContextMenu(e, message.id);
-      }}
+      className={messageClass}
+      onContextMenu={(e) => onContextMenu(e, message.id)}
     >
       {message.text}
     </div>
-
   );
 };
 
