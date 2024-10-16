@@ -27,7 +27,7 @@ function SandboxApp() {
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
-                    const response = await fetch(`http://localhost:8080/api/products/all/page?page=${currentPage}&size=8`);
+                    const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]); // 기존 아이템과 병합
                     setHasMore(data.content.length > 0); // 더 많은 상품이 있는지 설정
