@@ -16,29 +16,33 @@ import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
 import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';
 import Coupon from "../Admin/Coupon/Coupon";
 import ProductCreate from '../Admin/Product/ProductCreate';
+import SignUpResult from "../User/SignUpResult";
+import MyPage from "../User/MyPage";
 
 function AppRouter() {
-        return (
-            <Routes>
-                    <Route path="/category/:categoryId" element={<Sandbox />} />
-                    <Route path="/category" element={<Sandbox />} />
-                    <Route path="/product-detail" element={<ProductDetail />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/" element={<Home />} />
-                    <Route path="/admin/category" element={<AdminCategory />} />
-                    <Route path="/admin/order" element={<AdminOrder />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/logout" element={<Logout />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/order" element={<OrderPage />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    <Route path="/admin/product" element={<ProductAdmin />} />
-                    <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
-                    <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit />} />
-                    <Route path="/admin/createProduct" element={<ProductCreate />} />
-                    <Route path="/admin/coupon" element={<Coupon />} />
+    return (
+        <Routes>
+            <Route path="/category/:categoryId" element={<Sandbox />} />
+            <Route path="/category" element={<Sandbox />} />
+            <Route path="/product-detail" element={<ProductDetail />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/admin/category" element={<AdminCategory />} />
+            <Route path="/admin/order" element={<AdminOrder />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/logout" element={<Logout />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signup/result" element={<SignUpResult />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/order" element={<OrderPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/admin/product" element={<ProductAdmin />} />
+            <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
+            <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit />} />
+            <Route path="/admin/createProduct" element={<ProductCreate />} />
+            <Route path="/admin/coupon" element={<Coupon />} />
 
-            </Routes>
-        );
+        </Routes>
+    );
 }
 export default AppRouter;
