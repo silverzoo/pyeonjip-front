@@ -10,7 +10,7 @@ import Login from "../User/login";
 import Signup from '../User/signup';
 import Logout from '../User/logout';
 import OrderPage from '../Order/OrderPage';
-import ChatPage from '../Chat/chatPage';
+import ChatPage from '../Chat/ChatPage';
 import ProductAdmin from '../Admin/Product/ProductAdmin';
 import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
 import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';

@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-const useWebSocket = (chatRoomId, onMessageReceived) => {
+const useWebSocket = (chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted) => {
   const [client, setClient] = useState(null);
 
   useEffect(() => {
@@ -16,12 +16,26 @@ const useWebSocket = (chatRoomId, onMessageReceived) => {
       onConnect: () => {
         console.log('STOMP connected');
         stompClient.subscribe(`/topic/messages/${chatRoomId}`, (message) => {
+          console.log('Received message from server:', message.body);
           const receivedMessage = JSON.parse(message.body);
-          if (typeof onMessageReceived === 'function') {
-            // 서버로부터 받은 메시지에 'received' 플래그 추가
-            onMessageReceived({ ...receivedMessage, received: true });
-          } else {
-            console.error('onMessageReceived is not a function');
+          if (typeof onMessageReceived === 'function' && receivedMessage.message) {
+            onMessageReceived(receivedMessage);
+          }
+        });
+        
+        stompClient.subscribe(`/topic/message-updates/${chatRoomId}`, (update) => {
+          console.log('Received message update:', update.body);
+          const updatedMessage = JSON.parse(update.body);
+          if (typeof onMessageUpdated === 'function') {
+            onMessageUpdated(updatedMessage);
+          }
+        });
+
+        stompClient.subscribe(`/topic/message-deletions/${chatRoomId}`, (deletion) => {
+          console.log('Received message deletion:', deletion.body);
+          const deletedMessageId = JSON.parse(deletion.body);
+          if (typeof onMessageDeleted === 'function') {
+            onMessageDeleted(deletedMessageId);
           }
         });
       },
@@ -39,27 +53,36 @@ const useWebSocket = (chatRoomId, onMessageReceived) => {
         stompClient.deactivate();
       }
     };
-  }, [chatRoomId, onMessageReceived]);
+  }, [chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted]);
 
   const sendMessage = useCallback((message) => {
     if (client && client.active) {
-      const messageObject = {
-        chatRoomId: chatRoomId,
-        message: message,  // 'text' 대신 'message' 사용
-        // 'sent' 및 'id' 필드 제거
-      };
-      
       client.publish({
         destination: `/app/chat.sendMessage/${chatRoomId}`,
-        body: JSON.stringify(messageObject),
+        body: JSON.stringify(message),
       });
-      
-      // 로컬에 즉시 메시지 추가하는 부분 제거
-      // onMessageReceived(messageObject);
     }
   }, [client, chatRoomId]);
 
-  return { sendMessage };
+  const updateMessage = useCallback((messageId, newText) => {
+    if (client && client.active) {
+      client.publish({
+        destination: `/app/chat.updateMessage/${chatRoomId}`,
+        body: JSON.stringify({ id: messageId, message: newText }),
+      });
+    }
+  }, [client, chatRoomId]);
+
+  const deleteMessage = useCallback((messageId) => {
+    if (client && client.active) {
+      client.publish({
+        destination: `/app/chat.deleteMessage/${chatRoomId}`,
+        body: JSON.stringify({ id: messageId }),
+      });
+    }
+  }, [client, chatRoomId]);
+
+  return { sendMessage, updateMessage, deleteMessage };
 };
 
 export default useWebSocket;

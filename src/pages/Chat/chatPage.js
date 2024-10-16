@@ -2,35 +2,124 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ChatMessage from './ChatMessage';
 import ChatRoomList from './ChatRoomList';
-import useWebSocket from './useWebSocket';
-import './chat.css';
+import useWebSocket from './UseWebSocket';
+import './Chat.css';
 
 const ChatPage = () => {
   const [chatRoomId, setChatRoomId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [category, setCategory] = useState('');
   const [showNoHistoryMessage, setShowNoHistoryMessage] = useState(false);
+  const [selectedRoomId, setSelectedRoomId] = useState(null);
   const [showSetup, setShowSetup] = useState(true);
   const [selectedMessageId, setSelectedMessageId] = useState(null);
   const [showContextMenu, setShowContextMenu] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
-  const [inputValue, setInputValue] = useState('');
   const [chatRooms, setChatRooms] = useState([]);
+  const [messageInput, setMessageInput] = useState("");
+
+  const categories = [
+    "주문/환불 문의",
+    "배송 문의",
+    "파손 문의",
+    "기타 문의",
+    "이전 문의 내역"
+  ];
+
+  const handleCategorySelect = async (selectedCategory) => {
+    setCategory(selectedCategory);
+    console.log('Selected category:', selectedCategory);
   
-  const handleMessageReceived = useCallback((message) => {
-    setMessages((prevMessages) => {
-      const messageExists = prevMessages.some(msg => msg.id === message.id);
-  
-      // sent가 true인 경우 내가 보낸 메시지이므로 received로 처리하지 않음
-      if (!messageExists && !message.sent) {
-        return [...prevMessages, { ...message, received: true }];
+    if (selectedCategory === '이전 문의 내역') {
+      const userId = 1; // 실제 사용자 ID로 변경 필요
+      try {
+        const response = await fetch(`http://localhost:8080/api/chat/chat-room-list/${userId}`);
+        const chatRooms = await response.json();
+        setChatRooms(chatRooms);
+        setShowSetup(false);
+        setChatRoomId(null);
+        setSelectedRoomId(null);
+        setMessages([]);
+        
+        if (chatRooms.length === 0) {
+          setShowNoHistoryMessage(true);
+        } else {
+          setShowNoHistoryMessage(false);
+        }
+      } catch (error) {
+        console.error('Error fetching chat room list:', error);
       }
-  
-      return prevMessages;
+    } else {
+      try {
+        const response = await fetch('http://localhost:8080/api/chat/chat-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ category: selectedCategory }),
+        });
+        if (!response.ok) throw new Error('Failed to create chat room');
+        const data = await response.json();
+        setChatRoomId(data.id);
+        setSelectedRoomId(data.id);
+        setMessages([]);
+        setShowSetup(false);
+        navigate(`/chat?chatRoomId=${data.id}`);
+      } catch (error) {
+        console.error('Error creating chat room:', error);
+      }
+    }
+  };
+
+  const handleMessageReceived = useCallback((message) => {
+    console.log('Received message in ChatPage:', message);
+    setMessages((prevMessages) => {
+      // 임시 메시지 찾기
+      const tempIndex = prevMessages.findIndex(msg => 
+        msg.isTemp && msg.text === message.message
+      );
+      
+      if (tempIndex !== -1) {
+        // 임시 메시지를 서버 응답으로 업데이트
+        const updatedMessages = [...prevMessages];
+        updatedMessages[tempIndex] = {
+          ...message,
+          id: message.id,
+          text: message.message,
+          sent: true,
+          received: false,
+          isTemp: false
+        };
+        return updatedMessages;
+      } else {
+        // 새로운 메시지 추가 (서버에서 시작된 메시지의 경우)
+        return [...prevMessages, {
+          id: message.id,
+          text: message.message,
+          sent: false,
+          received: true,
+          fromServer: true
+        }];
+      }
     });
   }, []);
 
-  const { sendMessage } = useWebSocket(chatRoomId, handleMessageReceived);
+  const handleMessageUpdated = useCallback((updatedMessage) => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) =>
+        msg.id === updatedMessage.id ? { ...msg, text: updatedMessage.message } : msg
+      )
+    );
+  }, []);
+
+  const handleMessageDeleted = useCallback((deletedMessageId) => {
+    setMessages((prevMessages) => prevMessages.filter(msg => msg.id !== deletedMessageId));
+  }, []);
+
+  const { sendMessage, updateMessage, deleteMessage } = useWebSocket(
+    chatRoomId,
+    handleMessageReceived, 
+    handleMessageUpdated, 
+    handleMessageDeleted  
+  );
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -49,13 +138,36 @@ const ChatPage = () => {
     }
   }, [location]);
 
+  useEffect(() => {
+    console.log('Messages:', messages); // messages 배열 확인
+  }, [messages]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+        setShowContextMenu(false);
+      }
+    };
 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleRoomSelect = async (roomId) => {
+    setSelectedRoomId(roomId);
+    setChatRoomId(roomId);
+    setCategory('선택된 이전 문의');
+    await loadChatMessages(roomId);
+  };
+  
   const loadChatMessages = async (roomId) => {
     try {
       const response = await fetch(`http://localhost:8080/api/chat/chat-message-history/${roomId}`);
       if (!response.ok) throw new Error('Failed to load chat messages');
       const chatMessages = await response.json();
+      console.log('Loaded messages:', chatMessages);
       setMessages(chatMessages);
       if (chatBodyRef.current) {
         chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
@@ -65,77 +177,34 @@ const ChatPage = () => {
     }
   };
 
-  const handleCreateRoom = async () => {
-    console.log('Selected category:', category); // 현재 선택된 카테고리 로그
-    if (category === '이전 문의 내역') {
-      const userId = 1; // 실제 사용자 ID로 변경 필요
-      try {
-        const response = await fetch(`http://localhost:8080/api/chat/chat-room-list/${userId}`);
-        const chatRooms = await response.json();
-        setChatRooms(chatRooms);
-        setShowSetup(false);
-        
-        if (chatRooms.length === 0) {
-          setShowNoHistoryMessage(true); // 메시지 표시
-        } else {
-          setShowNoHistoryMessage(false); // 메시지 숨김
-      // 메시지 로드 로직
-    }
-      } catch (error) {
-        console.error('Error fetching chat room list:', error);
-      }
-    } else if (category) {
-      try {
-        const response = await fetch('http://localhost:8080/api/chat/chat-room', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ category }),
-        });
-        if (!response.ok) throw new Error('Failed to create chat room');
-        const data = await response.json();
-        setChatRoomId(data.id);
-        setMessages([]); // 빈 메시지 배열 설정
-        setShowSetup(false);
-        navigate(`/chat?chatRoomId=${data.id}`);
-      } catch (error) {
-        console.error('Error creating chat room:', error);
-      }
-    } else {
-      alert("카테고리를 선택해주세요.");
+  const handleSendMessage = () => {
+    const newMessage = messageInput.trim();
+    if (newMessage !== "") {
+      const tempMessage = {
+        id: `temp-${Date.now()}`,
+        text: newMessage,
+        sent: true,
+        received: false,
+        isTemp: true
+      };
+      
+      // 임시 메시지를 messages 상태에 즉시 추가
+      setMessages(prevMessages => [...prevMessages, tempMessage]);
+      
+      // WebSocket을 통해 메시지 전송
+      sendMessage({
+        chatRoomId: chatRoomId,
+        message: newMessage,
+      });
+      
+      setMessageInput("");
     }
   };
-  
-
-  
-  const handleSendMessage = (message) => {
-    if (message.trim() && chatRoomId) {
-      const newMessage = { id: Date.now(), text: message.trim(), sent: true };
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      sendMessage(message.trim());
-      setInputValue('');
-  
-      if (chatBodyRef.current) {
-        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-      }
-    }
-  };
-  
 
   const handleEditMessage = async (newMessage) => {
     if (selectedMessageId && newMessage.trim()) {
       try {
-        const response = await fetch(`http://localhost:8080/api/chat/message/${selectedMessageId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'text/plain' },
-          body: newMessage,
-        });
-        if (!response.ok) throw new Error('Failed to edit message');
-        const updatedMessage = await response.json();
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.id === selectedMessageId ? { ...msg, text: updatedMessage.message } : msg
-          )
-        );
+        await updateMessage(selectedMessageId, newMessage);
         setShowContextMenu(false);
       } catch (error) {
         console.error('Error editing message:', error);
@@ -146,11 +215,7 @@ const ChatPage = () => {
   const handleDeleteMessage = async () => {
     if (selectedMessageId) {
       try {
-        const response = await fetch(`http://localhost:8080/api/chat/message/${selectedMessageId}`, {
-          method: 'DELETE',
-        });
-        if (!response.ok) throw new Error('Failed to delete message');
-        setMessages((prevMessages) => prevMessages.filter((msg) => msg.id !== selectedMessageId));
+        await deleteMessage(selectedMessageId);
         setShowContextMenu(false);
       } catch (error) {
         console.error('Error deleting message:', error);
@@ -160,61 +225,70 @@ const ChatPage = () => {
 
   const handleContextMenu = (e, messageId) => {
     e.preventDefault();
-    console.log("context menu triggered for message Id : ", messageId);
-    setSelectedMessageId(messageId);
-    setContextMenuPosition({ x: e.clientX, y: e.clientY });
-    setShowContextMenu(true);
+    const message = messages.find(msg => msg.id === messageId);
+    if (message && message.sent) {
+      console.log("Context menu triggered for message ID:", messageId);
+      setSelectedMessageId(messageId);
+      setContextMenuPosition({ x: e.clientX, y: e.clientY });
+      setShowContextMenu(true);
+    }
   };
 
   return (
-    <div>
+    <div className='chat-page-container'>
       {showSetup ? (
         <div className="chat-setup">
-          <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            <option value="">카테고리 선택</option>
-            <option value="주문/환불 문의">주문/환불 문의</option>
-            <option value="배송 문의">배송 문의</option>
-            <option value="파손 문의">파손 문의</option>
-            <option value="기타 문의">기타 문의</option>
-            <option value="이전 문의 내역">이전 문의 내역</option>
-          </select>
-          <button onClick={handleCreateRoom}>문의 하기</button>
+          <h2>문의 카테고리를 선택해주세요</h2>
+          <div className="chat-category-buttons">
+            {categories.map((cat, index) => (
+              <button
+                key={index}
+                onClick={() => handleCategorySelect(cat)}
+                className="chat-category-button"
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="chat-container">
-          <div className="header">편집에 문의하기</div>
-          <div className="chat-body" ref={chatBodyRef}>
-            <ChatRoomList 
-              chatRooms={chatRooms} 
-              onRoomSelect={(id) => {
-                setChatRoomId(id);
-                loadChatMessages(id); // 선택한 방의 메시지 로드
-              }} 
-            />
-            {messages.map((msg) => (
-              <ChatMessage
-                key={msg.id}
-                message={msg}
-                onContextMenu={handleContextMenu}
+          <div className="chat-header">편집에 문의하기</div>
+            <div className="chat-body" ref={chatBodyRef}>
+              {category === '이전 문의 내역' ? (
+                <ChatRoomList 
+                  chatRooms={chatRooms} 
+                  onRoomSelect={handleRoomSelect}
+                  showNoHistoryMessage={showNoHistoryMessage}
+                />
+              ) : (
+                messages.map((msg, index) => (
+                  <ChatMessage
+                    key={msg.id || index}
+                    message={msg}
+                    onContextMenu={handleContextMenu}
+                  />
+                ))
+              )}
+            </div>
+          {category !== '이전 문의 내역' && category !== '선택된 이전 문의' && (
+            <div className="chat-input-container">
+              <input
+                type="text"
+                placeholder="메시지를 입력하세요..."
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
               />
-            ))}
-          </div>
-          <div className="input-container">
-          <input
-            type="text"
-            placeholder="메시지를 입력하세요..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-            />
-            <button onClick={() => handleSendMessage(inputValue)}>전송</button>
-          </div>
+              <button onClick={handleSendMessage}>전송</button>
+            </div>
+          )}
           {showContextMenu && (
             <div
               ref={contextMenuRef}
               className="context-menu"
               style={{
-                position: 'absolute',
+                position: 'fixed',
                 top: `${contextMenuPosition.y}px`,
                 left: `${contextMenuPosition.x}px`,
                 background: 'white',
