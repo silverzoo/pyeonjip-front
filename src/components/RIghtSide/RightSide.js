@@ -25,6 +25,10 @@ const SidePanelApp = () => {
         navigate('/login');
     };
 
+    const goToMyPage = () => {
+        navigate('/mypage')
+    }
+
     // 최초화면 로드 세팅
     useEffect(() => {
         // 로그인
@@ -152,6 +156,12 @@ const SidePanelApp = () => {
             style={{cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold'}}
             onClick={goToLoginPage}>
             로그인
+        </span>
+        <span
+            className="text-dark"
+            style={{cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold'}}
+            onClick={goToMyPage}>
+            마이페이지
         </span>
 
                 {location.pathname !== '/cart' && (
