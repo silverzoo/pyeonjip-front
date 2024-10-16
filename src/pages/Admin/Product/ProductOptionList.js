@@ -1,7 +1,7 @@
 import React from 'react';
-import OptionItem from './OptionItem';
+import OptionItem from './ProductOptionItem';
 
-function OptionList({ options, selectedOptions, handleCheckboxChange, handleBulkDelete }) {
+function ProductOptionList({ options, selectedOptions, handleCheckboxChange, handleBulkDelete }) {
     return (
         <div className="option-list">
             <h2 className="mb-4">옵션 목록</h2>
@@ -32,4 +32,4 @@ function OptionList({ options, selectedOptions, handleCheckboxChange, handleBulk
     );
 }
 
-export default OptionList;
+export default ProductOptionList;

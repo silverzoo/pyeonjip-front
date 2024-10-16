@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ProductAdmin.css';
 
-function OptionEdit() {
+function ProductOptionEdit() {
     const { detailId } = useParams(); // URL에서 detailId(옵션 ID) 가져옴
     const navigate = useNavigate();
     const [option, setOption] = useState({
@@ -80,4 +80,4 @@ function OptionEdit() {
     );
 }
 
-export default OptionEdit;
+export default ProductOptionEdit;

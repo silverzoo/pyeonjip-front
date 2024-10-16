@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function OptionItem({ option, isSelected, handleCheckboxChange }) {
+function ProductOptionItem({ option, isSelected, handleCheckboxChange }) {
     return (
         <li className="list-group-item mb-3 shadow-sm p-3">
             <div className="d-flex justify-content-between align-items-center">
@@ -19,4 +19,4 @@ function OptionItem({ option, isSelected, handleCheckboxChange }) {
     );
 }
 
-export default OptionItem;
+export default ProductOptionItem;
