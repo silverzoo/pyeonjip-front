@@ -90,7 +90,7 @@ function Login() {
                         <div className="user-link">
                             <a href="/find">계정 찾기</a>
                             <a href="/reset-password">비밀번호 재설정</a>
-                            <a href="/User/SignUp">회원가입</a>
+                            <a href="/signup">회원가입</a>
                         </div>
                         <div>
                             <button type="submit" className="btn-sm user-btn">로그인</button>
