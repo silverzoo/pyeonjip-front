@@ -34,7 +34,7 @@ function SandboxApp() {
         }
         else {
             // 첫 번째 API 호출: 카테고리 ID에 따른 leaf 카테고리 가져오기
-            fetch(`http://localhost:8080/api/category/${categoryId}/leaf`)
+            fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`)
                 .then(response => response.json())
                 .then(categoryIds => {
                     console.log('Leaf 카테고리 불러오기 완료:', categoryIds);
