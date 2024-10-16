@@ -30,14 +30,14 @@ function SignUp() {
         });
 
         if (response.ok) {
-            navigate('/');
+            navigate('/signup/result', { state: { name, email } });
         } else {
             setErrorMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
         }
     };
 
     const handleBack = () => {
-        navigate(-1); // 이전 페이지로 이동
+        navigate(-1);
     };
 
     return (

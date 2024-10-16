@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './User.css';
 
-function SignUpSuccess() {
+function SignUpResult() {
     const location = useLocation();
     const { name, email } = location.state || {};
 
@@ -32,4 +32,4 @@ function SignUpSuccess() {
     );
 }
 
-export default SignUpSuccess;
+export default SignUpResult;
