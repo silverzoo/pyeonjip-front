@@ -32,6 +32,7 @@ const LeftSide = () => {
             CATEGORY: false,
             ORDER: false,
             PRODUCT: false,
+            COUPON: false
         };
 
         if (path.startsWith('/admin')) {
@@ -44,6 +45,9 @@ const LeftSide = () => {
             }
             if (path.startsWith('/admin/category')) {
                 newState.CATEGORY = true;
+            }
+            if (path.startsWith('/admin/coupon')) {
+                newState.COUPON = true;
             }
         }
 
@@ -95,6 +99,13 @@ const LeftSide = () => {
                                 to="/admin/category"
                                 isExpanded={expandedMenus.CATEGORY}
                                 onToggle={() => handleTapToggle('CATEGORY')}
+                                hasChildren={true}
+                            />
+                            <ToggleIcon
+                                label="COUPON"
+                                to="/admin/coupon"
+                                isExpanded={expandedMenus.COUPON}
+                                onToggle={() => handleTapToggle('COUPON')}
                                 hasChildren={true}
                             />
                         </>
