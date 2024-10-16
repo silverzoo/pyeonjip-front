@@ -5,7 +5,21 @@ import './Home.css';
 const CategoryList = () => {
     useEffect(() => {
         initMDB({ Carousel }); // 컴포넌트 마운트 시 초기화
-    }, []);
+
+        // 모든 카테고리 카드에 대해 show 클래스를 추가하는 함수
+        const addShowClassToCards = () => {
+            const categoryCards = document.querySelectorAll('.hvlo-category-card');
+            categoryCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('show'); // show 클래스를 추가하여 애니메이션 적용
+                }, (index + 1.5) * 400); // 인덱스에 따라 딜레이 설정 (200ms)
+            });
+        };
+
+        addShowClassToCards(); // 카드에 클래스를 추가하는 함수 호출
+    }, []); // 의존성 배열이 빈 배열로 설정되어 있어, 컴포넌트가 처음 렌더링될 때만 실행됩니다.
+
+
 
 
     const categories = [
@@ -164,7 +178,7 @@ const CategoryList = () => {
                     <a
                         key={index}
                         href={category.link}
-                        className="card border-0 mb-3 position-relative category-card"
+                        className=" border-0 mb-3 position-relative hvlo-category-card"
                         style={{ width: '18rem', textDecoration: 'none' }}
                     >
                         <img
@@ -184,7 +198,6 @@ const CategoryList = () => {
                     </a>
                 ))}
             </div>
-
             {/* 카테고리 설명 */}
             <div className="text-center mt-4">
                 <p>다양한 신제품들로 아늑하고 편안한 공간을 연출해 보세요.</p>

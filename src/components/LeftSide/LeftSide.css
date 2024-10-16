@@ -10,24 +10,28 @@
 /*    overflow-y: auto;*/
 /*}*/
 
-.logo {
+.left-side-logo {
     margin-top: 30px;
     margin-bottom: 30px;
-    padding-left: 46px;
+    padding-left: 30px;
 }
 
-.container {
+.left-side-container {
     margin: 0;
     padding: 0;
     overflow: hidden;
     transition: height 0.3s ease;
 }
 
-.container li {
+.left-side-container li {
     margin-bottom: 7px;
     font-size: 14px;
     position: relative;
     cursor: pointer;
+}
+
+.left-side-container ul {
+    /*margin-left: 10px;*/
 }
 
 .tapMark {

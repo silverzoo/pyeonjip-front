@@ -68,8 +68,8 @@ const LeftSide = () => {
     };
 
     return (
-        <div className='container'>
-            <div className="logo">
+        <div className='left-side-container'>
+            <div className="left-side-logo">
                 <Link to="/"><img src={logo} alt="logo" width="86" /></Link>
             </div>
             <div className="menu">
@@ -81,18 +81,21 @@ const LeftSide = () => {
                                 to="/admin/order"
                                 isExpanded={expandedMenus.ORDER}
                                 onToggle={() => handleTapToggle('ORDER')}
+                                hasChildren={true}
                             />
                             <ToggleIcon
                                 label="PRODUCT"
                                 to="/admin/product"
                                 isExpanded={expandedMenus.PRODUCT}
                                 onToggle={() => handleTapToggle('PRODUCT')}
+                                hasChildren={true}
                             />
                             <ToggleIcon
                                 label="CATEGORY"
                                 to="/admin/category"
                                 isExpanded={expandedMenus.CATEGORY}
                                 onToggle={() => handleTapToggle('CATEGORY')}
+                                hasChildren={true}
                             />
                         </>
                     ) : (
@@ -102,6 +105,7 @@ const LeftSide = () => {
                                 to="/category"
                                 isExpanded={expandedMenus.SHOP}
                                 onToggle={() => handleTapToggle('SHOP')}
+                                hasChildren={true}
                             />
                             {expandedMenus.SHOP && <Category categories={categories} />}
                             <ToggleIcon
@@ -109,6 +113,7 @@ const LeftSide = () => {
                                 to="/admin/order"
                                 isExpanded={expandedMenus.ADMIN}
                                 onToggle={() => handleTapToggle('ADMIN')}
+                                hasChildren={true}
                             />
                         </>
                     )}
