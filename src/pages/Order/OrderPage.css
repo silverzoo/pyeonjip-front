@@ -8,6 +8,16 @@
   margin: 0;
 }
 
+.section-title {
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 .order-content {
   width: 100%;
   max-width: 1200px;
@@ -90,6 +100,17 @@
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
   margin-bottom: 20px;
+}
+
+/* 상품목록, 회원 등급, 결제 금액에 같은 스타일 적용 */
+.product-list h6,
+.membership h6,
+.order-summary-left h6 {
+    width: 100%; /* 모든 섹션의 너비를 동일하게 설정 */
+    font-size: 1.2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .order-summary {

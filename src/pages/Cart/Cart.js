@@ -11,6 +11,7 @@ import {
 } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import {isLoggedIn} from "../../utils/authUtils";
 
 const ANIMATION_DURATION = 400;
 
@@ -26,13 +27,19 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [isLogin, setIsLogin] = useState(false); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
     const [showModal, setShowModal] = useState(false);
 
 
+
     // 최초화면 로드 세팅
     useEffect(() => {
+        setIsLogin(!!isLoggedIn());
+    }, []);
+
+    useEffect(() => {
+        console.log(`(cart) ${isLogin ? '로그인' : '비로그인'}`);
         // 로그인
         if (isLogin) {
             const userId = testUserId;
@@ -65,7 +72,7 @@ function CartApp() {
                 console.log(coupons);
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []);
+    }, [isLogin]);
 
     useEffect(() => {
         if (items.length > 0) {
@@ -236,15 +243,14 @@ function CartApp() {
                 productName: item.name,
                 productDetailId: item.optionId,
                 quantity: item.quantity,
-                productPrice: item.price
+                productPrice: item.price,
+                productImage: item.url,
             })),
-            totalPrice: totalPrice,                   // 단순계산 총 금액
-            disCountedTotalPrice: previousTotal,      // 할인 적용 총 금액 (최종금액)
-            couponDiscountRate: isCouponApplied ? couponDiscount : 0, // 할인률
+            cartTotalPrice: totalPrice,
         };
         console.log(checkoutData);
         // TODO : 데이터 받는 Controller API URL 알맞게 수정
-        const response = await fetch('http://localhost:8080/checkout', {
+        const response = await fetch('http://localhost:8080/api/orders/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
