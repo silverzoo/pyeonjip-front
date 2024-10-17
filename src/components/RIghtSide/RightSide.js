@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
 
 const ANIMATION_DURATION = 400;
+const BUTTON_WHITELIST = ['/login', '/chat', '/order'];
 
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
@@ -18,47 +19,8 @@ const SidePanelApp = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const goToCartPage = () => {
-        toggleCart();
-        navigate('/cart');
-    };
-
-    const goToLoginPage = () => {
-        navigate('/login');
-    };
-
-    // 마이페이지 이동하는 버튼
-    const goToMyPage = () => {
-        navigate('/mypage');
-    };
-
-    // 로그아웃 핸들러
-    const handleLogout = async () => {
-        try {
-            const response = await fetch('http://localhost:8080/logout', {
-                method: 'POST',
-                credentials: 'include',
-            });
-            if (response.ok) {
-                localStorage.removeItem('access');
-                setIsLogin(false);
-                navigate('/');
-            }
-        } catch (error) {
-            console.error('로그아웃 중 오류 발생:', error);
-        }
-    };
-
     useEffect(() => {
         setIsLogin(!!isLoggedIn());
-    }, []);
-
-    // 컴포넌트가 마운트될 때 로그인 상태 확인
-    useEffect(() => {
-        const accessToken = localStorage.getItem('access');
-        if (accessToken) {
-            setIsLogin(true); // Access 토큰이 존재하면 로그인 상태로 변경
-        }
     }, []);
 
     // 최초화면 로드 세팅
@@ -87,12 +49,29 @@ const SidePanelApp = () => {
                     updateTotalPrice(items);
                 });
         }
-    }, [isCartOpen, isLogin]); /* 추가 */
+    }, [isCartOpen, isLogin]);
 
     // items가 업데이트될 때마다 totalPrice 업데이트
     useEffect(() => {
         updateTotalPrice(items);
     }, [items]);
+
+    // 로그아웃 핸들러
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/logout', {
+                method: 'POST',
+                credentials: 'include',
+            });
+            if (response.ok) {
+                localStorage.removeItem('access');
+                setIsLogin(false);
+                navigate('/');
+            }
+        } catch (error) {
+            console.error('로그아웃 중 오류 발생:', error);
+        }
+    };
 
     const updateTotalPrice = (items) => {
         let total = 0;
@@ -162,8 +141,25 @@ const SidePanelApp = () => {
         }
     };
 
+    const goToCartPage = () => {
+        toggleCart();
+        navigate('/cart');
+    };
+
+    const goToLoginPage = () => {
+        navigate('/login');
+    };
+
+    // 마이페이지 이동하는 버튼
+    const goToMyPage = () => {
+        navigate('/mypage');
+    };
+
+    const isButtonVisible = !BUTTON_WHITELIST.includes(location.pathname);
+
     return (
         <div className="App">
+            {isButtonVisible && (
             <div style={{
                 position: 'fixed',
                 right: '30px',
@@ -172,7 +168,7 @@ const SidePanelApp = () => {
                 flexDirection: 'column',
                 gap: '10px'
             }}>
-                {isLogin ? ( /* 추가 */
+                {isLogin ? (
                     <>
                         <span
                             className="text-dark"
@@ -187,7 +183,7 @@ const SidePanelApp = () => {
                             로그아웃
                         </span>
                     </>
-                ) : ( /* 추가 */
+                ) : (
                     <span
                         className="text-dark"
                         style={{ cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold' }}
@@ -204,7 +200,7 @@ const SidePanelApp = () => {
                         장바구니
                      </span>)}
             </div>
-
+                )}
             <div
                 className={`offcanvas offcanvas-end ${isCartOpen ? 'show' : ''}`}
                 tabIndex="-1"
