@@ -27,7 +27,7 @@ function CartApp() {
     const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true); // 더미데이터
+    const [isLogin, setIsLogin] = useState(false); // 더미데이터
     const [testUserId, setTestUserId] = useState(1); // 더미데이터
     const [showModal, setShowModal] = useState(false);
 
@@ -72,7 +72,7 @@ function CartApp() {
                 console.log(coupons);
             })
             .catch(error => console.error('Error fetching data:', error));
-    }, []);
+    }, [isLogin]);
 
     useEffect(() => {
         if (items.length > 0) {
