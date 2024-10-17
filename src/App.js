@@ -4,23 +4,27 @@ import AppRouter from './pages/router/Router';
 import Footer from './components/Footer/Footer';
 import LeftSide from './components/LeftSide/LeftSide';
 import RightSide from './components/RIghtSide/RightSide'
+import HiddenUtils from "./utils/HiddenUtils";
 
 function App() {
-  return (
-      <div className="app">
-        <div className='leftSide'>
-          <LeftSide />
+
+    return (
+        <div className="app">
+            <div className='leftSide'>
+                <HiddenUtils whitelist={['/chat']}>
+                    <LeftSide/>
+                </HiddenUtils>
+            </div>
+            <div className='rightSide'>
+                <RightSide/>
+            </div>
+            <div className='content'>
+                <AppRouter/>
+            </div>
+            <div className='footer'>
+                <Footer/>
+            </div>
         </div>
-        <div className='rightSide'>
-            <RightSide />
-        </div>
-        <div className='content'>
-          <AppRouter />
-        </div>
-        <div className='footer'>
-          <Footer />
-        </div>
-      </div>
-  );
+    );
 }
 export default App;
