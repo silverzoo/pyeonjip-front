@@ -21,7 +21,7 @@ const SidePanelApp = () => {
 
     useEffect(() => {
         setIsLogin(!!isLoggedIn());
-    }, []);
+    }, [location.pathname]);
 
     // 최초화면 로드 세팅
     useEffect(() => {
