@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import {isLoggedIn} from "../../utils/authUtils";
 import { fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
@@ -48,6 +49,10 @@ const SidePanelApp = () => {
         }
     };
 
+    useEffect(() => {
+        setIsLogin(!!isLoggedIn());
+    }, []);
+
     // 컴포넌트가 마운트될 때 로그인 상태 확인
     useEffect(() => {
         const accessToken = localStorage.getItem('access');
@@ -58,6 +63,8 @@ const SidePanelApp = () => {
 
     // 최초화면 로드 세팅
     useEffect(() => {
+        console.log(`(side) ${isLoggedIn() ? '로그인' : '비로그인'}`);
+
         if (isLogin) {
             const userId = testUserId;
             fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`)
@@ -70,7 +77,7 @@ const SidePanelApp = () => {
         } else {
             const localCart = JSON.parse(localStorage.getItem('cart')) || [];
             if (localCart.length === 0) {
-                console.log("장바구니가 비어 있습니다.");
+                console.log("(side) 장바구니가 비어 있습니다.");
                 return;
             }
             fetchCartDetails(localCart)
