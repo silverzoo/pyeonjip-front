@@ -4,9 +4,11 @@ import logo from '../../logo.svg';
 import './LeftSide.css';
 import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
-import AdminMenu from "./Tab/AdminMenu";
+import Admin from "./Tab/Admin";
+import {useAuth} from "../../context/AuthContext";
 
 const LeftSide = () => {
+    const { isAdmin } = useAuth();
     const location = useLocation();
     const [categories, setCategories] = useState([]);
     const [expandedMenus, setExpandedMenus] = useState({
@@ -51,7 +53,7 @@ const LeftSide = () => {
     return (
         <div className='left-side-container'>
             <div className="left-side-logo">
-                <Link to="/"><img src={logo} alt="logo" width="86"/></Link>
+                <Link to="/"><img src={logo} alt="logo" width="88"/></Link>
             </div>
             <div className="menu">
                 <ul>
@@ -63,14 +65,17 @@ const LeftSide = () => {
                         hasChildren={true}
                     />
                     {expandedMenus.SHOP && <Category categories={categories}/>}
-                    <ToggleIcon
-                        label="ADMIN"
-                        to="/admin"
-                        isExpanded={expandedMenus.ADMIN}
-                        onToggle={() => handleTapToggle('ADMIN')}
-                        hasChildren={true}
-                    />
-                    {expandedMenus.ADMIN && <AdminMenu/>}
+                    <li style={{height: '5px'}}/>
+                    {isAdmin && (
+                        <ToggleIcon
+                            label="ADMIN"
+                            to="/admin"
+                            isExpanded={expandedMenus.ADMIN}
+                            onToggle={() => handleTapToggle('ADMIN')}
+                            hasChildren={true}
+                        />
+                    )}
+                    {expandedMenus.ADMIN && <Admin/>}
                 </ul>
             </div>
         </div>
