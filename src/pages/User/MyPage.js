@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-// import jwtDecode from 'jwt-decode'; // 현재는 사용하지 않는 import문
-import { jwtDecode } from 'jwt-decode';
 import { useNavigate } from 'react-router-dom';
+import { fetchWithAuth, getUserEmail, isLoggedIn } from '../../utils/authUtils'; // 유틸 함수 import
 
 function MyPage() {
     const [user, setUser] = useState(null);
@@ -9,58 +8,41 @@ function MyPage() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // 로컬 스토리지에서 토큰을 꺼내서, 마이페이지를 조회할 email 추출하는 과정
-    const getEmailFromToken = () => {
-        try {
-            const token = localStorage.getItem('access');
-            if (token) {
-                // JWT 가져오기
-                const decodedToken = jwtDecode(token);
-                // JWT에서 email 추출
-                return decodedToken.email;
-            } else {
-                throw new Error('토큰이 없습니다.');
-            }
-        } catch (error) {
-            console.error('토큰 디코딩 오류:', error);
-            setErrorMessage('로그인이 필요합니다.');
-            navigate('/login');
-            return null;
-        }
-    };
-
+    // 유저 정보를 가져오는 함수
     const fetchUser = async (email) => {
         try {
-            const response = await fetch(`http://localhost:8080/api/user/mypage?email=${email}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('access')}`,
-                },
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                setUser(data);
-            } else if (response.status === 403 || response.status === 401) {
+            // Util의 fetchWithAuth를 사용해서 API를 요청
+            const data = await fetchWithAuth(`http://localhost:8080/api/user/mypage?email=${email}`);
+            setUser(data);
+        } catch (error) {
+            if (error.message === '토큰이 유효하지 않습니다. 로그인이 필요합니다.') {
                 setErrorMessage('로그인이 필요합니다.');
                 navigate('/login');
             } else {
                 setErrorMessage('유저 정보를 불러오는 데 실패했습니다.');
             }
-        } catch (error) {
-            setErrorMessage('서버와 통신하는 데 문제가 발생했습니다.');
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        const email = getEmailFromToken();
+        // 1. 로그인 상태 확인
+        if (!isLoggedIn()) {
+            setErrorMessage('로그인이 필요합니다.');
+            navigate('/login');
+            return;
+        }
+
+        // 2. 이메일 추출
+        const email = getUserEmail();
         if (email) {
             fetchUser(email);
+        } else {
+            setErrorMessage('유저 정보를 불러오는 데 실패했습니다.');
+            setLoading(false);
         }
-    }, []);
+    }, [navigate]);
 
     return (
         <div className="user-container h-100 d-flex justify-content-center align-items-center">
