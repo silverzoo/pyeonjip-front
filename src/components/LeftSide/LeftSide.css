@@ -11,16 +11,20 @@
     transition: height 0.3s ease;
 }
 
-.left-side-container li {
-    margin-bottom: 7px;
+.left-side-container {
     font-size: 14px;
     position: relative;
     cursor: pointer;
 }
 
-.left-side-container ul {
-    /*margin-left: 10px;*/
+.left-side-menu {
+    margin-left: 33px;
 }
+
+.left-side-menu div {
+    margin-bottom: 3px;
+}
+
 
 .tapMark {
     font-size: 70%;

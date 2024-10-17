@@ -3,21 +3,22 @@ import { NavLink } from 'react-router-dom';
 function ToggleIcon({ label, to, isExpanded, onToggle, isSelected, hasChildren }) {
 
     return (
-        <li onClick={onToggle}>
+        <div onClick={onToggle}>
             <NavLink
                 to={to}
                 style={({ isActive }) => ({
                     fontWeight: isActive ? 'bold' : 'normal',
+                    textDecoration: 'none',
                 })}
             >
                 {hasChildren ? (
-                    isExpanded ? <span className='tapMark'>-</span> : <span className='tapMark'>+</span>
+                    <span className='tapMark'>{isExpanded ? '-' : '+'}</span>
                 ) : (
                     <span className='tapMark'>&nbsp;&nbsp;</span>
                 )}
                 &nbsp;&nbsp;{label}
             </NavLink>
-        </li>
+        </div>
     );
 }
 

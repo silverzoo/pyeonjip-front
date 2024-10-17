@@ -17,7 +17,7 @@ function Admin() {
     };
 
     return (
-        <ul style={{paddingLeft: 0}}>
+        <>
             <ToggleIcon
                 label="ORDER"
                 to="/admin/order"
@@ -46,7 +46,7 @@ function Admin() {
                 onToggle={() => handleToggle('COUPON')}
                 hasChildren={false}
             />
-        </ul>
+        </>
     );
 }
 
