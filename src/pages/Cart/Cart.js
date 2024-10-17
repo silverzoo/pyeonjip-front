@@ -11,6 +11,7 @@ import {
 } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import {isLoggedIn} from "../../utils/authUtils";
 
 const ANIMATION_DURATION = 400;
 
@@ -31,8 +32,14 @@ function CartApp() {
     const [showModal, setShowModal] = useState(false);
 
 
+
     // 최초화면 로드 세팅
     useEffect(() => {
+        setIsLogin(!!isLoggedIn());
+    }, []);
+
+    useEffect(() => {
+        console.log(`(cart) ${isLogin ? '로그인' : '비로그인'}`);
         // 로그인
         if (isLogin) {
             const userId = testUserId;

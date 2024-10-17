@@ -6,6 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
+import {isLoggedIn} from "../../utils/authUtils";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -25,6 +26,8 @@ function SandboxApp() {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setIsLogin(!!isLoggedIn());
+            console.log(`(product) ${isLoggedIn() ? '로그인' : '비로그인'}`);
             try {
                 if (!categoryId) {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);

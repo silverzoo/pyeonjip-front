@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Collapse, initMDB } from 'mdb-ui-kit';
+import {isLoggedIn} from "../../utils/authUtils";
 import { useLocation } from 'react-router-dom';
 import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -16,7 +17,7 @@ function ProductDetail() {
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
-    const [isLogin, setIsLogin] = useState(true); // 더미 데이터
+    const [isLogin, setIsLogin] = useState(false); // 더미 데이터
     const [testUserId, setTestUserId] = useState(1); // 더미 데이터
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
@@ -36,11 +37,17 @@ function ProductDetail() {
     });
 
     useEffect(() => {
+        setIsLogin(!!isLoggedIn());
+    }, []);
+
+    useEffect(() => {
         initMDB({ Collapse }); // 아코디언 초기화
     }, []);
 
-    // Fetch product details by productId and optionId
+
     useEffect(() => {
+        console.log(`(detail) ${isLoggedIn() ? '로그인' : '비로그인'}`);
+
         fetch(`http://localhost:8080/api/products/${productId}`)
             .then((response) => response.json())
             .then((data) => {

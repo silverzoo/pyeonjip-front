@@ -45,7 +45,12 @@ function Login() {
             const accessToken = response.headers.get('access');
             if (accessToken) {
                 localStorage.setItem('access', accessToken); // access 토큰 로컬 스토리지에 저장
-                navigate('/');
+                navigate(-1);
+
+
+
+
+
             } else {
                 setErrorMessage('Access 토큰을 가져오지 못했습니다.');
             }
