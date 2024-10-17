@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import {syncWithLocal} from "../../utils/cartUtils";
+import {getUserEmail} from "../../utils/authUtils";
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -46,10 +47,11 @@ function Login() {
             const accessToken = response.headers.get('access');
             if (accessToken) {
                 localStorage.setItem('access', accessToken); // access 토큰 로컬 스토리지에 저장
-
                 // 로그인 성공 시 서버 Cart 동기화 및 로컬스토리지 초기화
-                syncWithLocal(JSON.parse(localStorage.getItem('cart')), 1); //Todo : userId 수정해야함
+                syncWithLocal();
                 localStorage.removeItem('cart');
+                const event = new Event('authChange');
+                window.dispatchEvent(event);
 
                 //이전페이지로 리다이렉트
                 //Todo : 로그인 창에서 새로고침 할 시 좋지않은 유저경험... 수정필요
@@ -70,7 +72,7 @@ function Login() {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/");
     };
 
     return (

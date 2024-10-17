@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Collapse, initMDB } from 'mdb-ui-kit';
-import {isLoggedIn} from "../../utils/authUtils";
+import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { useLocation } from 'react-router-dom';
 import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -18,7 +18,7 @@ function ProductDetail() {
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
     const [isLogin, setIsLogin] = useState(false); // 더미 데이터
-    const [testUserId, setTestUserId] = useState(1); // 더미 데이터
+    const [email, setEmail] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -37,7 +37,11 @@ function ProductDetail() {
     });
 
     useEffect(() => {
-        setIsLogin(!!isLoggedIn());
+        const loginStatus = isLoggedIn();
+        setIsLogin(loginStatus);
+        if (loginStatus) {
+            setEmail(getUserEmail());
+        }
     }, []);
 
     useEffect(() => {
@@ -76,7 +80,7 @@ function ProductDetail() {
         };
 
         if (isLogin) {
-            addServerCart(cartItem, testUserId);
+            addServerCart(cartItem, email);
         } else {
             addLocalCart(cartItem, selectedOption);
         }

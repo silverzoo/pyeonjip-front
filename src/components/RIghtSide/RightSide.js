@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {isLoggedIn} from "../../utils/authUtils";
+import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
@@ -14,42 +14,52 @@ const SidePanelApp = () => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const [isLogin, setIsLogin] = useState(false); // 로그인 상태 확인 용도
-    const [testUserId, setTestUserId] = useState(1); // 더미데이터
+    const [email, setEmail] = useState('');
 
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
-        setIsLogin(!!isLoggedIn());
+    // 로그인 상태 및 이메일 정보 업데이트 (useCallback 사용)
+    const syncLoginState = useCallback(() => {
+        const loggedIn = isLoggedIn();
+        const userEmail = getUserEmail();
+        setIsLogin(loggedIn);
+        setEmail(userEmail);
+        console.log('(side) isLogin : ', loggedIn, userEmail);
     }, []);
 
-    // 최초화면 로드 세팅
+    // 페이지 이동 시 로그인 및 이메일 상태 동기화
     useEffect(() => {
-        console.log(`(side) ${isLoggedIn() ? '로그인' : '비로그인'}`);
+        syncLoginState();
+    }, [location.pathname, syncLoginState]);
 
-        if (isLogin) {
-            const userId = testUserId;
-            fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`)
-                .then(response => response.json())
-                .then(cartDetailDtos => {
+    useEffect(() => {
+        const loadCartData = async () => {
+            try {
+                if (isLogin) {
+                    console.log('(side) 로그인 상태');
+                    const response = await fetch(`http://localhost:8080/api/cart?email=${email}`);
+                    const cartDetailDtos = await response.json();
                     setItems(cartDetailDtos);
-                    console.log('(side)data from server', cartDetailDtos);
-                })
-                .catch(error => console.error('Error fetching CartDetailDto:', error));
-        } else {
-            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (localCart.length === 0) {
-                console.log("(side) 장바구니가 비어 있습니다.");
-                return;
-            }
-            fetchCartDetails(localCart)
-                .then(localDetails => {
+                    console.log('(side, server) Cart 동기화 완료', cartDetailDtos);
+                } else {
+                    console.log('(side) 비로그인 상태');
+                    const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+                    if (localCart.length === 0) {
+                        console.log('(side, local) 장바구니가 비어 있습니다.');
+                        return;
+                    }
+                    const localDetails = await fetchCartDetails(localCart);
                     setItems(localDetails);
-                    console.log('(side)data from local : ', localDetails);
-                    updateTotalPrice(items);
-                });
-        }
-    }, [isCartOpen, isLogin]);
+                    console.log('(side, local) Cart 불러오기 완료', localDetails);
+                }
+            } catch (error) {
+                console.error('Error fetching cart data:', error);
+            }
+        };
+
+        loadCartData(); // 비동기 함수 호출
+    }, [isLogin, email, isCartOpen]);
 
     // items가 업데이트될 때마다 totalPrice 업데이트
     useEffect(() => {
@@ -65,8 +75,12 @@ const SidePanelApp = () => {
             });
             if (response.ok) {
                 localStorage.removeItem('access');
+                localStorage.removeItem('cart');
+                const event = new Event('authChange');
+                window.dispatchEvent(event);
                 setIsLogin(false);
-                navigate('/');
+                setItems([]);
+                //navigate('/');
             }
         } catch (error) {
             console.error('로그아웃 중 오류 발생:', error);
@@ -102,13 +116,13 @@ const SidePanelApp = () => {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
             };
-            updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
+            updateCartItemQuantity(email, cartItem.optionId, cartItem);
         } else {
             updateLocalStorage(updatedItems);
         }
     };
 
-    const removeItem = (index) => {
+    const handleDeleteItem = (index) => {
         setAnimatedItems((prevAnimatedItems) => [...prevAnimatedItems, index]);
 
         setTimeout(() => {
@@ -121,7 +135,7 @@ const SidePanelApp = () => {
             } else if (isLogin === false) {
                 updateLocalStorage(updatedCartItems);
             } else if (isLogin) {
-                deleteCartItem(testUserId, targetOptionId);
+                deleteCartItem(email, targetOptionId);
             }
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
         }, ANIMATION_DURATION);
@@ -233,12 +247,41 @@ const SidePanelApp = () => {
                                      className={`cart-item mb-3 mx-5 ${animatedItems.includes(index) ? 'removing' : ''}`}>
                                     <div className="d-flex justify-content-between align-items-center">
                                         <img src={item.url} className="img-fluid rounded-2 col-xl-2"
-                                             style={{ width: '100px' }} />
+                                             style={{width: '100px'}}/>
                                         <div className="col-xl-4">
-                                            <h6 className="mb-1" style={{ fontSize: '15px' }}>{item.name}</h6>
+                                            <h6 className="mb-1" style={{fontSize: '15px'}}>{item.name}</h6>
                                             <h6>₩ {item.price.toLocaleString()}</h6>
                                         </div>
-                                        <div />
+                                        <div className="col-md-2 col-lg-1 col-xl-3 d-flex align-items-center">
+                                            <button
+                                                className="quantity-button"
+                                                onClick={() => validateQuantity(index, item.quantity - 1)}
+                                                disabled={item.quantity <= 0} // 최소 수량 1
+                                            >
+                                                -
+                                            </button>
+                                            <input
+                                                type="number"
+                                                className="form-control quantity mx-2 my-1"
+                                                value={item.quantity}
+                                                min="1"
+                                                onChange={(e) => validateQuantity(index, e.target.value)}
+                                            />
+                                            <button
+                                                className="quantity-button"
+                                                onClick={() => validateQuantity(index, item.quantity + 1)}
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                        <div className="col-md-1 col-lg-1 col-xl-1">
+                                            <button className="hvlo-delete-button"
+                                                    onClick={() => handleDeleteItem(index)}>
+                                                <i className="bi bi-trash3"
+                                                   style={{fontSize: '1.2rem'}}></i>
+                                            </button>
+                                        </div>
+                                        <div/>
                                     </div>
                                     <hr/>
                                 </div>
@@ -254,7 +297,7 @@ const SidePanelApp = () => {
                     </div>
                     <div className="d-flex justify-content-center">
                         <button className="btn btn-dark btn-primary btn-lg col-xl-11"
-                                style={{ borderRadius: '10px' }}
+                                style={{borderRadius: '10px'}}
                                 onClick={goToCartPage}>
                             장바구니로 가기
                         </button>
