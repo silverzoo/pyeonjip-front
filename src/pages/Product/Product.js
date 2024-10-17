@@ -7,6 +7,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
+import {useAuth} from "../../context/AuthContext";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -14,8 +15,8 @@ function SandboxApp() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
-    const [isLogin, setIsLogin] = useState(false);
-    const [email, setEmail] = useState('');
+   // const [isLogin, setIsLogin] = useState(false);
+  //  const [email, setEmail] = useState('');
     const { categoryId } = useParams();
     const [animationKey, setAnimationKey] = useState(0);
     const MODAL_DURATION = 1000;
@@ -25,13 +26,7 @@ function SandboxApp() {
     const [loading, setLoading] = useState(false);
 
 
-    useEffect(() => {
-        const loginStatus = isLoggedIn();
-        setIsLogin(loginStatus);
-        if (loginStatus) {
-            setEmail(getUserEmail());
-        }
-    }, []);
+    const { isLogin, email, setIsLogin } = useAuth();
 
     useEffect(() => {
         const fetchProducts = async () => {

@@ -12,6 +12,7 @@ import {
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
+import {useAuth} from "../../context/AuthContext";
 
 const ANIMATION_DURATION = 400;
 
@@ -28,18 +29,19 @@ function CartApp() {
     const [animatedItems, setAnimatedItems] = useState([]);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
-    const [email, setEmail] = useState('');
+   // const [isLogin, setIsLogin] = useState(false);
+   // const [email, setEmail] = useState('');
 
+    const { isLogin, email, setIsLogin } = useAuth();
 
     // 로그인 여부 확인 및 상태 설정
-    useEffect(() => {
-        const loginStatus = isLoggedIn();
-        setIsLogin(loginStatus);
-        if (loginStatus) {
-            setEmail(getUserEmail());
-        }
-    }, []); // 최초 렌더링 시 한 번 실행
+    // useEffect(() => {
+    //     const loginStatus = isLoggedIn();
+    //     setIsLogin(loginStatus);
+    //     if (loginStatus) {
+    //         setEmail(getUserEmail());
+    //     }
+    // }, []); // 최초 렌더링 시 한 번 실행
 
     // 로그인 상태에 따라 장바구니 데이터 로드
     useEffect(() => {

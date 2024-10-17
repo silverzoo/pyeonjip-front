@@ -4,6 +4,7 @@ import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
+import {useAuth} from "../../context/AuthContext";
 
 const ANIMATION_DURATION = 400;
 const BUTTON_WHITELIST = ['/login', '/chat', '/order'];
@@ -13,37 +14,20 @@ const SidePanelApp = () => {
     const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
-    const [isLogin, setIsLogin] = useState(false); // 로그인 상태 확인 용도
-    const [email, setEmail] = useState('');
-
     const navigate = useNavigate();
     const location = useLocation();
 
-    // 로그인 상태 및 이메일 정보 업데이트 (useCallback 사용)
-    const syncLoginState = useCallback(() => {
-        const loggedIn = isLoggedIn();
-        const userEmail = getUserEmail();
-        setIsLogin(loggedIn);
-        setEmail(userEmail);
-        console.log('(side) isLogin : ', loggedIn, userEmail);
-    }, []);
-
-    // 페이지 이동 시 로그인 및 이메일 상태 동기화
-    useEffect(() => {
-        syncLoginState();
-    }, [location.pathname, syncLoginState]);
+    const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
 
     useEffect(() => {
         const loadCartData = async () => {
             try {
                 if (isLogin) {
-                    console.log('(side) 로그인 상태');
                     const response = await fetch(`http://localhost:8080/api/cart?email=${email}`);
                     const cartDetailDtos = await response.json();
                     setItems(cartDetailDtos);
                     console.log('(side, server) Cart 동기화 완료', cartDetailDtos);
                 } else {
-                    console.log('(side) 비로그인 상태');
                     const localCart = JSON.parse(localStorage.getItem('cart')) || [];
                     if (localCart.length === 0) {
                         console.log('(side, local) 장바구니가 비어 있습니다.');
@@ -78,7 +62,7 @@ const SidePanelApp = () => {
                 localStorage.removeItem('cart');
                 const event = new Event('authChange');
                 window.dispatchEvent(event);
-                setIsLogin(false);
+                handleContextLogout();
                 setItems([]);
                 //navigate('/');
             }
@@ -86,6 +70,16 @@ const SidePanelApp = () => {
             console.error('로그아웃 중 오류 발생:', error);
         }
     };
+
+    // 이벤트 리스너 추가
+    useEffect(() => {
+        const handleAuthChange = () => {
+        };
+        window.addEventListener('authChange', handleAuthChange);
+        return () => {
+            window.removeEventListener('authChange', handleAuthChange);
+        };
+    }, []);
 
     const updateTotalPrice = (items) => {
         let total = 0;
