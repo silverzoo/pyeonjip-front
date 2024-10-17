@@ -31,8 +31,8 @@ export const addLocalCart = (cart, selectedDetail) => {
 
 // 로컬스토리지 -> 서버
 export const syncWithLocal = (cart, userId) => {
-
-    fetch(`http://localhost:8080/api/cart/syncLocal?userId=${userId}`, {
+        console.log(JSON.stringify(cart));
+    fetch(`http://localhost:8080/api/cart/sync?userId=${userId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

@@ -243,15 +243,14 @@ function CartApp() {
                 productName: item.name,
                 productDetailId: item.optionId,
                 quantity: item.quantity,
-                productPrice: item.price
+                productPrice: item.price,
+                productImage: item.url,
             })),
-            totalPrice: totalPrice,                   // 단순계산 총 금액
-            disCountedTotalPrice: previousTotal,      // 할인 적용 총 금액 (최종금액)
-            couponDiscountRate: isCouponApplied ? couponDiscount : 0, // 할인률
+            cartTotalPrice: totalPrice,
         };
         console.log(checkoutData);
         // TODO : 데이터 받는 Controller API URL 알맞게 수정
-        const response = await fetch('http://localhost:8080/checkout', {
+        const response = await fetch('http://localhost:8080/api/orders/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
