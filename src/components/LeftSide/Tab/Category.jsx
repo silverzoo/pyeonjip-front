@@ -15,6 +15,7 @@ function Category({ categories }) {
 
     // 카테고리 펼침 상태를 로컬 스토리지에 저장
     useEffect(() => {
+        console.log(expandedCategories);
         localStorage.setItem('expandedCategories', JSON.stringify(expandedCategories));
     }, [expandedCategories]);
 
@@ -29,15 +30,17 @@ function Category({ categories }) {
             setExpandedCategories(savedExpandedState);
         }
 
-        if (!isNaN(categoryId)) {
-            setSelectedCategoryId(categoryId);
-            setExpandedCategories((prev) => ({
-                ...prev,
-                [categoryId]: true,
-            }));
-        } else if (!location.pathname.startsWith('/category')) {
-            setExpandedCategories({});
-            localStorage.setItem('expandedCategories', JSON.stringify({})); // 빈 객체로 설정
+        else {
+            if (!isNaN(categoryId)) {
+                setSelectedCategoryId(categoryId);
+                setExpandedCategories((prev) => ({
+                    ...prev,
+                    [categoryId]: true,
+                }));
+            } else if (!location.pathname.startsWith('/category')) {
+                setExpandedCategories({});
+                localStorage.setItem('expandedCategories', JSON.stringify({})); // 빈 객체로 설정
+            }
         }
     }, [location]);
 
