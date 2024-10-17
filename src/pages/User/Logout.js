@@ -22,7 +22,7 @@ function Logout() {
   };
 
   return (
-    <div className="container-user d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
+    <div className="user-container d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
       <button className="btn btn-danger" onClick={handleLogout}>
         로그아웃
       </button>
