@@ -1,26 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
 import OptionList from './ProductOptionList';
 import ProductImageList from './ProductImageList';
 import './ProductAdmin.css';
 
 function ProductOptionAdmin() {
     const { productId } = useParams();
+    const navigate = useNavigate(); // useNavigate 사용
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [images, setImages] = useState([]);
     const [selectedImages, setSelectedImages] = useState([]);
-    const [categories, setCategories] = useState([]); // 카테고리 추가
-    const [selectedCategory, setSelectedCategory] = useState(''); // 선택된 카테고리 상태 추가
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
 
-    // 상품 정보 상태 추가
     const [product, setProduct] = useState({
         name: '',
         description: '',
         category: ''
     });
 
-    // 옵션 및 이미지 리스트를 API에서 불러오는 함수
     useEffect(() => {
         if (productId) {
             // 옵션 불러오기
@@ -40,7 +39,7 @@ function ProductOptionAdmin() {
                 .then(response => response.json())
                 .then(data => {
                     setProduct(data);
-                    setSelectedCategory(data.categoryId); // 카테고리 설정
+                    setSelectedCategory(data.categoryId);
                 })
                 .catch(error => console.error('Error fetching product:', error));
 
@@ -52,15 +51,14 @@ function ProductOptionAdmin() {
         }
     }, [productId]);
 
-    // 상품 정보 수정 요청 함수
     const handleProductUpdate = () => {
-        const updatedProduct = { ...product, categoryId: selectedCategory }; // 카테고리 추가
+        const updatedProduct = { ...product, categoryId: selectedCategory };
         fetch(`http://localhost:8080/api/products/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(updatedProduct),  // 수정된 상품 정보를 전송
+            body: JSON.stringify(updatedProduct),
         })
             .then(response => {
                 if (response.ok) {
@@ -72,7 +70,6 @@ function ProductOptionAdmin() {
             .catch(error => console.error('Error updating product:', error));
     };
 
-    // 체크박스 선택/해제 처리 함수
     const handleCheckboxChange = (id) => {
         setSelectedOptions(prevSelected =>
             prevSelected.includes(id)
@@ -81,7 +78,6 @@ function ProductOptionAdmin() {
         );
     };
 
-    // 이미지 체크박스 선택/해제 처리 함수
     const handleImageCheckboxChange = (id) => {
         setSelectedImages(prevSelected =>
             prevSelected.includes(id)
@@ -90,34 +86,33 @@ function ProductOptionAdmin() {
         );
     };
 
-    // 선택된 옵션 일괄 삭제 함수
     const handleBulkDeleteOptions = () => {
-        console.log('Deleting selected options:', selectedOptions);
         setOptions(options.filter(option => !selectedOptions.includes(option.id)));
         setSelectedOptions([]);
     };
 
-    // 선택된 이미지 일괄 삭제 함수
     const handleBulkDeleteImages = () => {
-        console.log('Deleting selected images:', selectedImages);
         setImages(images.filter(image => !selectedImages.includes(image.id)));
         setSelectedImages([]);
     };
 
-    // 새로운 이미지 추가 핸들러
     const handleAddImage = (newImageUrl) => {
         const newImage = {
-            id: images.length + 1, // 임시로 ID를 설정, 서버에서 실제 ID를 설정
+            id: images.length + 1,
             imageUrl: newImageUrl
         };
         setImages([...images, newImage]);
     };
 
-    // 이미지 URL 변경 핸들러
     const handleImageUrlChange = (index, newUrl) => {
         const updatedImages = [...images];
         updatedImages[index].imageUrl = newUrl;
         setImages(updatedImages);
+    };
+
+    // 옵션 추가 페이지로 이동하는 함수
+    const handleNavigateToAddOption = () => {
+        navigate(`/admin/product/${productId}/add-option`);
     };
 
     return (
@@ -145,7 +140,6 @@ function ProductOptionAdmin() {
                     />
                 </div>
 
-                {/* 카테고리 선택 */}
                 <div className="form-group">
                     <label>카테고리 선택</label>
                     <select
@@ -176,9 +170,15 @@ function ProductOptionAdmin() {
                     selectedOptions={selectedOptions}
                     handleCheckboxChange={handleCheckboxChange}
                     handleBulkDelete={handleBulkDeleteOptions}
+                    handleNavigateToAddOption={handleNavigateToAddOption} // 옵션 추가 함수 전달
                 />
             ) : (
-                <p>등록된 옵션이 없습니다.</p>
+                <div>
+                    <p>등록된 옵션이 없습니다.</p>
+                    <button className="btn btn-secondary mt-3" onClick={handleNavigateToAddOption}>
+                        옵션 추가
+                    </button>
+                </div>
             )}
 
             <hr />

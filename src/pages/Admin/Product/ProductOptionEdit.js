@@ -31,7 +31,7 @@ function ProductOptionEdit() {
         })
             .then(response => {
                 if (response.ok) {
-                    navigate('/admin/options'); // 수정 완료 후 목록 페이지로 이동
+                    navigate(-1); // 이전 페이지로 이동
                 } else {
                     console.error('Error updating option');
                 }
