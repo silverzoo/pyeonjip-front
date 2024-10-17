@@ -10,6 +10,7 @@ import Login from "../User/Login";
 import SignUp from '../User/SignUp';
 import Logout from '../User/Logout';
 import OrderPage from '../Order/OrderPage';
+import OrderSuccess from '../Order/OrderSuccess';
 import ChatPage from '../Chat/ChatPage';
 import ProductAdmin from '../Admin/Product/ProductAdmin';
 import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
@@ -39,6 +40,7 @@ function AppRouter() {
             <Route path="/find" element={<FindAccount />} />
             <Route path="/found" element={<FindAccountResult />} />
             <Route path="/order" element={<OrderPage />} />
+            <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
             <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
