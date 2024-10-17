@@ -1,23 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import {logout} from "../../utils/authUtils";
 
 function Logout() {
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
+  const handleLogout = async (navigate) => {
     try {
-      const response = await fetch('http://localhost:8080/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-
-      if (response.ok) {
-        navigate('/');
-      } else {
-        alert('로그아웃에 실패했습니다.');
-      }
+      await logout();
+      navigate('/');
     } catch (error) {
-      console.error('로그아웃 중 오류 발생:', error);
+      console.error('Logout failed:', error.message);
+      alert('로그아웃에 실패했습니다.');
     }
   };
 
