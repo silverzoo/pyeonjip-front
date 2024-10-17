@@ -1,17 +1,18 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import './Cart.css';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import {
     fetchCartDetails,
     updateLocalStorage,
     deleteCartItem,
     deleteAllCartItems,
-    updateCartItemQuantity
-} from "../../utils/cartUtils";
+    updateCartItemQuantity,
+} from '../../utils/cartUtils';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import {isLoggedIn} from "../../utils/authUtils";
+import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
+import {useAuth} from "../../context/AuthContext";
 
 const ANIMATION_DURATION = 400;
 
@@ -23,57 +24,64 @@ function CartApp() {
     const [totalPrice, setTotalPrice] = useState(0);
     const [previousTotal, setPreviousTotal] = useState(0);
     const [itemCount, setItemCount] = useState(0);
-    const [animatedTotal, setAnimatedTotal] = useState(0); // 애니메이션된 총 가격
-    const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0); // 애니메이션된 할인된 가격
-    const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
+    const [animatedTotal, setAnimatedTotal] = useState(0);
+    const [animatedDiscountedPrice, setAnimatedDiscountedPrice] = useState(0);
+    const [animatedItems, setAnimatedItems] = useState([]);
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(false); // 더미데이터
-    const [testUserId, setTestUserId] = useState(1); // 더미데이터
     const [showModal, setShowModal] = useState(false);
+   // const [isLogin, setIsLogin] = useState(false);
+   // const [email, setEmail] = useState('');
 
+    const { isLogin, email, setIsLogin } = useAuth();
 
+    // 로그인 여부 확인 및 상태 설정
+    // useEffect(() => {
+    //     const loginStatus = isLoggedIn();
+    //     setIsLogin(loginStatus);
+    //     if (loginStatus) {
+    //         setEmail(getUserEmail());
+    //     }
+    // }, []); // 최초 렌더링 시 한 번 실행
 
-    // 최초화면 로드 세팅
+    // 로그인 상태에 따라 장바구니 데이터 로드
     useEffect(() => {
-        setIsLogin(!!isLoggedIn());
-    }, []);
-
-    useEffect(() => {
-        console.log(`(cart) ${isLogin ? '로그인' : '비로그인'}`);
-        // 로그인
         if (isLogin) {
-            const userId = testUserId;
-            fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`)
-                .then(response => response.json())
-                .then(cartDetailDtos => {
+            console.log('(cart) 로그인 상태');
+            fetch(`http://localhost:8080/api/cart?email=${email}`)
+                .then((response) => response.json())
+                .then((cartDetailDtos) => {
                     setItems(cartDetailDtos);
-                    console.log('(cart)data from server', cartDetailDtos);
+                    console.log('(cart, server) Cart 동기화 완료', cartDetailDtos);
                 })
-                .catch(error => console.error('Error fetching CartDetailDto:', error));
-                }
-        // 비 로그인
-        else {
+                .catch((error) => console.error('Error fetching CartDetailDto:', error));
+        } else {
+            console.log('(cart) 비로그인 상태');
             const localCart = JSON.parse(localStorage.getItem('cart')) || [];
             if (localCart.length === 0) {
-                console.log("장바구니가 비어 있습니다.");
+                console.log('(cart, local) 장바구니가 비어 있습니다.');
                 return;
             }
             fetchCartDetails(localCart)
-                .then(localDetails => {
+                .then((localDetails) => {
                     setItems(localDetails);
-                    console.log('(cart)data from local : ', localDetails);
+                    console.log('(cart, local) Cart 불러오기 완료', localDetails);
                 })
+                .catch((error) => console.error('Error fetching local cart details:', error));
         }
-        // 쿠폰 가져오기
-        fetch('http://localhost:8080/api/coupon')
-            .then(response => response.json())
-            .then(coupons => {
-                setCoupons(coupons);
-                console.log(coupons);
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }, [isLogin]);
+    }, [isLogin, email]); // isLogin과 email 상태 변경 시 실행
 
+    // 쿠폰 데이터 로드
+    useEffect(() => {
+        fetch('http://localhost:8080/api/coupon')
+            .then((response) => response.json())
+            .then((coupons) => {
+                setCoupons(coupons);
+                console.log('coupons : ', coupons);
+            })
+            .catch((error) => console.error('Error fetching coupons:', error));
+    }, []);
+
+    // 총 가격 업데이트
     useEffect(() => {
         if (items.length > 0) {
             updateTotalPrice(items);
@@ -101,7 +109,7 @@ function CartApp() {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
             };
-            updateCartItemQuantity(testUserId, cartItem.optionId, cartItem);
+            updateCartItemQuantity(email, cartItem.optionId, cartItem);
 
         } else {
             updateLocalStorage(updatedItems);
@@ -192,7 +200,7 @@ function CartApp() {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
             } else if (isLogin) {
-                deleteCartItem(testUserId, targetOptionId);
+                deleteCartItem(email, targetOptionId);
             }
 
             // 애니메이션 적용 목록에서 삭제한 항목 제거
@@ -215,7 +223,7 @@ function CartApp() {
                 // 로컬 스토리지에서 장바구니 비우기
                 updateLocalStorage([]);
             } else {
-                deleteAllCartItems(testUserId);
+                deleteAllCartItems(email);
             }
             updateTotalPrice(clearedItems);
             // 모든 항목의 애니메이션 목록 초기화
@@ -237,7 +245,7 @@ function CartApp() {
         }
         // 결제 데이터 조합
         const checkoutData = {
-            userId: testUserId, // 로그인된 사용자 ID (비 로그인일 경우 null)
+            email: email, // 로그인된 사용자 ID (비 로그인일 경우 null)
             // OrderDetailDto 참고해서 보낼 데이터 작성함
             orderDetails: items.map(item => ({
                 productName: item.name,

@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import {syncWithLocal} from "../../utils/cartUtils";
+import {useAuth} from "../../context/AuthContext";
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+    const { handleContextLogin } = useAuth();
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,8 +50,10 @@ function Login() {
                 localStorage.setItem('access', accessToken.split(' ')[1]); // access 토큰 로컬 스토리지에 저장
 
                 // 로그인 성공 시 서버 Cart 동기화 및 로컬스토리지 초기화
-                syncWithLocal(JSON.parse(localStorage.getItem('cart')), 1); //Todo : userId 수정해야함
+                handleContextLogin(); // 로그인 상태 업데이트
+                syncWithLocal();
                 localStorage.removeItem('cart');
+
 
                 //이전페이지로 리다이렉트
                 //Todo : 로그인 창에서 새로고침 할 시 좋지않은 유저경험... 수정필요
@@ -70,8 +74,18 @@ function Login() {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/");
     };
+
+    // 이벤트 리스너 추가
+    useEffect(() => {
+        const handleAuthChange = () => {
+        };
+        window.addEventListener('authChange', handleAuthChange);
+        return () => {
+            window.removeEventListener('authChange', handleAuthChange);
+        };
+    }, []);
 
     return (
         <div className="user-container h-100 d-flex justify-content-center align-items-center">

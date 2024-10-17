@@ -6,7 +6,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
-import {isLoggedIn} from "../../utils/authUtils";
+import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
+import {useAuth} from "../../context/AuthContext";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -14,8 +15,8 @@ function SandboxApp() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
-    const [isLogin, setIsLogin] = useState(true);
-    const [testUserId, setTestUserId] = useState(1);
+   // const [isLogin, setIsLogin] = useState(false);
+  //  const [email, setEmail] = useState('');
     const { categoryId } = useParams();
     const [animationKey, setAnimationKey] = useState(0);
     const MODAL_DURATION = 1000;
@@ -24,10 +25,11 @@ function SandboxApp() {
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
+
+    const { isLogin, email, setIsLogin } = useAuth();
+
     useEffect(() => {
         const fetchProducts = async () => {
-            setIsLogin(!!isLoggedIn());
-            console.log(`(product) ${isLoggedIn() ? '로그인' : '비로그인'}`);
             try {
                 if (!categoryId) {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
@@ -96,7 +98,7 @@ function SandboxApp() {
         };
 
         if (isLogin) {
-            addServerCart(cartItem, testUserId);
+            addServerCart(cartItem, email);
         } else {
             addLocalCart(cartItem, selectedDetail);
         }
