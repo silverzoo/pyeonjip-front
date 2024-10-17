@@ -4,7 +4,7 @@ import Sandbox from "../Product/Product";
 import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
 import Home from "../Home/Home";
-import AdminCategory from "../Admin/Category/category";
+import AdminCategory from "../Admin/Category/Category";
 import AdminOrder from "../Admin/Order/Order";
 import Login from "../User/Login";
 import SignUp from '../User/SignUp';
