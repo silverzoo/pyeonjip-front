@@ -6,9 +6,9 @@ import Cart from "../Cart/Cart";
 import Home from "../Home/Home";
 import AdminCategory from "../Admin/Category/category";
 import AdminOrder from "../Admin/Order/Order";
-import Login from "../User/login";
-import Signup from '../User/signup';
-import Logout from '../User/logout';
+import Login from "../User/Login";
+import SignUp from '../User/SignUp';
+import Logout from '../User/Logout';
 import OrderPage from '../Order/OrderPage';
 import ChatPage from '../Chat/ChatPage';
 import ProductAdmin from '../Admin/Product/ProductAdmin';
@@ -16,6 +16,10 @@ import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
 import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';
 import Coupon from "../Admin/Coupon/Coupon";
 import ProductCreate from '../Admin/Product/ProductCreate';
+import SignUpResult from "../User/SignUpResult";
+import MyPage from "../User/MyPage";
+import FindAccount from "../User/FindAccount";
+import FindAccountResult from "../User/FindAccountResult";
 
 function AppRouter() {
     return (
@@ -29,7 +33,11 @@ function AppRouter() {
             <Route path="/admin/order" element={<AdminOrder />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/signup" element={<Signup />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/signup/result" element={<SignUpResult />} />
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/find" element={<FindAccount />} />
+            <Route path="/found" element={<FindAccountResult />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
