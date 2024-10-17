@@ -17,7 +17,10 @@ const SidePanelApp = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
+    useEffect(() => {
+        setIsLogin(!!isLoggedIn());
+    }, [location.pathname]);
+
 
     useEffect(() => {
         const loadCartData = async () => {
