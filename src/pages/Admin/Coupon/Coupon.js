@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import { Button, Form, Table, Spinner, Container, Row, Col, Alert } from 'react-bootstrap';
 
 const CouponComponent = () => {
     const [discount, setDiscount] = useState(0);
     const [coupons, setCoupons] = useState([]);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false); // 로딩 상태 추가
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         fetchCoupons();
     }, []);
 
     const fetchCoupons = async () => {
-        // Fetch coupons logic here
         try {
-            const response = await fetch('http://localhost:8080/api/coupon'); // Fetch coupons from the backend
-            if (!response.ok) {
-                throw new Error('쿠폰 목록을 불러오는 데 실패했습니다.');
-            }
+            const response = await fetch('http://localhost:8080/api/coupon');
+            if (!response.ok) throw new Error('쿠폰 목록을 불러오는 데 실패했습니다.');
             const data = await response.json();
             setCoupons(data);
         } catch (err) {
@@ -25,105 +22,131 @@ const CouponComponent = () => {
         }
     };
 
-    // 쿠폰 생성
     const createCoupon = async () => {
-        setLoading(true); // 로딩 시작
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:8080/api/coupon?discount=' + discount, {
+            const response = await fetch(`http://localhost:8080/api/coupon?discount=${discount}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ discount }),
             });
-
-            if (!response.ok) {
-                throw new Error('쿠폰 생성에 실패했습니다.');
-            }
-
-            const coupon = await response.json();
-            console.log(coupon);
-            setDiscount(0); // 입력값 초기화
-            fetchCoupons(); // 쿠폰 목록 갱신
+            if (!response.ok) throw new Error('쿠폰 생성에 실패했습니다.');
+            setDiscount(0);
+            fetchCoupons();
         } catch (err) {
             setError(err.message);
         } finally {
-            setLoading(false); // 로딩 종료
+            setLoading(false);
         }
     };
 
-    // 쿠폰 삭제
     const deleteCoupon = async (id) => {
         if (window.confirm('이 쿠폰을 삭제하시겠습니까?')) {
-            setLoading(true); // 로딩 시작
+            setLoading(true);
             try {
                 const response = await fetch(`http://localhost:8080/api/coupon?id=${id}`, {
                     method: 'DELETE',
                 });
-
-                if (!response.ok || !response.status === 204) {
-                    throw new Error('쿠폰 삭제에 실패했습니다.');
-                }
-
-                fetchCoupons(); // 쿠폰 목록 갱신
+                if (!response.ok) throw new Error('쿠폰 삭제에 실패했습니다.');
+                fetchCoupons();
             } catch (err) {
                 setError(err.message);
             } finally {
-                setLoading(false); // 로딩 종료
+                setLoading(false);
             }
         }
     };
 
     return (
-        <div className="container col-xl-12" style={{ width: '900px' }}>
-            <h2>ADMIN - COUPON</h2>
-            {error && <div className="alert alert-danger">{error}</div>}
-            <Form>
-                <Form.Group controlId="discount">
-                    <Form.Label column={discount}>할인율 (%)</Form.Label>
-                    <Form.Control
-                        type="number"
-                        value={discount}
-                        onChange={(e) => setDiscount(e.target.value)}
-                        placeholder="할인율을 입력하세요"
-                    />
-                </Form.Group>
-                <Button
-                    className="btn-dark"
-                    onClick={createCoupon}
-                    disabled={loading} // 로딩 중일 때 비활성화
-                >
-                    {loading ? '생성 중...' : '쿠폰 생성'}
-                </Button>
+        <Container className="mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '900px' }}>
+            <h2 className="text-center mb-4">ADMIN - COUPON MANAGEMENT</h2>
+
+            {error && <Alert variant="danger">{error}</Alert>}
+
+            <Form className="mb-4">
+                <Row className="align-items-center">
+                    <Col xs={8}>
+                        <Form.Group controlId="discount">
+                            <Form.Label style={{fontWeight: 'bold'}}>할인율 (%)</Form.Label>
+                            <Form.Control
+                                type="number"
+                                value={discount}
+                                onChange={(e) => setDiscount(e.target.value)}
+                                placeholder="할인율을 입력하세요"
+                                min={0}
+                                max={100}
+                                className="shadow-sm"
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col xs={4} className="text-end">
+                        <Button
+                            variant="dark"
+                            className="w-100 shadow-sm"
+                            onClick={createCoupon}
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <Spinner
+                                        as="span"
+                                        animation="border"
+                                        size="sm"
+                                        role="status"
+                                        aria-hidden="true"
+                                    />{' '}
+                                    생성 중...
+                                </>
+                            ) : (
+                                '쿠폰 생성'
+                            )}
+                        </Button>
+                    </Col>
+                </Row>
             </Form>
-            <h3 className="mt-4">쿠폰 목록</h3>
-            <Table striped bordered hover>
-                <thead>
+
+            <h3 className="mb-3">쿠폰 목록</h3>
+            <Table striped bordered hover responsive className="shadow-sm">
+                <thead className="table-dark">
                 <tr>
                     <th>ID</th>
                     <th>쿠폰 코드</th>
                     <th>할인율</th>
                     <th>상태</th>
                     <th>만료 날짜</th>
-                    <th>작업</th> {/* 작업 열 추가 */}
+                    <th>작업</th>
                 </tr>
                 </thead>
                 <tbody>
-                {coupons.map((coupon) => (
-                    <tr key={coupon.id}>
-                        <td>{coupon.id}</td>
-                        <td>{coupon.code}</td>
-                        <td>{coupon.discount}%</td>
-                        <td>{coupon.active ? '활성' : '비활성'}</td>
-                        <td>{new Date(coupon.expiryDate).toLocaleString()}</td>
-                        <td>
-                            <Button className="btn-dark" onClick={() => deleteCoupon(coupon.id)}>삭제</Button>
+                {coupons.length > 0 ? (
+                    coupons.map((coupon) => (
+                        <tr key={coupon.id}>
+                            <td>{coupon.id}</td>
+                            <td>{coupon.code}</td>
+                            <td>{coupon.discount}%</td>
+                            <td>{coupon.active ? '활성' : '비활성'}</td>
+                            <td>{new Date(coupon.expiryDate).toLocaleString()}</td>
+                            <td>
+                                <Button
+                                    variant="dark"
+                                    size="md"
+                                    onClick={() => deleteCoupon(coupon.id)}
+                                >
+                                    삭제
+                                </Button>
+                            </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                        <td colSpan="6" className="text-center">
+                            쿠폰이 없습니다.
                         </td>
                     </tr>
-                ))}
+                )}
                 </tbody>
             </Table>
-        </div>
+        </Container>
     );
 };
 
