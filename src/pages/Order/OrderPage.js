@@ -86,7 +86,7 @@ function OrderPage() {
           console.log('응답 상태:', response.status);
   
           if (response.ok) {
-              // console.log('주문이 성공적으로 완료되었습니다.');
+              console.log('주문이 성공적으로 완료되었습니다.');
               navigate('/order-success');
           } else {
             const errorData = await response.json();
@@ -169,7 +169,7 @@ function OrderPage() {
                             <span>₩{orderData.deliveryPrice}</span>
                         </div>
                         <div className="price-summary-item">
-                            <span className="price-summary-label">할인율</span>
+                            <span className="price-summary-label">회원 할인</span>
                             <span>{orderData.discountRate * 100}%</span>
                         </div>
                         <div className="total-price">
