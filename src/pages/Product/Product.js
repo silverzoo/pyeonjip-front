@@ -154,7 +154,7 @@ function SandboxApp() {
                                                             style={{ animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s` }}
                                                         >
                                                             <div>
-                                                                <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                <Link to={`/category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                     <img
                                                                         src={hoveredImage}
                                                                         className="card-img-top"
@@ -166,7 +166,7 @@ function SandboxApp() {
                                                                     />
                                                                 </Link>
                                                                 <div className="card-body">
-                                                                    <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                    <Link to={`category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
                                                                         <h6>{selectedDetail.name}</h6>
                                                                         <h4 className="fw-bolder">

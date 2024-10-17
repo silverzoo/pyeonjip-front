@@ -35,7 +35,7 @@ const LeftSide = () => {
             newState.ADMIN = true;
         }
 
-        if (path.startsWith('/category') || path.startsWith('/product-detail')) {
+        if (path.startsWith('/category')) {
             newState.SHOP = true;
         }
 
@@ -55,28 +55,26 @@ const LeftSide = () => {
             <div className="left-side-logo">
                 <Link to="/"><img src={logo} alt="logo" width="88"/></Link>
             </div>
-            <div className="menu">
-                <ul>
+            <div className="left-side-menu">
+                <ToggleIcon
+                    label="SHOP"
+                    to="/category"
+                    isExpanded={expandedMenus.SHOP}
+                    onToggle={() => handleTapToggle('SHOP')}
+                    hasChildren={true}
+                />
+                {expandedMenus.SHOP && <Category categories={categories}/>}
+                <div style={{height: '8px'}}/>
+                {isAdmin && (
                     <ToggleIcon
-                        label="SHOP"
-                        to="/category"
-                        isExpanded={expandedMenus.SHOP}
-                        onToggle={() => handleTapToggle('SHOP')}
+                        label="ADMIN"
+                        to="/admin"
+                        isExpanded={expandedMenus.ADMIN}
+                        onToggle={() => handleTapToggle('ADMIN')}
                         hasChildren={true}
                     />
-                    {expandedMenus.SHOP && <Category categories={categories}/>}
-                    <li style={{height: '5px'}}/>
-                    {isAdmin && (
-                        <ToggleIcon
-                            label="ADMIN"
-                            to="/admin"
-                            isExpanded={expandedMenus.ADMIN}
-                            onToggle={() => handleTapToggle('ADMIN')}
-                            hasChildren={true}
-                        />
-                    )}
-                    {expandedMenus.ADMIN && <Admin/>}
-                </ul>
+                )}
+                {expandedMenus.ADMIN && <Admin/>}
             </div>
         </div>
     );
