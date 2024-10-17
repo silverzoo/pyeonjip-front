@@ -17,9 +17,7 @@ const SidePanelApp = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    useEffect(() => {
-        setIsLogin(!!isLoggedIn());
-    }, [location.pathname]);
+    const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
 
 
     useEffect(() => {
