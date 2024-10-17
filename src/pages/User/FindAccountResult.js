@@ -4,7 +4,7 @@ import './User.css';
 
 function FindAccountResult() {
     const location = useLocation();
-    const { email } = location.state || {};  // 이메일 정보를 state에서 받아옴
+    const { email } = location.state || {};
 
     return (
         <div className="user-container h-100 d-flex justify-content-center align-items-center">
@@ -17,7 +17,7 @@ function FindAccountResult() {
                     <p>이메일 정보를 찾을 수 없습니다.</p>
                 )}
                 <div className="d-flex justify-content-end mt-3">
-                    <a href="/User/Login" className="user-btn">로그인 페이지로 이동</a>
+                    <a href="/login" className="user-btn">로그인 페이지로 이동</a>
                 </div>
             </div>
         </div>
