@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './ProductAdmin.css';
 
 function CreateProduct() {
@@ -8,6 +9,7 @@ function CreateProduct() {
     const [categories, setCategories] = useState([]);
     const [options, setOptions] = useState([{ name: '', price: '', quantity: '', imageUrl: '' }]);
     const [productImages, setProductImages] = useState([{ imageUrl: '' }]); // 상품 이미지 관리
+    const navigate = useNavigate();
 
     // 옵션 필드의 값 변경을 처리하는 함수
     const handleOptionChange = (index, field, value) => {
@@ -93,6 +95,7 @@ function CreateProduct() {
         })
         .then(data => {
             alert('상품이 성공적으로 생성되었습니다.');
+            navigate('/admin/product');
         })
         .catch(error => {
             console.error(error);

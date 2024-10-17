@@ -17,6 +17,7 @@ import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
 import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';
 import Coupon from "../Admin/Coupon/Coupon";
 import ProductCreate from '../Admin/Product/ProductCreate';
+import ProductDetailCreate from '../Admin/Product/ProductDetailCreate';
 import SignUpResult from "../User/SignUpResult";
 import MyPage from "../User/MyPage";
 import FindAccount from "../User/FindAccount";
@@ -46,6 +47,7 @@ function AppRouter() {
             <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
             <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit />} />
             <Route path="/admin/createProduct" element={<ProductCreate />} />
+            <Route path="/admin/product/:productId/add-option" element={<ProductDetailCreate />} />
             <Route path="/admin/coupon" element={<Coupon />} />
 
         </Routes>
