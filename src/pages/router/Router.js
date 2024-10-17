@@ -18,6 +18,8 @@ import Coupon from "../Admin/Coupon/Coupon";
 import ProductCreate from '../Admin/Product/ProductCreate';
 import SignUpResult from "../User/SignUpResult";
 import MyPage from "../User/MyPage";
+import FindAccount from "../User/FindAccount";
+import FindAccountResult from "../User/FindAccountResult";
 
 function AppRouter() {
     return (
@@ -34,6 +36,8 @@ function AppRouter() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signup/result" element={<SignUpResult />} />
             <Route path="/mypage" element={<MyPage />} />
+            <Route path="/find" element={<FindAccount />} />
+            <Route path="/found" element={<FindAccountResult />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/admin/product" element={<ProductAdmin />} />
