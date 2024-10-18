@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
             setEmail(null);
             setIsAdmin(false);
         }
+        console.log(email);
     };
 
     useEffect(() => {
