@@ -5,7 +5,7 @@ import './LeftSide.css';
 import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
 import Admin from "./Tab/Admin";
-import {useAuth} from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const LeftSide = () => {
     const { isAdmin } = useAuth();
@@ -62,9 +62,12 @@ const LeftSide = () => {
                     isExpanded={expandedMenus.SHOP}
                     onToggle={() => handleTapToggle('SHOP')}
                     hasChildren={true}
+                    className={`toggle-icon ${expandedMenus.SHOP ? 'expanded' : ''}`}
                 />
-                {expandedMenus.SHOP && <Category categories={categories}/>}
-                <div style={{height: '8px'}}/>
+                <div className={`collapse-content ${expandedMenus.SHOP ? 'expanded' : ''}`}>
+                    {expandedMenus.SHOP && <Category categories={categories} />}
+                </div>
+                <div style={{ height: '8px' }} />
                 {isAdmin && (
                     <ToggleIcon
                         label="ADMIN"
@@ -72,9 +75,12 @@ const LeftSide = () => {
                         isExpanded={expandedMenus.ADMIN}
                         onToggle={() => handleTapToggle('ADMIN')}
                         hasChildren={true}
+                        className={`toggle-icon ${expandedMenus.ADMIN ? 'expanded' : ''}`}
                     />
                 )}
-                {expandedMenus.ADMIN && <Admin/>}
+                <div className={`collapse-content ${expandedMenus.ADMIN ? 'expanded' : ''}`}>
+                    {expandedMenus.ADMIN && <Admin />}
+                </div>
             </div>
         </div>
     );
