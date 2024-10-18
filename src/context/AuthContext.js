@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {jwtDecode} from 'jwt-decode'; // 주의: {} 없이 사용합니다.
-
+import {jwtDecode} from 'jwt-decode';
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -8,7 +7,6 @@ export const AuthProvider = ({ children }) => {
     const [email, setEmail] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    // 로그인 상태 및 이메일 설정
     const updateAuthState = () => {
         const token = localStorage.getItem('access');
         if (token) {
@@ -29,7 +27,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // 최초 렌더링 시 로그인 상태 확인 및 리스너 등록
     useEffect(() => {
         updateAuthState();
 

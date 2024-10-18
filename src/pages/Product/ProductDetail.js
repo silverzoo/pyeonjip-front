@@ -8,6 +8,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
@@ -38,6 +39,8 @@ function ProductDetail() {
     });
 
     const { isLogin, email, setIsLogin } = useAuth();
+    const {loadCartData} = useCart();
+
     useEffect(() => {
         initMDB({ Collapse }); // 아코디언 초기화
     }, []);
@@ -78,6 +81,7 @@ function ProductDetail() {
         } else {
             addLocalCart(cartItem, selectedOption);
         }
+        loadCartData();
         showModalMessage(`${product.name}의 ${selectedOption.name}이(가) 장바구니에 추가되었습니다.`);
     };
 

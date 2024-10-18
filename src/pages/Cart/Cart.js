@@ -3,7 +3,6 @@ import './Cart.css';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import {
-    fetchCartDetails,
     updateLocalStorage,
     deleteCartItem,
     deleteAllCartItems,
@@ -11,14 +10,13 @@ import {
 } from '../../utils/cartUtils';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
 import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
 
 const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
-    const [items, setItems] = useState([]);
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -29,46 +27,9 @@ function CartApp() {
     const [animatedItems, setAnimatedItems] = useState([]);
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-   // const [isLogin, setIsLogin] = useState(false);
-   // const [email, setEmail] = useState('');
 
     const { isLogin, email, setIsLogin } = useAuth();
-
-    // 로그인 여부 확인 및 상태 설정
-    // useEffect(() => {
-    //     const loginStatus = isLoggedIn();
-    //     setIsLogin(loginStatus);
-    //     if (loginStatus) {
-    //         setEmail(getUserEmail());
-    //     }
-    // }, []); // 최초 렌더링 시 한 번 실행
-
-    // 로그인 상태에 따라 장바구니 데이터 로드
-    useEffect(() => {
-        if (isLogin) {
-            console.log('(cart) 로그인 상태');
-            fetch(`http://localhost:8080/api/cart?email=${email}`)
-                .then((response) => response.json())
-                .then((cartDetailDtos) => {
-                    setItems(cartDetailDtos);
-                    console.log('(cart, server) Cart 동기화 완료', cartDetailDtos);
-                })
-                .catch((error) => console.error('Error fetching CartDetailDto:', error));
-        } else {
-            console.log('(cart) 비로그인 상태');
-            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (localCart.length === 0) {
-                console.log('(cart, local) 장바구니가 비어 있습니다.');
-                return;
-            }
-            fetchCartDetails(localCart)
-                .then((localDetails) => {
-                    setItems(localDetails);
-                    console.log('(cart, local) Cart 불러오기 완료', localDetails);
-                })
-                .catch((error) => console.error('Error fetching local cart details:', error));
-        }
-    }, [isLogin, email]); // isLogin과 email 상태 변경 시 실행
+    const { items, setItems, loadCartData } = useCart();
 
     // 쿠폰 데이터 로드
     useEffect(() => {
@@ -257,7 +218,6 @@ function CartApp() {
             cartTotalPrice: totalPrice,
         };
         console.log(checkoutData);
-        // TODO : 데이터 받는 Controller API URL 알맞게 수정
         const response = await fetch('http://localhost:8080/api/orders/checkout', {
             method: 'POST',
             headers: {
@@ -268,7 +228,6 @@ function CartApp() {
         if (response.ok || response.status === 204) {
             const orderSummary = await response.json();
             console.log('체크아웃 완료');
-            // TODO : Order 페이지 URL 알맞게 수정 (프론트 페이지)
             navigate('/order', { 
                 state: { 
                     orderSummary: orderSummary, 
@@ -279,8 +238,6 @@ function CartApp() {
             const errorData = await response.json();
             console.error(`체크아웃 실패 ${errorData}`);
         }
-
-
     };
     return (
         <>
@@ -318,19 +275,9 @@ function CartApp() {
                                                         className={`row mb-2 d-flex justify-content-between align-items-center cart-item ${animatedItems.includes(index) ? 'fade-out' : ''}`}
                                                     >
                                                         <div className="col-md-2 col-lg-2 col-xl-2">
-                                                            <a href={`product-detail?productId=${item.productId}&optionId=${item.optionId}`}>
                                                                 <img src={item.url} className="img-fluid rounded-3"/>
-                                                            </a>
-
                                                         </div>
                                                         <div className="col-md-3 col-lg-3 col-xl-3 ">
-                                                            <a href='/cart/sandbox'
-                                                               style={{
-                                                                   textDecoration: 'none',
-                                                                   color: 'inherit',
-                                                                   textAlign: 'left'
-                                                               }}
-                                                            >
                                                                 <h5 className="mb-0"
                                                                     style={{
                                                                         fontSize: '0.9rem',
@@ -341,7 +288,6 @@ function CartApp() {
                                                                         fontSize: '0.8rem',
                                                                     }}
                                                                 >{item.optionName}</h6>
-                                                            </a>
                                                         </div>
                                                         <div
                                                             className="col-md-2 col-lg-1 col-xl-2 d-flex align-items-center">
@@ -380,7 +326,6 @@ function CartApp() {
                                                         <hr className="my-3"/>
                                                     </div>
                                                 ))}
-
                                             </div>
                                         )}
                                         <div className="back-button-container d-flex justify-content-between">
@@ -394,13 +339,10 @@ function CartApp() {
 
 
                                             <h6 className="delete-button"
-                                                onClick={() => deleteAll()}
-                                            >
+                                                onClick={() => deleteAll()}>
                                                 전체삭제 <i className="bi bi-trash3 my-1 "
                                                         style={{fontSize: '1.2rem'}}></i>
-
                                             </h6>
-
                                         </div>
 
                                     </div>

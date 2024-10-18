@@ -1,52 +1,24 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
 import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
 
 const ANIMATION_DURATION = 400;
 const BUTTON_WHITELIST = ['/login', '/chat', '/order'];
 
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
-    const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
     const location = useLocation();
 
     const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
+    const { items, setItems, loadCartData } = useCart();
 
-
-    useEffect(() => {
-        const loadCartData = async () => {
-            try {
-                if (isLogin) {
-                    const response = await fetch(`http://localhost:8080/api/cart?email=${email}`);
-                    const cartDetailDtos = await response.json();
-                    setItems(cartDetailDtos);
-                    console.log('(side, server) Cart 동기화 완료', cartDetailDtos);
-                } else {
-                    const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-                    if (localCart.length === 0) {
-                        console.log('(side, local) 장바구니가 비어 있습니다.');
-                        return;
-                    }
-                    const localDetails = await fetchCartDetails(localCart);
-                    setItems(localDetails);
-                    console.log('(side, local) Cart 불러오기 완료', localDetails);
-                }
-            } catch (error) {
-                console.error('Error fetching cart data:', error);
-            }
-        };
-
-        loadCartData(); // 비동기 함수 호출
-    }, [isLogin, email, isCartOpen]);
-
-    // items가 업데이트될 때마다 totalPrice 업데이트
     useEffect(() => {
         updateTotalPrice(items);
     }, [items]);
@@ -66,6 +38,8 @@ const SidePanelApp = () => {
                 handleContextLogout();
                 setItems([]);
                 //navigate('/');
+                loadCartData();
+                console.log('로그아웃');
             }
         } catch (error) {
             console.error('로그아웃 중 오류 발생:', error);
@@ -144,6 +118,7 @@ const SidePanelApp = () => {
         } else {
             setCartOpen(true);
             setTimeout(() => {
+                loadCartData();
                 document.querySelector('.offcanvas').classList.add('show');
                 document.querySelector('.offcanvas-backdrop').classList.add('show');
             }, 0);

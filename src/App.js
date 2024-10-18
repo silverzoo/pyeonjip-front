@@ -6,6 +6,7 @@ import LeftSide from './components/LeftSide/LeftSide';
 import RightSide from './components/RIghtSide/RightSide'
 import HiddenUtils from "./utils/HiddenUtils";
 import {AuthProvider} from "./context/AuthContext";
+import {CartProvider} from "./context/CartContext";
 
 function App() {
 
@@ -18,12 +19,14 @@ function App() {
                     <LeftSide/>
                 </HiddenUtils>
             </div>
+                <CartProvider>
             <div className='rightSide'>
                 <RightSide/>
             </div>
             <div className='content'>
                 <AppRouter/>
             </div>
+                </CartProvider>
             </AuthProvider>
             <div className='footer'>
                 <Footer/>
