@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom';
 
-function ToggleIcon({ label, to, isExpanded, onToggle, isSelected, hasChildren }) {
+function ToggleIcon({ label, to, isExpanded, onToggle, hasChildren }) {
 
     return (
-        <div onClick={onToggle}>
+
+        <div onClick={onToggle} style={{ marginBottom: '10px' }}>
             <NavLink
                 to={to}
                 style={({ isActive }) => ({
