@@ -12,17 +12,19 @@ function App() {
     return (
 
         <div className="app">
+            <AuthProvider>
             <div className='leftSide'>
                 <HiddenUtils whitelist={['/chat']}>
                     <LeftSide/>
                 </HiddenUtils>
             </div>
-            <AuthProvider><div className='rightSide'>
+            <div className='rightSide'>
                 <RightSide/>
             </div>
             <div className='content'>
                 <AppRouter/>
-            </div> </AuthProvider>
+            </div>
+            </AuthProvider>
             <div className='footer'>
                 <Footer/>
             </div>

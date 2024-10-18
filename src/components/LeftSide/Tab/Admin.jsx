@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import ToggleIcon from '../ToggleIcon/ToggleIcon';
 
-function AdminMenu() {
+function Admin() {
     const [expandedMenus, setExpandedMenus] = useState({
         ORDER: false,
         PRODUCT: false,
@@ -17,7 +17,7 @@ function AdminMenu() {
     };
 
     return (
-        <ul style={{paddingLeft: 0}}>
+        <>
             <ToggleIcon
                 label="ORDER"
                 to="/admin/order"
@@ -46,8 +46,8 @@ function AdminMenu() {
                 onToggle={() => handleToggle('COUPON')}
                 hasChildren={false}
             />
-        </ul>
+        </>
     );
 }
 
-export default AdminMenu;
+export default Admin;

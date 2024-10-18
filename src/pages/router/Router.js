@@ -28,7 +28,7 @@ function AppRouter() {
         <Routes>
             <Route path="/category/:categoryId" element={<Sandbox />} />
             <Route path="/category" element={<Sandbox />} />
-            <Route path="/product-detail" element={<ProductDetail />} />
+            <Route path="/category/:categoryId/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
             <Route path="/admin/category" element={<AdminCategory />} />

@@ -1,19 +1,7 @@
-/*.gnb {*/
-/*    display: flex;*/
-/*    justify-content: space-between;*/
-/*    position: fixed;*/
-/*    left: 0;*/
-/*    top: 0;*/
-/*    width: 100%;*/
-/*    height: auto;*/
-/*    max-height: 800px;*/
-/*    overflow-y: auto;*/
-/*}*/
-
 .left-side-logo {
     margin-top: 30px;
     margin-bottom: 30px;
-    padding-left: 30px;
+    padding-left: 33px;
 }
 
 .left-side-container {
@@ -23,16 +11,20 @@
     transition: height 0.3s ease;
 }
 
-.left-side-container li {
-    margin-bottom: 7px;
+.left-side-container {
     font-size: 14px;
     position: relative;
     cursor: pointer;
 }
 
-.left-side-container ul {
-    /*margin-left: 10px;*/
+.left-side-menu {
+    margin-left: 33px;
 }
+
+.left-side-menu div {
+    margin-bottom: 3px;
+}
+
 
 .tapMark {
     font-size: 70%;

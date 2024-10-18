@@ -4,9 +4,11 @@ import logo from '../../logo.svg';
 import './LeftSide.css';
 import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
-import AdminMenu from "./Tab/AdminMenu";
+import Admin from "./Tab/Admin";
+import {useAuth} from "../../context/AuthContext";
 
 const LeftSide = () => {
+    const { isAdmin } = useAuth();
     const location = useLocation();
     const [categories, setCategories] = useState([]);
     const [expandedMenus, setExpandedMenus] = useState({
@@ -33,7 +35,7 @@ const LeftSide = () => {
             newState.ADMIN = true;
         }
 
-        if (path.startsWith('/category') || path.startsWith('/product-detail')) {
+        if (path.startsWith('/category')) {
             newState.SHOP = true;
         }
 
@@ -51,18 +53,19 @@ const LeftSide = () => {
     return (
         <div className='left-side-container'>
             <div className="left-side-logo">
-                <Link to="/"><img src={logo} alt="logo" width="86"/></Link>
+                <Link to="/"><img src={logo} alt="logo" width="88"/></Link>
             </div>
-            <div className="menu">
-                <ul>
-                    <ToggleIcon
-                        label="SHOP"
-                        to="/category"
-                        isExpanded={expandedMenus.SHOP}
-                        onToggle={() => handleTapToggle('SHOP')}
-                        hasChildren={true}
-                    />
-                    {expandedMenus.SHOP && <Category categories={categories}/>}
+            <div className="left-side-menu">
+                <ToggleIcon
+                    label="SHOP"
+                    to="/category"
+                    isExpanded={expandedMenus.SHOP}
+                    onToggle={() => handleTapToggle('SHOP')}
+                    hasChildren={true}
+                />
+                {expandedMenus.SHOP && <Category categories={categories}/>}
+                <div style={{height: '8px'}}/>
+                {isAdmin && (
                     <ToggleIcon
                         label="ADMIN"
                         to="/admin"
@@ -70,8 +73,8 @@ const LeftSide = () => {
                         onToggle={() => handleTapToggle('ADMIN')}
                         hasChildren={true}
                     />
-                    {expandedMenus.ADMIN && <AdminMenu/>}
-                </ul>
+                )}
+                {expandedMenus.ADMIN && <Admin/>}
             </div>
         </div>
     );

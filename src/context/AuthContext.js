@@ -6,6 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isLogin, setIsLogin] = useState(!!localStorage.getItem('access'));
     const [email, setEmail] = useState(null);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     // 로그인 상태 및 이메일 설정
     const updateAuthState = () => {
@@ -15,13 +16,16 @@ export const AuthProvider = ({ children }) => {
                 const decodedToken = jwtDecode(token);
                 setEmail(decodedToken.email);
                 setIsLogin(true);
+                setIsAdmin(decodedToken.role === 'ROLE_ADMIN');
             } catch (error) {
                 console.error('Token error:', error);
                 setIsLogin(false);
+                setIsAdmin(false);
             }
         } else {
             setIsLogin(false);
             setEmail(null);
+            setIsAdmin(false);
         }
     };
 
@@ -49,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ isLogin, email, handleContextLogin, handleContextLogout }}>
+        <AuthContext.Provider value={{ isLogin, email, isAdmin, handleContextLogin, handleContextLogout }}>
             {children}
         </AuthContext.Provider>
     );
