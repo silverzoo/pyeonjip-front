@@ -8,6 +8,7 @@ import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -27,6 +28,7 @@ function SandboxApp() {
 
 
     const { isLogin, email, setIsLogin } = useAuth();
+    const {loadCartData} = useCart();
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -102,6 +104,7 @@ function SandboxApp() {
         } else {
             addLocalCart(cartItem, selectedDetail);
         }
+        loadCartData();
         showModalMessage(`${item.name}의 ${selectedDetail.name}이(가) 장바구니에 추가되었습니다.`);
     };
 

@@ -3,7 +3,6 @@ import './Cart.css';
 import { useNavigate } from 'react-router-dom';
 import { Modal, Button } from 'react-bootstrap';
 import {
-    fetchCartDetails,
     updateLocalStorage,
     deleteCartItem,
     deleteAllCartItems,
@@ -11,14 +10,14 @@ import {
 } from '../../utils/cartUtils';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
-import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
 import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
 
 const ANIMATION_DURATION = 400;
 
 function CartApp() {
     const [coupons, setCoupons] = useState([]);
-    const [items, setItems] = useState([]);
+    //const [items, setItems] = useState([]);
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -33,6 +32,8 @@ function CartApp() {
    // const [email, setEmail] = useState('');
 
     const { isLogin, email, setIsLogin } = useAuth();
+    const { items, setItems, loadCartData } = useCart();
+
 
     // 로그인 여부 확인 및 상태 설정
     // useEffect(() => {
@@ -43,32 +44,32 @@ function CartApp() {
     //     }
     // }, []); // 최초 렌더링 시 한 번 실행
 
-    // 로그인 상태에 따라 장바구니 데이터 로드
-    useEffect(() => {
-        if (isLogin) {
-            console.log('(cart) 로그인 상태');
-            fetch(`http://localhost:8080/api/cart?email=${email}`)
-                .then((response) => response.json())
-                .then((cartDetailDtos) => {
-                    setItems(cartDetailDtos);
-                    console.log('(cart, server) Cart 동기화 완료', cartDetailDtos);
-                })
-                .catch((error) => console.error('Error fetching CartDetailDto:', error));
-        } else {
-            console.log('(cart) 비로그인 상태');
-            const localCart = JSON.parse(localStorage.getItem('cart')) || [];
-            if (localCart.length === 0) {
-                console.log('(cart, local) 장바구니가 비어 있습니다.');
-                return;
-            }
-            fetchCartDetails(localCart)
-                .then((localDetails) => {
-                    setItems(localDetails);
-                    console.log('(cart, local) Cart 불러오기 완료', localDetails);
-                })
-                .catch((error) => console.error('Error fetching local cart details:', error));
-        }
-    }, [isLogin, email]); // isLogin과 email 상태 변경 시 실행
+    // // 로그인 상태에 따라 장바구니 데이터 로드
+    // useEffect(() => {
+    //     if (isLogin) {
+    //         console.log('(cart) 로그인 상태');
+    //         fetch(`http://localhost:8080/api/cart?email=${email}`)
+    //             .then((response) => response.json())
+    //             .then((cartDetailDtos) => {
+    //                 setItems(cartDetailDtos);
+    //                 console.log('(cart, server) Cart 동기화 완료', cartDetailDtos);
+    //             })
+    //             .catch((error) => console.error('Error fetching CartDetailDto:', error));
+    //     } else {
+    //         console.log('(cart) 비로그인 상태');
+    //         const localCart = JSON.parse(localStorage.getItem('cart')) || [];
+    //         if (localCart.length === 0) {
+    //             console.log('(cart, local) 장바구니가 비어 있습니다.');
+    //             return;
+    //         }
+    //         fetchCartDetails(localCart)
+    //             .then((localDetails) => {
+    //                 setItems(localDetails);
+    //                 console.log('(cart, local) Cart 불러오기 완료', localDetails);
+    //             })
+    //             .catch((error) => console.error('Error fetching local cart details:', error));
+    //     }
+    // }, [isLogin, email]); // isLogin과 email 상태 변경 시 실행
 
     // 쿠폰 데이터 로드
     useEffect(() => {
