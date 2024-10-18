@@ -6,9 +6,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
-import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
+import CommentSection from "./CommentSection";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -167,12 +167,13 @@ function SandboxApp() {
                                                                     />
                                                                 </Link>
                                                                 <div className="card-body">
-                                                                    <Link to={`category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                    <Link to={`/category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
                                                                         <h6>{selectedDetail.name}</h6>
                                                                         <h4 className="fw-bolder">
                                                                             ￦{selectedDetail.price.toLocaleString()}
                                                                         </h4>
+                                                                        <CommentSection productId={item.id} />
                                                                     </Link>
                                                                     <div className="my-3">
                                                                         <h6 style={{ fontSize: '14px' }}>옵션</h6>

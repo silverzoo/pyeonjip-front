@@ -8,7 +8,8 @@ import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
-import CommentSection from "./Comment";
+import Comment from "./Comment";
+import CommentSection from "./CommentSection";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
@@ -133,6 +134,7 @@ function ProductDetail() {
                     <h4>{selectedOption.name}</h4>
                     <p>{product.description}</p>
                     <h3>￦{selectedOption.price.toLocaleString()}</h3>
+                    <CommentSection productId={product.id} />
 
                     <hr></hr>
 
@@ -243,7 +245,7 @@ function ProductDetail() {
                         >
                             <div className="accordion-body">
                                 {/*   리뷰 바디    */}
-                                <CommentSection productId={productId}/>
+                                <Comment productId={productId}/>
                             </div>
                         </div>
                     </div>
