@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import logo from "../../logo.svg";
 
 function SignUp() {
     const [email, setEmail] = useState('');
@@ -42,13 +43,16 @@ function SignUp() {
     return (
         <div className="container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
+                <div className="user-login-logo text-center mb-5">
+                    <Link to="/"><img src={logo} alt="logo" width="140"/></Link>
+                </div>
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">회원가입</h3>
                     <div className="user-link">
                         <a href="#" onClick={handleBack} className="text-muted">뒤로가기</a>
                     </div>
                 </div>
-                <hr />
+                <hr/>
                 <form onSubmit={handleSignup}>
                     <div className="form-group mb-3">
                         <label htmlFor="email">이메일</label>
@@ -114,7 +118,7 @@ function SignUp() {
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
-                            style={{ marginBottom: '40px' }}
+                            style={{marginBottom: '40px'}}
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
+import logo from "../../logo.svg";
 
 function FindAccount() {
     const [name, setName] = useState('');
@@ -45,6 +46,9 @@ function FindAccount() {
     return (
         <div className="user-container h-100 d-flex justify-content-center align-items-center">
             <div className="col-md-6">
+                <div className="user-login-logo text-center mb-5">
+                    <Link to="/"><img src={logo} alt="logo" width="140"/></Link>
+                </div>
                 <div className="d-flex justify-content-between align-items-center">
                     <h3 className="text-left mb-2">계정 찾기</h3>
                     <div className="user-link">
@@ -73,7 +77,7 @@ function FindAccount() {
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
                             required
-                            style={{ marginBottom: '40px' }}
+                            style={{marginBottom: '40px'}}
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}
