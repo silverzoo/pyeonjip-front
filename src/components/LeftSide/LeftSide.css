@@ -29,3 +29,29 @@
 .tapMark {
     font-size: 70%;
 }
+
+.collapse-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1.0s ease-in-out;
+
+}
+
+/* 확장된 상태 */
+.collapse-content.expanded {
+    max-height: 500px; /* 충분한 높이로 설정 */
+}
+
+/* 닫기 시작할 때 상태 */
+.collapse-content.collapsing {
+    max-height: 0;
+}
+
+/* 토글 아이콘 회전 */
+.toggle-icon {
+    transition: transform 1.6s;
+}
+
+.toggle-icon.expanded {
+    transform: rotate(90deg);
+}
