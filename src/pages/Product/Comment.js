@@ -87,7 +87,7 @@ function CommentSection({ productId }) {
 
     // 댓글 작성 여부 확인
     const hasUserCommented = comments.some(comment => comment.email === email);
-    const [showInput, setShowInput] = useState(true); // 입력폼 표시 여부 상태 추가
+    const [showInput, setShowInput] = useState(false); // 입력폼 표시 여부 상태 추가
 
     return (
         <div className="card border-0 p-3 rounded">
@@ -95,64 +95,22 @@ function CommentSection({ productId }) {
                 <i className="bi bi-chat-left-text me-2"></i>
                 {comments.length}개의 리뷰
             </h5>
+            <hr/>
 
-            {isLogin ? (
-                hasUserCommented ? (
-                    <></>
-                ) : (
-                    showInput && (
-                        <div className="mb-3">
-                            <div className="mb-2">
-                                {[1, 2, 3, 4, 5].map(star => (
-                                    <span
-                                        key={star}
-                                        className={`bi bi-star${newRating >= star ? '-fill' : ''} text-black cursor-pointer mx-2`}
-                                        onClick={() => setNewRating(star)}
-                                        style={{ fontSize: '1.2rem', marginRight: '5px', marginLeft: '5px' }}
-                                    ></span>
-                                ))}
-                            </div>
-                            <input
-                                type="text"
-                                className="form-control mb-2"
-                                placeholder="제목을 입력하세요"
-                                value={newTitle}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                            />
-                            <textarea
-                                className="form-control"
-                                rows="3" // 줄 수 조정
-                                placeholder="댓글을 입력하세요"
-                                value={newComment}
-                                onChange={(e) => setNewComment(e.target.value)}
-                            />
-                            <div className="d-flex justify-content-end">
-                                <button className="btn btn-dark mt-2 px-4" onClick={handleAddComment}>
-                                    <i className="bi bi-send"></i>
-                                </button>
-                            </div>
-                        </div>
-                    )
-                )
-            ) : (
-                <div className="alert grey text-center">
-                    <i className="bi bi-lock"></i> 댓글을 작성하려면 로그인 해주세요.
-                </div>
-            )}
 
             {comments.length > 0 ? (
                 comments.map((comment) => (
-                    <div key={comment.id} className="card mb-3">
-                        <div className="card-body" style={{ paddingTop: '5px' }}>
+                    <div key={comment.id} className="card mb-1 border-0">
+                        <div className="card-body" style={{paddingTop: '5px'}}>
                             {editingCommentId === comment.id ? (
                                 <>
-                                    <div>
+                                    <div className="my-2">
                                         {[1, 2, 3, 4, 5].map(star => (
                                             <span
                                                 key={star}
-                                                className={`bi bi-star${editingRating >= star ? '-fill' : ''} text-black cursor-pointer`}
+                                                className={`bi bi-star${editingRating >= star ? '-fill' : ''} text-black cursor-pointer mx-2 `}
                                                 onClick={() => setEditingRating(star)}
-                                                style={{ fontSize: '1.2rem', marginRight: '5px' }}
+                                                style={{fontSize: '1.2rem', marginRight: '5px', marginLeft: '5px'}}
                                             ></span>
                                         ))}
                                     </div>
@@ -185,25 +143,25 @@ function CommentSection({ productId }) {
                                 </>
                             ) : (
                                 <>
-                                    <div className="text-black mx-1 my-2">
+                                    <div className="text-black my-2">
                                         {[1, 2, 3, 4, 5].map(star => (
                                             <span key={star}
                                                   className={`bi bi-star${comment.rating >= star ? '-fill' : ''} `}
-                                                  style={{ fontSize: '0.8rem', marginRight: '5px'}}
+                                                  style={{fontSize: '0.8rem', marginRight: '5px'}}
                                             ></span>
                                         ))}
                                     </div>
                                     <div className="d-flex justify-content-between">
-                                        <h2 style={{ fontSize: '18px' }} className="fw-bolder">
+                                        <h2 style={{fontSize: '18px'}} className="fw-bolder">
                                             {comment.title} {/* 제목 표시 */}
                                         </h2>
 
-                                        <h6 style={{ fontSize: '12px' }} className="text-muted">
+                                        <h6 style={{fontSize: '12px'}} className="text-muted">
                                             {new Date(comment.createdAt).toLocaleString()}
                                         </h6>
                                     </div>
 
-                                    <h6 style={{ whiteSpace: 'pre-wrap', overflowWrap: 'break-word', fontSize: '15px' }}>
+                                    <h6 style={{whiteSpace: 'pre-wrap', overflowWrap: 'break-word', fontSize: '15px'}}>
                                         {comment.content}
                                     </h6>
 
@@ -224,6 +182,7 @@ function CommentSection({ productId }) {
                                             </button>
                                         </div>
                                     )}
+                                    <hr/>
                                 </>
                             )}
                         </div>
@@ -237,6 +196,58 @@ function CommentSection({ productId }) {
                         리뷰를 작성해주시면 더 나은 서비스를 제공하는데 도움이 됩니다.
                     </p>
                 </div>
+            )}
+            {isLogin ? (
+                <>
+                    {hasUserCommented ? null : (
+                        <div className="mb-3">
+                            <button
+                                className="btn btn-dark mb-2"
+                                onClick={() => setShowInput(prev => !prev)} // 버튼 클릭 시 입력 폼 토글
+                            >
+                                {showInput ? '취소' : '리뷰 작성하기'}
+                            </button>
+                            {showInput && (
+                                <div>
+                                    <div className="mb-2">
+                                        {[1, 2, 3, 4, 5].map(star => (
+                                            <span
+                                                key={star}
+                                                className={`bi bi-star${newRating >= star ? '-fill' : ''} text-black cursor-pointer mx-2`}
+                                                onClick={() => setNewRating(star)}
+                                                style={{fontSize: '1.2rem', marginRight: '5px', marginLeft: '5px'}}
+                                            ></span>
+                                        ))}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        className="form-control mb-2"
+                                        placeholder="제목을 입력하세요"
+                                        value={newTitle}
+                                        onChange={(e) => setNewTitle(e.target.value)}
+                                    />
+                                    <textarea
+                                        className="form-control"
+                                        rows="3" // 줄 수 조정
+                                        placeholder="댓글을 입력하세요"
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
+                                    />
+                                    <div className="d-flex justify-content-end">
+                                        <button className="btn btn-dark mt-2 px-4" onClick={handleAddComment}>
+                                            <i className="bi bi-send"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </>
+            ) : (
+                <div className="alert grey text-center">
+                    <i className="bi bi-lock"></i> 댓글을 작성하려면 로그인 해주세요.
+                </div>
+
             )}
         </div>
     );
