@@ -9,10 +9,8 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [isSidePanelOpen, setIsSidePanelOpen] = useState(false); // 사이드패널 열림/닫힘 상태 관리
-    const { isLogin, email } = useAuth(); // 인증 상태와 이메일 가져오기
+    const { isLogin, email } = useAuth();
 
-    // 장바구니 데이터 로드 함수
     const loadCartData = useCallback(async () => {
         try {
             if (isLogin) {
@@ -35,10 +33,9 @@ export const CartProvider = ({ children }) => {
         }
     }, [isLogin, email]);
 
-    // 초기 데이터 로드
     useEffect(() => {
         loadCartData();
-    }, [loadCartData, isLogin]); // 로그인 상태가 바뀔 때도 다시 로드
+    }, [loadCartData, isLogin]);
 
     return (
         <CartContext.Provider value={{

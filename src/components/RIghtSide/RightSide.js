@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { fetchCartDetails, updateLocalStorage, deleteCartItem, updateCartItemQuantity } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './RightSide.css';
@@ -12,7 +11,6 @@ const BUTTON_WHITELIST = ['/login', '/chat', '/order'];
 
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
-    //const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [animatedItems, setAnimatedItems] = useState([]); // 애니메이션을 적용할 항목을 추적
     const navigate = useNavigate();
@@ -21,7 +19,6 @@ const SidePanelApp = () => {
     const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
     const { items, setItems, loadCartData } = useCart();
 
-    // items가 업데이트될 때마다 totalPrice 업데이트
     useEffect(() => {
         updateTotalPrice(items);
     }, [items]);
