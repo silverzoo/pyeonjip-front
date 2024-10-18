@@ -7,7 +7,7 @@ import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 
 const ANIMATION_DURATION = 400;
-const BUTTON_WHITELIST = ['/login', '/chat', '/order'];
+const BUTTON_WHITELIST = ['/login', '/chat', '/order', '/signup', '/signup/result', '/find', '/found'];
 
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
