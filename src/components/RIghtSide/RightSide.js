@@ -156,13 +156,13 @@ const SidePanelApp = () => {
                     <>
                         <span
                             className="text-dark"
-                            style={{ cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold' }}
+                            style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
                             onClick={goToMyPage}>
                             마이페이지
                         </span>
                         <span
                             className="text-dark"
-                            style={{ cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold' }}
+                            style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
                             onClick={handleLogout}>
                             로그아웃
                         </span>
@@ -170,7 +170,7 @@ const SidePanelApp = () => {
                 ) : (
                     <span
                         className="text-dark"
-                        style={{ cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold' }}
+                        style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
                         onClick={goToLoginPage}>
                         로그인
                     </span>
@@ -179,7 +179,7 @@ const SidePanelApp = () => {
                 {location.pathname !== '/cart' && (
                     <span
                         className="text-dark"
-                        style={{ cursor: 'pointer', fontSize: '16px', fontWeight: 'semibold' }}
+                        style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
                         onClick={toggleCart}>
                         장바구니
                      </span>)}

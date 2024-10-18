@@ -15,7 +15,7 @@ function App() {
         <div className="app">
             <AuthProvider>
             <div className='leftSide'>
-                <HiddenUtils whitelist={['/chat']}>
+                <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find']}>
                     <LeftSide/>
                 </HiddenUtils>
             </div>

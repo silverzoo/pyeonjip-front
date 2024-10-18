@@ -55,10 +55,15 @@ function Category({ categories }) {
                         onToggle={() => handleCategoryToggle(category.id)}
                         isSelected={selectedCategoryId === category.id}
                         hasChildren={category.children && category.children.length > 0}
+                        className={`toggle-icon ${expandedCategories[category.id] ? 'expanded' : ''}`}
                     />
-                    {expandedCategories[category.id] && category.children && (
-                        <Category categories={category.children} />
-                    )}
+                    <div
+                        className={`collapse-content ${expandedCategories[category.id] ? 'expanded' : ''}`}
+                    >
+                        {expandedCategories[category.id] && category.children && (
+                            <Category categories={category.children} />
+                        )}
+                    </div>
                 </div>
             ))}
         </div>

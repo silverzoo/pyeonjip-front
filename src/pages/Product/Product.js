@@ -16,8 +16,6 @@ function SandboxApp() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
-   // const [isLogin, setIsLogin] = useState(false);
-  //  const [email, setEmail] = useState('');
     const { categoryId } = useParams();
     const [animationKey, setAnimationKey] = useState(0);
     const MODAL_DURATION = 1000;
@@ -33,7 +31,7 @@ function SandboxApp() {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                if (!categoryId) {
+                if (!categoryId || categoryId === 'all') {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
