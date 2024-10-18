@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Collapse, initMDB } from 'mdb-ui-kit';
-import {getUserEmail, isLoggedIn} from "../../utils/authUtils";
 import { useLocation } from 'react-router-dom';
 import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -9,6 +8,7 @@ import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
+import CommentSection from "./Comment";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
@@ -19,8 +19,6 @@ function ProductDetail() {
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
-    // const [isLogin, setIsLogin] = useState(false); // 더미 데이터
-    // const [email, setEmail] = useState(null);
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [categoryId, setCategoryId] = useState('');
@@ -45,10 +43,7 @@ function ProductDetail() {
         initMDB({ Collapse }); // 아코디언 초기화
     }, []);
 
-
     useEffect(() => {
-        //console.log(`(detail) ${isLoggedIn() ? '로그인' : '비로그인'}`);
-
         fetch(`http://localhost:8080/api/products/${productId}`)
             .then((response) => response.json())
             .then((data) => {
@@ -248,13 +243,7 @@ function ProductDetail() {
                         >
                             <div className="accordion-body">
                                 {/*   리뷰 바디    */}
-                                <div className="text-center my-2 ">
-                                    <i className="bi bi-emoji-frown  my-5" style={{fontSize: '3rem'}}></i>
-                                    <h3 className="my-4 bold">리뷰가 비어 있어요.</h3>
-                                    <h6 className="text-muted">리뷰를 작성해주시면 더 나은 서비스를 제공하는데 도움이 됩니다.</h6>
-                                </div>
-
-
+                                <CommentSection productId={productId}/>
                             </div>
                         </div>
                     </div>
@@ -266,5 +255,4 @@ function ProductDetail() {
         </div>
     );
 }
-
 export default ProductDetail;
