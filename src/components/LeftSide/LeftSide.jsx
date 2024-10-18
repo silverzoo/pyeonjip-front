@@ -67,7 +67,7 @@ const LeftSide = () => {
                 <div className={`collapse-content ${expandedMenus.SHOP ? 'expanded' : ''}`}>
                     {expandedMenus.SHOP && <Category categories={categories} />}
                 </div>
-                <div style={{ height: '8px' }} />
+                {/*<div style={{ height: '15px' }} />*/}
                 {isAdmin && (
                     <ToggleIcon
                         label="ADMIN"
