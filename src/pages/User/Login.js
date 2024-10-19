@@ -119,7 +119,7 @@ function Login() {
                 </form>
                 <div className="d-flex justify-content-between mb-5">
                     <Link to="/find" className="user-link">계정 찾기</Link>
-                    <Link to="/find" className="user-link">비밀번호 재설정</Link>
+                    <Link to="/reset" className="user-link">비밀번호 재설정</Link>
                     <Link to="/signup" className="user-link">회원가입</Link>
                 </div>
                 <hr className="mb-3"/>

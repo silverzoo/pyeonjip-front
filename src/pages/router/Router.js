@@ -22,6 +22,8 @@ import SignUpResult from "../User/SignUpResult";
 import MyPage from "../User/MyPage";
 import FindAccount from "../User/FindAccount";
 import FindAccountResult from "../User/FindAccountResult";
+import ResetPassword from "../User/ResetPassword";
+import ResetPasswordResult from "../User/ResetPasswordResult";
 
 function AppRouter() {
     return (
@@ -40,6 +42,9 @@ function AppRouter() {
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/find" element={<FindAccount />} />
             <Route path="/found" element={<FindAccountResult />} />
+            <Route path="/reset" element={<ResetPassword />} />
+            <Route path="/reset" element={<ResetPassword />} />
+            <Route path="/reset/result" element={<ResetPasswordResult />} />
             <Route path="/order" element={<OrderPage />} />
             <Route path="/order-success" element={<OrderSuccess />} />
             <Route path="/chat" element={<ChatPage />} />
