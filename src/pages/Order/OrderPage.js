@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+// import SidePanelApp from '../components/RightSide';
 import './OrderPage.css';
 
 function OrderPage() {
   const location = useLocation();
   const navigate = useNavigate();
   const orderData = location.state?.orderSummary;
+  const couponId = location.state?.couponId; 
 
   const [userEmail, setUserEmail] = useState('');
   const [recipient, setRecipient] = useState(''); // 수령인
@@ -17,7 +19,6 @@ function OrderPage() {
 
   // 사용자 정보 가져오기
   useEffect(() => {
-    console.log('Location state:', location.state);
     const fetchUserData = async () => {
       const userEmail = location.state?.email;
 
@@ -35,6 +36,7 @@ function OrderPage() {
         if (!response.ok) {
           throw new Error(`HTTP 에러 발생, 현재 상태: ${response.status}`);
         }
+    
         const userData = await response.json();
 
         // 유저 정보 설정
@@ -98,6 +100,21 @@ function OrderPage() {
 
       if (response.ok) {
         console.log('주문이 성공적으로 완료되었습니다.');
+
+      // 2. 장바구니 비우기 API 호출
+      await fetch(`http://localhost:8080/api/cart?email=${userEmail}`, {
+        method: 'DELETE',
+      });
+      console.log('장바구니가 성공적으로 비워졌습니다.');
+
+      // 3. 쿠폰 비활성화 API 호출
+      if (couponId) {
+        await fetch(`http://localhost:8080/api/coupon?id=${couponId}`, {
+          method: 'DELETE',
+        });
+        console.log('쿠폰이 성공적으로 비활성화되었습니다.');
+      }
+
         navigate('/order-success'); // 주문 성공 페이지 이동
       } else {
         const errorData = await response.json();
@@ -240,6 +257,9 @@ function OrderPage() {
       </div>
     </form>
   </section>
+
+   {/* 오른쪽 사이드 패널 */}
+   {/* <SidePanelApp /> */}
     </div >
   );
 }

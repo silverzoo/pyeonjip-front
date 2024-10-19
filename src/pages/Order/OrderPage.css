@@ -209,6 +209,7 @@
   cursor: pointer;
   box-sizing: border-box;
   border-radius: 0;
+  margin-bottom: 100px;
 }
 
 .order-back-button {
