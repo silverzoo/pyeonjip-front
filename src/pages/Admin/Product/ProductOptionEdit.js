@@ -40,42 +40,45 @@ function ProductOptionEdit() {
     };
 
     return (
-        <div className="option-edit-container">
-            <h1>옵션 수정</h1>
-            <div>
+        <div className="container option-edit-container my-4">
+            <h1 className="mb-4">옵션 수정</h1>
+            <div className="form-group">
                 <label>옵션 이름</label>
                 <input
                     type="text"
+                    className="form-control"
                     value={option.name}
                     onChange={(e) => setOption({ ...option, name: e.target.value })}
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>가격</label>
                 <input
                     type="number"
+                    className="form-control"
                     value={option.price}
                     onChange={(e) => setOption({ ...option, price: e.target.value })}
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>수량</label>
                 <input
                     type="number"
+                    className="form-control"
                     value={option.quantity}
                     onChange={(e) => setOption({ ...option, quantity: e.target.value })}
                 />
             </div>
-            {/* 메인 이미지 수정 */}
-            <div>
+            <div className="form-group">
                 <label>메인 이미지</label>
                 <input
                     type="text"
+                    className="form-control"
                     value={option.mainImage}
                     onChange={(e) => setOption({ ...option, mainImage: e.target.value })}
                 />
             </div>
-            <button onClick={handleUpdate}>수정 완료</button>
+            <button className="btn btn-primary mt-3" onClick={handleUpdate}>수정 완료</button>
         </div>
     );
 }
