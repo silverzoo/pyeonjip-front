@@ -2,15 +2,22 @@ import { useEffect, useState, useCallback } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
-const useWebSocket = (chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted) => {
+const useWebSocket = (chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted, userEmail) => {
   const [client, setClient] = useState(null);
 
   useEffect(() => {
-    if (!chatRoomId) return;
+    if (!chatRoomId || !userEmail) return;
+
+    const token = localStorage.getItem('access');
+    if (!token) {
+      console.error('JWT 토큰이 없습니다.');
+      return;
+    }
 
     const stompClient = new Client({
       webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
       connectHeaders: {
+        Authorization: `Bearer ${token}`,
         chatRoomId: chatRoomId
       },
       onConnect: () => {
@@ -53,34 +60,34 @@ const useWebSocket = (chatRoomId, onMessageReceived, onMessageUpdated, onMessage
         stompClient.deactivate();
       }
     };
-  }, [chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted]);
+  }, [chatRoomId, onMessageReceived, onMessageUpdated, onMessageDeleted, userEmail]);
 
   const sendMessage = useCallback((message) => {
     if (client && client.active) {
       client.publish({
         destination: `/app/chat.sendMessage/${chatRoomId}`,
-        body: JSON.stringify(message),
+        body: JSON.stringify({ ...message, senderEmail: userEmail }),
       });
     }
-  }, [client, chatRoomId]);
+  }, [client, chatRoomId, userEmail]);
 
   const updateMessage = useCallback((messageId, newText) => {
     if (client && client.active) {
       client.publish({
         destination: `/app/chat.updateMessage/${chatRoomId}`,
-        body: JSON.stringify({ id: messageId, message: newText }),
+        body: JSON.stringify({ id: messageId, message: newText, senderEmail: userEmail }),
       });
     }
-  }, [client, chatRoomId]);
+  }, [client, chatRoomId, userEmail]);
 
   const deleteMessage = useCallback((messageId) => {
     if (client && client.active) {
       client.publish({
         destination: `/app/chat.deleteMessage/${chatRoomId}`,
-        body: JSON.stringify({ id: messageId }),
+        body: JSON.stringify({ id: messageId, senderEmail: userEmail }),
       });
     }
-  }, [client, chatRoomId]);
+  }, [client, chatRoomId, userEmail]);
 
   return { sendMessage, updateMessage, deleteMessage };
 };
