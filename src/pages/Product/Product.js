@@ -8,7 +8,7 @@ import './Product.css';
 import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
-import CommentSection from "./CommentSection";
+import CommentRateSection from "./CommentRateSection";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -30,6 +30,8 @@ function SandboxApp() {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setItems([]);
+            setCurrentPage(0);
             try {
                 if (!categoryId || categoryId === 'all') {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
@@ -50,8 +52,6 @@ function SandboxApp() {
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
-            console.log('데이터 불러오기 완료.', items);
-            console.log('페이지 : ' , currentPage + 1, 'hasMore : ' , hasMore);
         };
 
         fetchProducts();
@@ -173,7 +173,7 @@ function SandboxApp() {
                                                                         <h5 className="fw-bolder">
                                                                             ￦{selectedDetail.price.toLocaleString()}
                                                                         </h5>
-                                                                        <CommentSection productId={item.id} />
+                                                                        <CommentRateSection productId={item.id} />
                                                                     </Link>
                                                                     <div className="my-3">
                                                                         <h6 style={{ fontSize: '14px' }}>옵션</h6>

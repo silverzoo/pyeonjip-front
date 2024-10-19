@@ -9,7 +9,7 @@ import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 import Comment from "./Comment";
-import CommentSection from "./CommentSection";
+import CommentDetailRateSection from "./CommentDetailRateSection";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
@@ -23,6 +23,7 @@ function ProductDetail() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [categoryId, setCategoryId] = useState('');
+    const [commentUpdated, setCommentUpdated] = useState(false);
 
     const [product, setProduct] = useState({
         productImages: [],
@@ -49,8 +50,6 @@ function ProductDetail() {
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
-                console.log('제품 상세정보 불러오기 완료 : ', data);
-
                 const option = data.productDetails.find(detail => detail.id === parseInt(optionId));
                 setSelectedOption(option || data.productDetails[0]); // 기본 옵션 설정
 
@@ -134,7 +133,7 @@ function ProductDetail() {
                     <h4>{selectedOption.name}</h4>
                     <p>{product.description}</p>
                     <h3>￦{selectedOption.price.toLocaleString()}</h3>
-                    <CommentSection productId={product.id} />
+                    <CommentDetailRateSection productId={product.id} commentUpdated={commentUpdated} />
 
                     <hr></hr>
 
@@ -245,7 +244,7 @@ function ProductDetail() {
                         >
                             <div className="accordion-body">
                                 {/*   리뷰 바디    */}
-                                <Comment productId={productId}/>
+                                <Comment productId={productId} setCommentUpdated={setCommentUpdated} />
                             </div>
                         </div>
                     </div>

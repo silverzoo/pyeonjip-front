@@ -1,38 +1,38 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-function CommentSection({ productId }) {
+function CommentDetailRateSection({ productId, commentUpdated }) {
     const [comments, setComments] = useState([]);
     const location = useLocation();
 
-    useEffect(() => {
-        // productId가 null일 경우 URL 쿼리 파라미터에서 가져오기
+    const fetchComments = () => {
         const queryParams = new URLSearchParams(location.search);
         const idFromQuery = queryParams.get('productId');
-
-        // 최종적으로 사용할 productId 결정
         const idToFetch = productId || idFromQuery;
 
         if (idToFetch) {
             fetch(`http://localhost:8080/api/comments/product/${idToFetch}`)
                 .then((response) => response.json())
                 .then((data) => {
-                    if (Array.isArray(data)) {
-                        setComments(data); // 배열인 경우에만 상태 업데이트
-                    } else {
-                        console.error('응답 데이터가 배열이 아닙니다:', data);
-                        setComments([]); // 기본값으로 빈 배열 설정
-                    }
+                    setComments(Array.isArray(data) ? data : []);
                 })
                 .catch((error) => console.error('댓글을 가져오는 중 오류 발생:', error));
         }
-    }, [productId, location.search]); // location.search를 의존성 배열에 추가
+    };
 
-    // 평균 별점 계산
+    useEffect(() => {
+        fetchComments(); // 컴포넌트가 처음 렌더링될 때 호출
+    }, [productId, location.search]);
+
+    // 상위 컴포넌트에서 리뷰가 업데이트될 때 호출
+    useEffect(() => {
+        fetchComments();
+    }, [commentUpdated]);
+
     const calculateAverageRating = () => {
         if (comments.length === 0) return 0;
         const totalRating = comments.reduce((acc, comment) => acc + comment.rating, 0);
-        return (totalRating / comments.length).toFixed(1); // 소수점 한 자리까지 반올림
+        return (totalRating / comments.length).toFixed(1);
     };
 
     const averageRating = calculateAverageRating();
@@ -51,4 +51,4 @@ function CommentSection({ productId }) {
     );
 }
 
-export default CommentSection;
+export default CommentDetailRateSection;
