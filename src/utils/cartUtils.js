@@ -1,7 +1,8 @@
+import {getUserEmail} from "./authUtils";
 
-export const addServerCart = (cart, userId) => {
+export const addServerCart = (cart, email) => {
 // 로그인 상태: 서버로 장바구니 항목 추가
-fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`, {
+fetch(`http://localhost:8080/api/cart?email=${email}`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -30,9 +31,14 @@ export const addLocalCart = (cart, selectedDetail) => {
 }
 
 // 로컬스토리지 -> 서버
-export const syncWithLocal = (cart, userId) => {
-        console.log(JSON.stringify(cart));
-    fetch(`http://localhost:8080/api/cart/sync?userId=${userId}`, {
+export const syncWithLocal = () => {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    if(cart === null){
+        console.log('cart is empty');
+        return;
+    }
+    const email = getUserEmail();
+    fetch(`http://localhost:8080/api/cart/sync?email=${email}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -54,9 +60,9 @@ export const syncWithLocal = (cart, userId) => {
 };
 
 // 서버 -> 로컬
-export const syncWithServer = async (userId) => {
+export const syncWithServer = async (email) => {
     try {
-        const response = await fetch(`http://localhost:8080/api/cart/sync?userId=${userId}`, {
+        const response = await fetch(`http://localhost:8080/api/cart/sync?email=${email}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,8 +133,8 @@ export const fetchCartDetails = (cartDtos) => {
         });
 };
 
-export const updateCartItemQuantity = (userId, quantity, cartItem) => {
-    fetch(`http://localhost:8080/api/cart/cart-items/${cartItem.optionId}?userId=${userId}`, {
+export const updateCartItemQuantity = (email, quantity, cartItem) => {
+    fetch(`http://localhost:8080/api/cart/${cartItem.optionId}?email=${email}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -150,8 +156,8 @@ export const updateCartItemQuantity = (userId, quantity, cartItem) => {
 }
 
 
-export const deleteCartItem = (userId, optionId) => {
-    fetch(`http://localhost:8080/api/cart/cart-items/${optionId}?userId=${userId}`, {
+export const deleteCartItem = (email, optionId) => {
+    fetch(`http://localhost:8080/api/cart/${optionId}?email=${email}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -175,8 +181,8 @@ export const deleteCartItem = (userId, optionId) => {
 }
 
 
-export const deleteAllCartItems = (userId) => {
-    fetch(`http://localhost:8080/api/cart/cart-items?userId=${userId}`, {
+export const deleteAllCartItems = (email) => {
+    fetch(`http://localhost:8080/api/cart?email=${email}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

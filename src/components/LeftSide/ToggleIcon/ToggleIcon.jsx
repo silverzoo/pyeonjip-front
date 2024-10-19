@@ -1,21 +1,25 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
-function ToggleIcon({ label, to, isExpanded, onToggle, isSelected, hasChildren }) {
+function ToggleIcon({ label, to, isExpanded, onToggle, hasChildren }) {
 
     return (
-        <li onClick={onToggle}>
-            <Link to={to}
-                  style={{
-                      fontWeight: isSelected ? 'bold' : 'normal',
-                  }}>
+
+        <div onClick={onToggle} style={{ marginBottom: '10px' }}>
+            <NavLink
+                to={to}
+                style={({ isActive }) => ({
+                    fontWeight: isActive ? 'bold' : 'normal',
+                    textDecoration: 'none',
+                })}
+            >
                 {hasChildren ? (
-                    isExpanded ? <span className='tapMark'>-</span> : <span className='tapMark'>+</span>
+                    <span className='tapMark'>{isExpanded ? '-' : '+'}</span>
                 ) : (
                     <span className='tapMark'>&nbsp;&nbsp;</span>
                 )}
                 &nbsp;&nbsp;{label}
-            </Link>
-        </li>
+            </NavLink>
+        </div>
     );
 }
 

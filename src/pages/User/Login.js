@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import {syncWithLocal} from "../../utils/cartUtils";
+import {useAuth} from "../../context/AuthContext";
+import logo from "../../logo.svg";
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+    const { handleContextLogin } = useAuth();
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,8 +51,10 @@ function Login() {
                 localStorage.setItem('access', accessToken.split(' ')[1]); // access 토큰 로컬 스토리지에 저장
 
                 // 로그인 성공 시 서버 Cart 동기화 및 로컬스토리지 초기화
-                syncWithLocal(JSON.parse(localStorage.getItem('cart')), 1); //Todo : userId 수정해야함
+                handleContextLogin(); // 로그인 상태 업데이트
+                syncWithLocal();
                 localStorage.removeItem('cart');
+
 
                 //이전페이지로 리다이렉트
                 //Todo : 로그인 창에서 새로고침 할 시 좋지않은 유저경험... 수정필요
@@ -70,55 +75,58 @@ function Login() {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/");
     };
 
-    return (
-        <div className="user-container h-100 d-flex justify-content-center align-items-center">
-            <div className="col-md-6">
-                <div className="d-flex justify-content-between align-items-center">
-                    <h3 className="text-left mb-1">로그인</h3>
-                    <div className="user-link">
-                        <a href="#" onClick={handleBack} className="text-muted">뒤로가기</a>
-                    </div>
-                </div>
-                <hr />
-                <form onSubmit={handleLogin}>
-                    <div className="form-group mb-3">
-                        <label htmlFor="email">이메일</label>
-                        <input
-                            type="email"
-                            className="form-control user-form-control"
-                            id="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group mb-3">
-                        <label htmlFor="password">비밀번호</label>
-                        <input
-                            type="password"
-                            className="form-control user-form-control"
-                            id="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    {errorMessage && <p className="text-danger">{errorMessage}</p>}
+    // 이벤트 리스너 추가
+    useEffect(() => {
+        const handleAuthChange = () => {
+        };
+        window.addEventListener('authChange', handleAuthChange);
+        return () => {
+            window.removeEventListener('authChange', handleAuthChange);
+        };
+    }, []);
 
-                    <div className="d-flex justify-content-between align-items-center">
-                        <div className="user-link">
-                            <a href="/find">계정 찾기</a>
-                            <a href="/reset-password">비밀번호 재설정</a>
-                            <a href="/signup">회원가입</a>
-                        </div>
-                        <div>
-                            <button type="submit" className="btn-sm user-btn">로그인</button>
-                        </div>
-                    </div>
+    return (
+        <div className="login-container d-flex flex-column align-items-center justify-content-start vh-100">
+            <div className="user-login-container">
+                <div className="user-login-logo text-center mb-5">
+                    <Link to="/"><img src={logo} alt="logo" width="180"/></Link>
+                </div>
+                <div className="text-center">
+                    <h5 className="user-login-text mb-3 fw-semibold">나의 공간을 '편집'</h5>
+                </div>
+                <form onSubmit={handleLogin} className="d-flex flex-column">
+                    <input
+                        type="email"
+                        className="form-control user-form-control mb-3"
+                        placeholder="이메일"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <input
+                        type="password"
+                        className="form-control user-form-control mb-4"
+                        placeholder="비밀번호"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    {errorMessage && <p className="text-danger mb-3">{errorMessage}</p>}
+                    <button type="submit" className="btn user-login-btn mb-4">로그인</button>
                 </form>
+                <div className="d-flex justify-content-between mb-5">
+                    <Link to="/find" className="user-link">계정 찾기</Link>
+                    <Link to="/find" className="user-link">비밀번호 재설정</Link>
+                    <Link to="/signup" className="user-link">회원가입</Link>
+                </div>
+                <hr className="mb-3"/>
+                <div className="text-center">
+                    <p className="bottom-text mb-0"> Elice Cloud Track 4기 2차 프로젝트 5팀</p>
+                </div>
+
             </div>
         </div>
     );

@@ -4,7 +4,7 @@ import Sandbox from "../Product/Product";
 import ProductDetail from "../Product/ProductDetail";
 import Cart from "../Cart/Cart";
 import Home from "../Home/Home";
-import AdminCategory from "../Admin/Category/category";
+import AdminCategory from "../Admin/Category/Category";
 import AdminOrder from "../Admin/Order/Order";
 import Login from "../User/Login";
 import SignUp from '../User/SignUp';
@@ -17,6 +17,7 @@ import ProductOptionAdmin from '../Admin/Product/ProductOptionAdmin';
 import ProductOptionEdit from '../Admin/Product/ProductOptionEdit';
 import Coupon from "../Admin/Coupon/Coupon";
 import ProductCreate from '../Admin/Product/ProductCreate';
+import ProductDetailCreate from '../Admin/Product/ProductDetailCreate';
 import SignUpResult from "../User/SignUpResult";
 import MyPage from "../User/MyPage";
 import FindAccount from "../User/FindAccount";
@@ -27,7 +28,7 @@ function AppRouter() {
         <Routes>
             <Route path="/category/:categoryId" element={<Sandbox />} />
             <Route path="/category" element={<Sandbox />} />
-            <Route path="/product-detail" element={<ProductDetail />} />
+            <Route path="/category/:categoryId/product-detail" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/" element={<Home />} />
             <Route path="/admin/category" element={<AdminCategory />} />
@@ -46,6 +47,7 @@ function AppRouter() {
             <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin />} />
             <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit />} />
             <Route path="/admin/createProduct" element={<ProductCreate />} />
+            <Route path="/admin/product/:productId/add-option" element={<ProductDetailCreate />} />
             <Route path="/admin/coupon" element={<Coupon />} />
 
         </Routes>

@@ -6,7 +6,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
 import { Modal } from 'react-bootstrap';
-import {isLoggedIn} from "../../utils/authUtils";
+import {useAuth} from "../../context/AuthContext";
+import {useCart} from "../../context/CartContext";
+import CommentSection from "./CommentSection";
 
 function SandboxApp() {
     const [items, setItems] = useState([]);
@@ -14,8 +16,6 @@ function SandboxApp() {
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
-    const [isLogin, setIsLogin] = useState(true);
-    const [testUserId, setTestUserId] = useState(1);
     const { categoryId } = useParams();
     const [animationKey, setAnimationKey] = useState(0);
     const MODAL_DURATION = 1000;
@@ -24,12 +24,14 @@ function SandboxApp() {
     const [hasMore, setHasMore] = useState(true);
     const [loading, setLoading] = useState(false);
 
+
+    const { isLogin, email, setIsLogin } = useAuth();
+    const {loadCartData} = useCart();
+
     useEffect(() => {
         const fetchProducts = async () => {
-            setIsLogin(!!isLoggedIn());
-            console.log(`(product) ${isLoggedIn() ? '로그인' : '비로그인'}`);
             try {
-                if (!categoryId) {
+                if (!categoryId || categoryId === 'all') {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=8`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
@@ -96,10 +98,11 @@ function SandboxApp() {
         };
 
         if (isLogin) {
-            addServerCart(cartItem, testUserId);
+            addServerCart(cartItem, email);
         } else {
             addLocalCart(cartItem, selectedDetail);
         }
+        loadCartData();
         showModalMessage(`${item.name}의 ${selectedDetail.name}이(가) 장바구니에 추가되었습니다.`);
     };
 
@@ -152,7 +155,7 @@ function SandboxApp() {
                                                             style={{ animationDelay: `${(groupIndex * 4 + itemIndex) * 0.1}s` }}
                                                         >
                                                             <div>
-                                                                <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                <Link to={`/category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                     <img
                                                                         src={hoveredImage}
                                                                         className="card-img-top"
@@ -164,12 +167,13 @@ function SandboxApp() {
                                                                     />
                                                                 </Link>
                                                                 <div className="card-body">
-                                                                    <Link to={`/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
+                                                                    <Link to={`/category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
                                                                         <h6>{selectedDetail.name}</h6>
                                                                         <h4 className="fw-bolder">
                                                                             ￦{selectedDetail.price.toLocaleString()}
                                                                         </h4>
+                                                                        <CommentSection productId={item.id} />
                                                                     </Link>
                                                                     <div className="my-3">
                                                                         <h6 style={{ fontSize: '14px' }}>옵션</h6>
