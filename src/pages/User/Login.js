@@ -43,9 +43,9 @@ function Login() {
 
         if (response.ok) {
             // 응답 헤더에서 access 토큰 꺼내기
-            const accessToken = response.headers.get('access');
-            if (accessToken) {
-                localStorage.setItem('access', accessToken); // access 토큰 로컬 스토리지에 저장
+            const accessToken = response.headers.get('Authorization');
+            if (accessToken && accessToken.startsWith('Bearer ')) {
+                localStorage.setItem('access', accessToken.split(' ')[1]); // access 토큰 로컬 스토리지에 저장
 
                 // 로그인 성공 시 서버 Cart 동기화 및 로컬스토리지 초기화
                 syncWithLocal(JSON.parse(localStorage.getItem('cart')), 1); //Todo : userId 수정해야함
