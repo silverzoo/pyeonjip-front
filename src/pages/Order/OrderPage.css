@@ -1,21 +1,42 @@
 .order-product-item {
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center; 
+  width: 100%;
+  gap: 20px; 
   padding: 20px 0;
+  position: relative;
+}
+
+.order-product-list{
+  width: 100%;
+  border-bottom: 1px solid black;
+  margin-bottom: 10px;
+}
+
+.order-product-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: -30px; /* 왼쪽으로 선을 확장 */
+  width: calc(100% + 30px); 
   border-bottom: 1px solid #ddd;
-  margin-bottom: 50px;
 }
 
 .order-product-image {
-  width: 100px; /* 이미지 너비 설정 */
+  width: 100px; 
   height: auto;
-  object-fit: cover;
-  border-radius: 5px;
-  margin-right: 50px; /* 이미지와 텍스트 사이 여백 */
 }
 
-.order-product-quantity,
+.order-product-details {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1; 
+  margin-left: 20px;
+  width: 60%;
+}
+
 .order-product-price {
   font-size: 0.7rem;
   font-weight: 500;
@@ -26,15 +47,42 @@
   font-weight: lighter;
 }
 
-.order-total-price,
-.order-product-name,
-.order-section-title,
+.order-product-name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.order-product-quantity {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 500px; 
+}
+
+.order-total-price {
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: right;
+  margin-right: 10px; /* 오른쪽 끝으로 */
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
 .order-membership,
 .order-summary-title {
   font-weight: 700;
   font-size: 0.9rem;
-  margin-bottom: 50px;
-  margin-top: 50px;
+  margin-bottom: 20px;
+  margin-top: 20px
+}
+.order-summary-title{
+  margin-left: 40px;
+}
+
+.order-section-title{
+  font-weight: 700;
+  font-size: 0.9rem;
 }
 
 .final-price{
@@ -42,13 +90,20 @@
   font-size: 0.7rem;
 }
 
+.order-membership{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 20px;
+}
+
 .order-summary {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px 0;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
   font-size: 14px;
 }
 
@@ -59,17 +114,22 @@
   gap: 5px;
 }
 
-.order-summary-left,
 .order-membership {
+  margin-top: 20px;
+}
+.order-summary-left{
   margin-top: 50px;
-  /* text-align: center; 중앙 정렬 */
 }
 
+.order-membership span:last-child {
+  font-weight: 700;
+  font-size: 0.9rem;
+}
 
 .price-summary-item {
   display: flex;
   justify-content: space-between;
-  width: 300px; /* 적절히 조정 */
+  width: 300px; 
   font-size: 0.8rem;
 }
 
@@ -78,31 +138,26 @@
   font-weight: 300;
 }
 
-.order-product-list{
-  width: 100%;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 50px;
-}
-
 .order-section-title {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid black;
   padding-bottom: 10px;
   display: block; 
   width: 100%;    
 }
+
 .total-price {
   display: flex;
   justify-content: flex-end;
   font-size: 1rem;
   font-weight: bold;
   margin-top: 10px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid black;
   padding-top: 10px;
 }
 
 .final-price {
   font-weight: bold;
-  font-size: 1.2rem;
+  font-size: 1.0rem;
 }
 /*  */
 
