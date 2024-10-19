@@ -14,7 +14,15 @@ function Comment({ productId }) {
     useEffect(() => {
         fetch(`http://localhost:8080/api/comments/product/${productId}`)
             .then((response) => response.json())
-            .then((data) => setComments(data))
+            .then((data) => {
+                // Ensure the data is an array
+                if (Array.isArray(data)) {
+                    setComments(data);
+                } else {
+                    console.error('Fetched data is not an array:', data);
+                    setComments([]); // Set an empty array if the data is not valid
+                }
+            })
             .catch((error) => console.error('Error fetching comments:', error));
     }, [productId]);
 
