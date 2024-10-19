@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-function CommentDetailRateSection({ productId, commentUpdated }) {
+function ProductDetailRate({ productId, commentUpdated }) {
     const [comments, setComments] = useState([]);
     const location = useLocation();
 
@@ -22,12 +22,7 @@ function CommentDetailRateSection({ productId, commentUpdated }) {
 
     useEffect(() => {
         fetchComments(); // 컴포넌트가 처음 렌더링될 때 호출
-    }, [productId, location.search]);
-
-    // 상위 컴포넌트에서 리뷰가 업데이트될 때 호출
-    useEffect(() => {
-        fetchComments();
-    }, [commentUpdated]);
+    }, [productId, location.search, commentUpdated]);
 
     const calculateAverageRating = () => {
         if (comments.length === 0) return 0;
@@ -51,4 +46,4 @@ function CommentDetailRateSection({ productId, commentUpdated }) {
     );
 }
 
-export default CommentDetailRateSection;
+export default ProductDetailRate;

@@ -9,7 +9,7 @@ import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 import Comment from "./Comment";
-import CommentDetailRateSection from "./CommentDetailRateSection";
+import ProductDetailRate from "./ProductDetailRate";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
@@ -24,6 +24,8 @@ function ProductDetail() {
     const [modalMessage, setModalMessage] = useState('');
     const [categoryId, setCategoryId] = useState('');
     const [commentUpdated, setCommentUpdated] = useState(false);
+    const { isLogin, email, setIsLogin } = useAuth();
+    const {loadCartData} = useCart();
 
     const [product, setProduct] = useState({
         productImages: [],
@@ -37,9 +39,6 @@ function ProductDetail() {
         name: '',
         price: 0,
     });
-
-    const { isLogin, email, setIsLogin } = useAuth();
-    const {loadCartData} = useCart();
 
     useEffect(() => {
         initMDB({ Collapse }); // 아코디언 초기화
@@ -133,7 +132,7 @@ function ProductDetail() {
                     <h4>{selectedOption.name}</h4>
                     <p>{product.description}</p>
                     <h3>￦{selectedOption.price.toLocaleString()}</h3>
-                    <CommentDetailRateSection productId={product.id} commentUpdated={commentUpdated} />
+                    <ProductDetailRate productId={product.id} commentUpdated={commentUpdated} />
 
                     <hr></hr>
 
