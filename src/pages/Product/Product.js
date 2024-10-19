@@ -170,9 +170,9 @@ function SandboxApp() {
                                                                     <Link to={`/category/${categoryId}/product-detail?productId=${item.id}&optionId=${selectedDetail.id}`}>
                                                                         <h6 className="card-title fw-bold">{item.name}</h6>
                                                                         <h6>{selectedDetail.name}</h6>
-                                                                        <h4 className="fw-bolder">
+                                                                        <h5 className="fw-bolder">
                                                                             ￦{selectedDetail.price.toLocaleString()}
-                                                                        </h4>
+                                                                        </h5>
                                                                         <CommentSection productId={item.id} />
                                                                     </Link>
                                                                     <div className="my-3">
