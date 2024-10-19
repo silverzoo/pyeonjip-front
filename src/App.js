@@ -7,6 +7,7 @@ import RightSide from './components/RIghtSide/RightSide'
 import HiddenUtils from "./utils/HiddenUtils";
 import {AuthProvider} from "./context/AuthContext";
 import {CartProvider} from "./context/CartContext";
+import ChatDashboardButton from './components/Chat/ChatDashboardButton';
 
 function App() {
 
@@ -31,6 +32,7 @@ function App() {
             <div className='footer'>
                 <Footer/>
             </div>
+            <ChatDashboardButton/>
         </div>
 
     );
