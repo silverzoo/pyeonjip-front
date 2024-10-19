@@ -29,6 +29,7 @@ function Comment({ productId }) {
             .then((savedComment) => {
                 setComments((prev) => [...prev, savedComment]);
                 setShowInput(false); // 작성 완료 후 입력폼 닫기
+                window.location.reload();
             })
             .catch((error) => console.error('Error adding comment:', error));
     };
@@ -48,6 +49,7 @@ function Comment({ productId }) {
                     )
                 );
                 setEditingCommentId(null);
+                window.location.reload();
             })
             .catch((error) => console.error('Error updating comment:', error));
     };
@@ -56,6 +58,7 @@ function Comment({ productId }) {
         fetch(`http://localhost:8080/api/comments/${id}`, { method: 'DELETE' })
             .then(() => setComments((prev) => prev.filter((comment) => comment.id !== id)))
             .catch((error) => console.error('Error deleting comment:', error));
+        window.location.reload();
     };
 
     const hasUserCommented = comments.some((comment) => comment.email === email);
