@@ -191,7 +191,7 @@ const SidePanelApp = () => {
                 tabIndex="-1"
                 style={{
                     visibility: isCartOpen ? 'visible' : 'hidden',
-                    width: '600px',
+                    width: '550px',
                     borderRadius: '10px 0 0 10px',
                 }}
             >
@@ -262,8 +262,8 @@ const SidePanelApp = () => {
                 </div>
 
                 <div className="offcanvas-footer my-4">
-                    <div className="total-price d-flex justify-content-between mx-4">
-                        <h4>총 주문금액:</h4>
+                    <div className="total-price d-flex justify-content-between mx-4 my-4">
+                        <h4 style={{fontSize: '20px'}}>총 주문금액:</h4>
                         <h4>₩ {totalPrice.toLocaleString()}</h4>
                     </div>
                     <div className="d-flex justify-content-center">

@@ -1,39 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Comment.css';
-import { useAuth } from '../../context/AuthContext';
 import CommentForm from './CommentForm';
 
-function Comment({ productId, setCommentUpdated }) {
-    const [comments, setComments] = useState([]);
+function Comment({ productId, setCommentUpdated, comments, setComments, email, isLogin}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
-    const { isLogin, email } = useAuth();
     const [showInput, setShowInput] = useState(false);
-    const [error, setError] = useState(null); // 오류 메시지 상태 관리
-    const [loading, setLoading] = useState(true); // 로딩 상태
-
-    useEffect(() => {
-        // 초기 리뷰 데이터를 가져올 때 예외 처리
-        const fetchComments = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/api/comments/product/${productId}`);
-                if (!response.ok) {
-                    throw new Error('리뷰 데이터를 불러오는데 실패했습니다.');
-                }
-                const data = await response.json();
-                setComments(Array.isArray(data) ? data : []);
-                setCommentUpdated((prev) => !prev);
-            } catch (err) {
-                console.error('리뷰 불러오기 실패:', err);
-                setError('리뷰를 불러오는 중 오류가 발생했습니다.');
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchComments();
-    }, [productId]);
 
     const handleAddComment = async ({ title, content, rating }) => {
         const comment = { title, content, productId, email, rating };
@@ -104,14 +77,6 @@ function Comment({ productId, setCommentUpdated }) {
     };
 
     const hasUserCommented = comments.some((comment) => comment.email === email);
-
-    if (loading) {
-        return <div className="text-center">로딩 중...</div>;
-    }
-
-    if (error) {
-        return <div className="text-center text-danger">{error}</div>;
-    }
 
     return (
         <div className="card border-0 p-3 rounded">
@@ -201,5 +166,4 @@ function Comment({ productId, setCommentUpdated }) {
         </div>
     );
 }
-
 export default Comment;
