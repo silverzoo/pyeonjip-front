@@ -36,17 +36,9 @@ const LeftSide = () => {
         const path = location.pathname;
 
         const newState = {
-            SHOP: false,
-            ADMIN: false,
+            SHOP: path.startsWith('/category'),
+            ADMIN: path.startsWith('/admin'),
         };
-
-        if (path.startsWith('/admin')) {
-            newState.ADMIN = true;
-        }
-
-        if (path.startsWith('/category')) {
-            newState.SHOP = true;
-        }
 
         setExpandedMenus(newState);
     }, [location]);
@@ -58,6 +50,9 @@ const LeftSide = () => {
             [menuName]: !currentExpandedState,
         }));
     };
+
+    const isShopActive = expandedMenus.SHOP;
+    const isAdminActive = location.pathname.startsWith('/admin');
 
     return (
         <div className='left-side-container'>
@@ -72,6 +67,7 @@ const LeftSide = () => {
                     onToggle={() => handleTapToggle('SHOP')}
                     hasChildren={true}
                     className={`toggle-icon ${expandedMenus.SHOP ? 'expanded' : ''}`}
+                    isActive={isShopActive}
                 />
                 <div className={`collapse-content ${expandedMenus.SHOP ? 'expanded' : ''}`}>
                     {expandedMenus.SHOP && <Category categories={categories} />}
@@ -85,6 +81,7 @@ const LeftSide = () => {
                         onToggle={() => handleTapToggle('ADMIN')}
                         hasChildren={true}
                         className={`toggle-icon ${expandedMenus.ADMIN ? 'expanded' : ''}`}
+                        isActive={isAdminActive}
                     />
                 )}
                 <div className={`collapse-content ${expandedMenus.ADMIN ? 'expanded' : ''}`}>
