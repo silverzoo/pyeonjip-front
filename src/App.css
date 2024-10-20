@@ -12,7 +12,7 @@
 .content {
   width: 100%;
   max-width: 960px;
-  margin: 30px 200px 0;
+  margin: 30px auto 0;
   box-sizing: border-box;
 }
 
