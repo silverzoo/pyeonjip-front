@@ -1,0 +1,38 @@
+/* Category Card 스타일 */
+.hvlo-category-card {
+    position: relative;
+    overflow: hidden; /* 자식 요소가 범위를 넘어가지 않도록 설정 */
+    opacity: 0; /* 처음에 보이지 않도록 설정 */
+    transform: translateY(20px); /* 아래로 이동 */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* 애니메이션 효과 */
+}
+
+.hvlo-category-card.show {
+    opacity: 1; /* 보이게 설정 */
+    transform: translateY(0); /* 원래 위치로 이동 */
+}
+
+.hvlo-category-card img {
+    transition: transform 0.3s ease; /* 이미지 확대 애니메이션 */
+}
+
+.hvlo-category-card:hover img {
+    transform: scale(1.05); /* 호버 시 이미지 확대 */
+}
+
+.hvlo-category-card:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(54, 54, 54, 0.5); /* 배경 블러 효과 */
+    backdrop-filter: blur(5px); /* 블러 효과 */
+    z-index: 1; /* 텍스트가 위에 오도록 설정 */
+}
+
+.hvlo-category-card h3 {
+    position: relative;
+    z-index: 2; /* 텍스트를 블러 위에 위치시키기 위해 z-index 설정 */
+}

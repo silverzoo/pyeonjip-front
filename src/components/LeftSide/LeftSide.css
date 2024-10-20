@@ -1,0 +1,57 @@
+.left-side-logo {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    padding-left: 33px;
+}
+
+.left-side-container {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
+
+.left-side-container {
+    font-size: 14px;
+    position: relative;
+    cursor: pointer;
+}
+
+.left-side-menu {
+    margin-left: 33px;
+}
+
+.left-side-menu div {
+    /*margin-bottom: 5px;*/
+}
+
+
+.tapMark {
+    font-size: 70%;
+}
+
+.collapse-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1.0s ease-in-out;
+
+}
+
+/* 확장된 상태 */
+.collapse-content.expanded {
+    max-height: 500px; /* 충분한 높이로 설정 */
+}
+
+/* 닫기 시작할 때 상태 */
+.collapse-content.collapsing {
+    max-height: 0;
+}
+
+/* 토글 아이콘 회전 */
+.toggle-icon {
+    transition: transform 1.6s;
+}
+
+.toggle-icon.expanded {
+    transform: rotate(90deg);
+}
