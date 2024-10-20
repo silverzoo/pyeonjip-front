@@ -95,9 +95,63 @@
 .user-tab-container {
     display: flex;
     justify-content: space-between;
+    align-items: center; /* 추가됨: 세로 중앙 정렬 */
+    margin-bottom: 10px; /* 탭과 마이페이지 정보 간격 좁히기 */
 }
 
-.col-md-6 {
-    position: sticky; /* 요소를 상단에 고정 */
-    top: 20px; /* 상단에 고정된 위치 */
+.user-tab-container button {
+    flex: 1; /* 추가됨: 버튼들이 동일한 너비를 가지도록 함 */
+    padding: 10px; /* 추가됨: 버튼 내부 여백 조정 */
+    border: none; /* 추가됨: 버튼 테두리 제거 */
+    background-color: transparent; /* 추가됨: 기본 배경색 투명하게 설정 */
+    cursor: pointer; /* 추가됨: 마우스 오버 시 커서 변경 */
+    transition: background-color 0.3s; /* 추가됨: 배경색 변경 시 부드러운 전환 효과 */
+    margin-right: 5px; /* 탭 사이 간격 줄이기 */
+}
+
+.user-tab-container button:hover {
+    background-color: #f8f9fa; /* 추가됨: 호버 시 배경색 변경 */
+}
+
+.user-tab-container button.btn-dark {
+    background-color: #343a40; /* 추가됨: 활성 탭의 배경색 설정 */
+    color: white; /* 추가됨: 활성 탭의 텍스트 색상 설정 */
+}
+
+.tab-divider {
+    width: 1px; /* 추가됨: 구분선의 너비 */
+    height: 30px; /* 추가됨: 구분선의 높이 */
+    background-color: #dee2e6; /* 추가됨: 구분선의 색상 */
+    margin: 0 10px; /* 추가됨: 구분선의 좌우 여백 */
+}
+
+.user-mypage-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+    position: relative;
+    top: 30px;  /* top을 양수로 바꿔서 전체를 더 하단으로 이동 */
+}
+
+.user-mypage-content {
+    width: 100%;
+    max-width: 600px;
+}
+
+.user-header {
+    position: sticky;
+    top: 20px; /* top을 조정해서 h3의 위치를 하단으로 내림 */
+    background-color: #fff;
+    padding: 100px 0 0 0; /* padding-bottom 값을 추가해 간격을 조절 */
+    z-index: 10;
+}
+
+.user-body {
+    padding-top: 10px; /* 상단 여백 줄이기 */
+}
+
+.user-content-container {
+    min-height: 300px;
 }

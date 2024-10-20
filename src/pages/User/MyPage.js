@@ -8,7 +8,7 @@ function MyPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('회원 정보');
-    const [editField, setEditField] = useState(''); // 어떤 필드를 수정할지 추적
+    const [editField, setEditField] = useState('');
     const navigate = useNavigate();
 
     const fetchUser = async (email) => {
@@ -46,17 +46,18 @@ function MyPage() {
     const handleEdit = async (field) => {
         setEditField(field);
 
-        // 이메일 값을 가져옴
         const email = getUserEmail();
 
-        // 업데이트할 데이터
         let updatedValue;
+        let endpoint;
         switch (field) {
             case 'address':
                 updatedValue = user.address;
+                endpoint = `http://localhost:8080/api/user/address/${email}`;
                 break;
             case 'password':
-                updatedValue = prompt('새 비밀번호를 입력해주세요:'); // 비밀번호는 별도로 입력받음
+                updatedValue = prompt('새 비밀번호를 입력해주세요:');
+                endpoint = `http://localhost:8080/api/user/password/${email}`;
                 break;
             default:
                 return;
@@ -64,7 +65,7 @@ function MyPage() {
 
         // PUT 요청 보내기
         try {
-            const response = await fetchWithAuth(`http://localhost:8080/api/user/information/${email}`, {
+            const response = await fetchWithAuth(endpoint, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -73,11 +74,15 @@ function MyPage() {
             });
 
             if (response.ok) {
-                alert(`${field}이(가) 성공적으로 수정되었습니다.`);
-                // 변경 후 사용자 정보 다시 로드
-                fetchUser(email);
+                const success = await response.json();
+                if (success) {
+                    alert(`${field}이(가) 성공적으로 수정되었습니다.`);
+                    fetchUser(email);
+                } else {
+                    alert('수정하는 중 문제가 발생했습니다.1');
+                }
             } else {
-                alert('수정하는 중 문제가 발생했습니다.');
+                alert('수정하는 중 문제가 발생했습니다.2');
             }
         } catch (error) {
             console.error('수정 요청 중 오류 발생:', error);
@@ -141,24 +146,36 @@ function MyPage() {
     if (errorMessage) return <p className="text-danger">{errorMessage}</p>;
 
     return (
-        <div className="user-container h-100 d-flex justify-content-center align-items-center">
-            <div className="col-md-6">
-                <h3 className="text-left mb-2">마이페이지</h3>
-                <hr/>
-                <div className="tab-container user-tab-container mb-3">
-                    {['회원 정보', '구매 내역', '나의 등급'].map(tab => (
-                        <button
-                            key={tab}
-                            className={`btn ${activeTab === tab ? 'btn-dark' : 'btn-light'} me-2`}
-                            onClick={() => setActiveTab(tab)}
-                        >
-                            {tab}
-                        </button>
-                    ))}
+        <div className="user-mypage-container">
+            <div className="user-mypage-content">
+                <div className="user-header">
+                    <h3 className="text-left mb-2">마이페이지</h3>
                 </div>
-                <hr/>
-                <div className="content-container">
-                    {renderContent()}
+                <div className="user-body">
+                    <hr/>
+                    <div className="tab-container user-tab-container">
+                        {['회원 정보', '구매 내역', '나의 등급'].map((tab, index) => (
+                            <React.Fragment key={tab}>
+                                <button
+                                    className={`btn ${activeTab === tab ? 'btn-dark' : 'btn-light'}`}
+                                    onClick={() => setActiveTab(tab)}
+                                >
+                                    {tab}
+                                </button>
+                                {index < 2 && <div className="tab-divider"></div>}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                    <hr/>
+                    <div className="user-content-container">
+                        {loading ? (
+                            <p>유저 정보를 불러오는 중입니다...</p>
+                        ) : errorMessage ? (
+                            <p className="text-danger">{errorMessage}</p>
+                        ) : (
+                            renderContent()
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
