@@ -89,7 +89,7 @@ function Login() {
     }, []);
 
     return (
-        <div className="login-container d-flex flex-column align-items-center justify-content-start vh-100">
+        <div className="login-container d-flex flex-column align-items-center justify-content-start vh-100 card border-0">
             <div className="user-login-container">
                 <div className="user-login-logo text-center mb-5">
                     <Link to="/"><img src={logo} alt="logo" width="180"/></Link>

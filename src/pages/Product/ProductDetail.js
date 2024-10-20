@@ -9,20 +9,22 @@ import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 import Comment from "./Comment";
-import CommentSection from "./CommentSection";
+import ProductDetailRate from "./ProductDetailRate";
 initMDB({ Collapse });
 
 const MODAL_DURATION = 1000; // Modal display duration
 
 function ProductDetail() {
-    const [items, setItems] = useState([]);
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
     const [showModal, setShowModal] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
-    const [categoryId, setCategoryId] = useState('');
+    const [commentUpdated, setCommentUpdated] = useState(false);
+    const [comments, setComments] = useState([]);
+    const { isLogin, email, setIsLogin } = useAuth();
+    const {loadCartData} = useCart();
 
     const [product, setProduct] = useState({
         productImages: [],
@@ -37,9 +39,6 @@ function ProductDetail() {
         price: 0,
     });
 
-    const { isLogin, email, setIsLogin } = useAuth();
-    const {loadCartData} = useCart();
-
     useEffect(() => {
         initMDB({ Collapse }); // 아코디언 초기화
     }, []);
@@ -49,8 +48,6 @@ function ProductDetail() {
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
-                console.log('제품 상세정보 불러오기 완료 : ', data);
-
                 const option = data.productDetails.find(detail => detail.id === parseInt(optionId));
                 setSelectedOption(option || data.productDetails[0]); // 기본 옵션 설정
 
@@ -64,7 +61,15 @@ function ProductDetail() {
                 }));
             })
             .catch((error) => console.error('Error fetching product details:', error));
-    }, [productId, optionId]);
+
+        fetch(`http://localhost:8080/api/comments/product/${productId}`)
+            .then((response) => response.json())
+            .then((data) => {
+                setComments(Array.isArray(data) ? data : []);
+            })
+            .catch((error) => console.error('댓글을 가져오는 중 오류 발생:', error));
+
+    }, [productId, optionId, commentUpdated]);
 
     const addToCart = () => {
         const cartItem = {
@@ -130,16 +135,32 @@ function ProductDetail() {
                     </div>
                 </div>
                 <div className="card border-0 col-xl-4" style={{marginTop: '80px', marginLeft: '80px'}}>
-                    <h2>{product.name}</h2>
-                    <h4>{selectedOption.name}</h4>
+                    <h4 className="fw-bold">{product.name}</h4>
+                    <h6 className="fw-bold">{selectedOption.name}</h6>
                     <p>{product.description}</p>
-                    <h3>￦{selectedOption.price.toLocaleString()}</h3>
-                    <CommentSection productId={product.id} />
+                    <h4 className="fw-bolder">￦{selectedOption.price.toLocaleString()}</h4>
+                    <ProductDetailRate comments={comments}/>
 
                     <hr></hr>
 
                     <div className="my-3">
-                        <h6 style={{fontSize: '14px'}}>다른 옵션</h6>
+                        <div className="d-flex justify-content-between col-xl-9">
+                            <h6 style={{fontSize: '14px'}} className="fw-bold">배송비</h6>
+                            <h6 style={{fontSize: '14px'}}>3,000원 / 착불</h6>
+                        </div>
+                        <div className="d-flex justify-content-between col-xl-9">
+                            <h6 style={{fontSize: '14px'}} className="fw-bold">배송 정보</h6>
+                            <h6 style={{fontSize: '14px'}}>주문제작 7일 이내 출고</h6>
+                        </div>
+                        <div className="d-flex justify-content-between col-xl-9">
+                            <h6 style={{fontSize: '14px'}} className="fw-bold">조립 정보</h6>
+                            <h6 style={{fontSize: '14px'}}>조립 설명서 동봉</h6>
+                        </div>
+                    </div>
+
+
+                    <div className="my-3">
+                        <h6 style={{fontSize: '15px'}}>다른 옵션</h6>
                         <div className="d-flex gap-3">
                             {product.productDetails.map((detail, index) => (
                                 <img
@@ -162,8 +183,6 @@ function ProductDetail() {
                         장바구니에 담기
                     </button>
                 </div>
-
-
 
                 <div className="accordion accordion-flush my-5" id="accordionFlushExample">
                     {/*1번 아코디언*/}
@@ -244,8 +263,7 @@ function ProductDetail() {
                             data-mdb-parent="#accordionFlushExample"
                         >
                             <div className="accordion-body">
-                                {/*   리뷰 바디    */}
-                                <Comment productId={productId}/>
+                                <Comment comments={comments} setComments={setComments} isLogin={isLogin} email={email} productId={productId} setCommentUpdated={setCommentUpdated} />
                             </div>
                         </div>
                     </div>

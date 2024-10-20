@@ -10,8 +10,13 @@
 
 .order-product-list{
   width: 100%;
-  border-bottom: 1px solid black;
+  border-bottom: 0.9px solid black;
   margin-bottom: 10px;
+}
+
+.order-product-detail-name{
+  font-size: 0.7rem;
+  font-weight:300;
 }
 
 .order-product-item:not(:last-child)::after {
@@ -20,7 +25,7 @@
   bottom: 0;
   left: -30px; /* 왼쪽으로 선을 확장 */
   width: calc(100% + 30px); 
-  border-bottom: 1px solid #ddd;
+  border-bottom: 0.9px solid #ddd;
 }
 
 .order-product-image {
@@ -102,8 +107,8 @@
   justify-content: space-between;
   align-items: flex-start;
   padding: 20px 0;
-  border-top: 1px solid black;
-  border-bottom: 1px solid black;
+  border-top: 0.9px solid black;
+  border-bottom: 0.9px solid black;
   font-size: 14px;
 }
 
@@ -139,7 +144,7 @@
 }
 
 .order-section-title {
-  border-bottom: 1px solid black;
+  border-bottom: 0.9px solid black;
   padding-bottom: 10px;
   display: block; 
   width: 100%;    
@@ -151,7 +156,7 @@
   font-size: 1rem;
   font-weight: bold;
   margin-top: 10px;
-  border-top: 1px solid black;
+  border-top: 0.9px solid black;
   padding-top: 10px;
 }
 
@@ -159,19 +164,18 @@
   font-weight: bold;
   font-size: 1.0rem;
 }
-/*  */
 
 .order-delivery-info {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 40px;
+  height: 50px;
 }
 
 .order-delivery-info label {
   display: block;
   font-weight: lighter;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
   font-size: 0.7rem;
 }
 
@@ -191,7 +195,13 @@
   border: 1px solid #ddd;
   border-radius: 4px;
   box-sizing: border-box;
-  margin-bottom: 10px;
+  margin-bottom: 30px;
+  transition: border-color 0.3s ease;
+}
+
+.order-delivery-info input:hover,
+.order-delivery-info textarea:hover {
+  border-color: black;
 }
 
 .order-actions {
@@ -201,6 +211,7 @@
 }
 
 .order-back-button, .order-submit-button {
+  position: relative;
   width: 50%;
   padding: 7px;
   font-size: 12px;
@@ -210,6 +221,7 @@
   box-sizing: border-box;
   border-radius: 0;
   margin-bottom: 100px;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .order-back-button {
@@ -220,4 +232,43 @@
 .order-submit-button {
   background-color: black;
   color: white;
+}
+
+/* hover 시 그림자 효과 */
+.order-back-button:hover, .order-submit-button:hover {
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+  transform: translateY(-3px); /* 살짝 올라가는 효과 */
+}
+
+.error-text {
+  color: red;
+  font-size: 11px;
+  margin-top: 5px;
+  font-weight: normal;
+}
+
+.required-notice,
+.required-star {
+  color: red;
+  font-size: 10px;
+}
+
+.recipient-input {
+  max-width: 1000px; 
+  font-size: 12px;
+}
+
+.address-search{
+  background-color: white; /* 흰색 배경 */
+  color: black; /* 검정색 글씨 */
+  border: 1px solid black; /* 검정색 테두리 */
+  padding: 5px 10px; /* 버튼 안쪽 여백 */
+  border-radius: 5px; /* 둥근 모서리 */
+  cursor: pointer; /* 마우스를 올렸을 때 커서 모양 */
+  font-size: 0.7rem; /* 글씨 크기 */
+}
+
+.address-search:hover{
+  background-color: black; /* 마우스 호버 시 배경색 */
+  color: white; /* 마우스 호버 시 글씨 색상 */
 }
