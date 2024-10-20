@@ -2,18 +2,19 @@ import React, { useEffect, useState } from 'react';
 import OrderList from './OrderList';
 import './Order.css';
 import Search from "../Search/Search";
-import {fetchGetOrders} from "../../../utils/Api";
-import {useNavigate} from "react-router-dom";
+import { fetchGetOrders } from "../../../utils/Api";
+import { useNavigate } from "react-router-dom";
 
 function AdminOrder() {
     const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
+    const [email, setEmail] = useState('');
 
     useEffect(() => {
         const fetchData = () => {
-            fetchGetOrders()
+            fetchGetOrders(currentPage, 5, 'createdAt', 'desc', email)
                 .then(data => {
                     setOrders(data.content);
                     setTotalPages(data.totalPages);
@@ -24,16 +25,20 @@ function AdminOrder() {
                 });
         };
         fetchData();
-    }, [currentPage, navigate]);
+    }, [currentPage, email, navigate]);
+
+    const filteredOrders = orders.filter(order =>
+        order.userEmail && order.userEmail.includes(email) // 이메일로 필터링
+    );
 
     const handleNextPage = () => {
-        if (currentPage < totalPages) {
+        if (currentPage < totalPages - 1) {
             setCurrentPage(prev => prev + 1);
         }
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
+        if (currentPage > 0) {
             setCurrentPage(prev => prev - 1);
         }
     };
@@ -41,12 +46,12 @@ function AdminOrder() {
     return (
         <div className="admin-order-page">
             <div className="admin-order-title">주문 관리 페이지</div>
-            <Search />
-            <OrderList orders={orders} />
+            <Search setEmail={setEmail} />
+            <OrderList orders={filteredOrders} /> {/* 필터링된 주문 목록 전달 */}
             <div className="pagination">
-                <button onClick={handlePreviousPage} disabled={currentPage === 1}>이전</button>
-                <span>페이지 {currentPage} / {totalPages}</span>
-                <button onClick={handleNextPage} disabled={currentPage === totalPages}>다음</button>
+                <button onClick={handlePreviousPage} disabled={currentPage === 0}>이전</button>
+                <span>페이지 {currentPage + 1} / {totalPages}</span>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages - 1}>다음</button>
             </div>
         </div>
     );
