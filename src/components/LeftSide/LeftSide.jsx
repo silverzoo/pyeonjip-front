@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import logo from '../../logo.svg';
 import './LeftSide.css';
 import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
 import Admin from "./Tab/Admin";
 import { useAuth } from "../../context/AuthContext";
+import {fetchGetCategories} from "../../utils/Api";
 
 const LeftSide = () => {
     const { isAdmin } = useAuth();
+    const navigate = useNavigate();
     const location = useLocation();
     const [categories, setCategories] = useState([]);
     const [expandedMenus, setExpandedMenus] = useState({
@@ -17,11 +19,18 @@ const LeftSide = () => {
     });
 
     useEffect(() => {
-        fetch('/api/category')
-            .then(response => response.json())
-            .then(data => setCategories(data))
-            .catch(error => console.error(error));
-    }, []);
+        const fetchData = () => {
+            fetchGetCategories()
+                .then(data => {
+                    setCategories(data);
+                })
+                .catch(error => {
+                    alert(error.message);
+                    navigate('/');
+                });
+        };
+        fetchData();
+    }, [navigate]);
 
     useEffect(() => {
         const path = location.pathname;

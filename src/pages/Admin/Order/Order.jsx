@@ -2,26 +2,29 @@ import React, { useEffect, useState } from 'react';
 import OrderList from './OrderList';
 import './Order.css';
 import Search from "../Search/Search";
+import {fetchGetOrders} from "../../../utils/Api";
+import {useNavigate} from "react-router-dom";
 
 function AdminOrder() {
+    const navigate = useNavigate();
     const [orders, setOrders] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
 
     useEffect(() => {
-        fetch(`/api/admin/orders`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Network response was not ok");
-                }
-                return response.json();
-            })
-            .then(data => {
-                setOrders(data.content); // content 배열에서 데이터 설정
-                setTotalPages(data.totalPages); // 전체 페이지 수 설정
-            })
-            .catch(error => console.error("Fetch Error:", error));
-    }, [currentPage]);
+        const fetchData = () => {
+            fetchGetOrders()
+                .then(data => {
+                    setOrders(data.content);
+                    setTotalPages(data.totalPages);
+                })
+                .catch(error => {
+                    alert(error.message);
+                    navigate('/admin');
+                });
+        };
+        fetchData();
+    }, [currentPage, navigate]);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) {
