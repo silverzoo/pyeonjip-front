@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Carousel, initMDB } from 'mdb-ui-kit';
 import './Home.css';
+import {Link} from "react-router-dom";
+import logo from "../../logo.svg";
 
 const CategoryList = () => {
     useEffect(() => {
@@ -56,7 +58,7 @@ const CategoryList = () => {
     ];
 
     return (
-        <div style={{ paddingTop: '5%', width: '960px' }}>
+        <div style={{width: '980px'}}>
 
 
             <div
@@ -98,7 +100,7 @@ const CategoryList = () => {
                                 src="https://eo246y8edo3.exactdn.com/wp-content/uploads/2023/09/konfurb-harmony-home-office-chair.jpg?strip=all&lossy=1&ssl=1"
                                 className="d-block w-100"
                                 alt="Wild Landscape"
-                                style={{ height: '300px', objectFit: 'cover' }}
+                                style={{height: '220px', objectFit: 'cover'}}
                             />
                             <div className="carousel-caption d-none d-md-block h-50">
                                 <h3>매일 머무르고 싶은 홈 오피스</h3>
@@ -110,7 +112,7 @@ const CategoryList = () => {
                                 src="https://www.ikea.com/images/lappnycklar-blakullen-6cf0f449b7725249d90b19636b9428b3.jpg?f=sg"
                                 className="d-block w-100"
                                 alt="Wild Landscape"
-                                style={{ height: '300px', objectFit: 'cover' }}
+                                style={{height: '220px', objectFit: 'cover'}}
                             />
                             <div className="carousel-caption d-none d-md-block h-50">
                                 <h3>밤마다 숙면할 수 있는 컬러풀한 침실</h3>
@@ -125,7 +127,7 @@ const CategoryList = () => {
                                 src="https://www.ikea.com/ext/ingkadam/m/145b69d715a93770/original/PH199354.jpg?f=sg"
                                 className="d-block w-100"
                                 alt="Exotic Fruits"
-                                style={{ height: '300px', objectFit: 'cover' }}
+                                style={{height: '220px', objectFit: 'cover'}}
                             />
                             <div className="carousel-caption d-none d-md-block h-50">
                                 <h3>대담하고 모던한 스타일의 현관</h3>
@@ -167,10 +169,14 @@ const CategoryList = () => {
 
             {/* 환영 메시지 및 홈페이지 설명 */}
             <div className="card border-0 my-4">
-            <div className="welcome-message text-center mb-4">
-                <h3>편집에 오신것을 환영합니다!</h3>
-                <p>공간에 다양한 이야기를 불어넣어 보세요</p>
-            </div>
+                <div className="welcome-message text-center mb-4">
+                    <div className="user-login-logo text-center mb-4">
+                     <img src={logo} alt="logo" width="200"/>
+                    </div>
+                    <div className="text-center">
+                        <h4 className="user-login-text mb-2 fw-semibold">나의 공간을 '편집'</h4>
+                    </div>
+                </div>
             </div>
             {/* Category Cards */}
             <div className="d-flex flex-wrap justify-content-around mt-4">
@@ -179,7 +185,7 @@ const CategoryList = () => {
                         key={index}
                         href={category.link}
                         className=" border-0 mb-3 position-relative hvlo-category-card"
-                        style={{ width: '18rem', textDecoration: 'none' }}
+                        style={{width: '18rem', textDecoration: 'none'}}
                     >
                         <img
                             src={category.img}
@@ -202,7 +208,11 @@ const CategoryList = () => {
             <div className="text-center mt-4">
                 <p>다양한 신제품들로 아늑하고 편안한 공간을 연출해 보세요.</p>
             </div>
+            <div className="text-center">
+                <p className="bottom-text mb-0"> Elice Cloud Track 4기 2차 프로젝트 5팀</p>
+            </div>
         </div>
+
     );
 };
 

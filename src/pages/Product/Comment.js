@@ -1,72 +1,79 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Comment.css';
-import { useAuth } from '../../context/AuthContext';
-import CommentForm from './CommentForm'; // CommentForm 불러오기
+import CommentForm from './CommentForm';
 
-function Comment({ productId }) {
-    const [comments, setComments] = useState([]);
+function Comment({ productId, setCommentUpdated, comments, setComments, email, isLogin}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
-    const { isLogin, email } = useAuth();
     const [showInput, setShowInput] = useState(false);
 
-    useEffect(() => {
-        fetch(`http://localhost:8080/api/comments/product/${productId}`)
-            .then((response) => response.json())
-            .then((data) => {
-                // Ensure the data is an array
-                if (Array.isArray(data)) {
-                    setComments(data);
-                } else {
-                    console.error('Fetched data is not an array:', data);
-                    setComments([]); // Set an empty array if the data is not valid
-                }
-            })
-            .catch((error) => console.error('Error fetching comments:', error));
-    }, [productId]);
-
-    const handleAddComment = ({ title, content, rating }) => {
+    const handleAddComment = async ({ title, content, rating }) => {
         const comment = { title, content, productId, email, rating };
-        fetch('http://localhost:8080/api/comments', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(comment),
-        })
-            .then((response) => response.json())
-            .then((savedComment) => {
-                setComments((prev) => [...prev, savedComment]);
-                setShowInput(false); // 작성 완료 후 입력폼 닫기
-                window.location.reload();
-            })
-            .catch((error) => console.error('Error adding comment:', error));
+
+        try {
+            const response = await fetch('http://localhost:8080/api/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(comment),
+            });
+
+            if (!response.ok) {
+                throw new Error('리뷰 저장에 실패했습니다.');
+            }
+
+            const savedComment = await response.json();
+            setComments((prev) => [...prev, savedComment]);
+            setShowInput(false);
+            setCommentUpdated((prev) => !prev);
+        } catch (err) {
+            console.error('리뷰 저장 실패:', err);
+            alert('리뷰 저장 중 문제가 발생했습니다. 다시 시도해주세요.');
+        }
     };
 
-    const handleUpdateComment = ({ title, content, rating }) => {
-        fetch(`http://localhost:8080/api/comments/${editingCommentId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ title, content, rating }),
-        })
-            .then(() => {
-                setComments((prev) =>
-                    prev.map((comment) =>
-                        comment.id === editingCommentId
-                            ? { ...comment, title, content, rating }
-                            : comment
-                    )
-                );
-                setEditingCommentId(null);
-                window.location.reload();
-            })
-            .catch((error) => console.error('Error updating comment:', error));
+    const handleUpdateComment = async ({ title, content, rating }) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments/${editingCommentId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, content, rating }),
+            });
+
+            if (!response.ok) {
+                throw new Error('리뷰 수정에 실패했습니다.');
+            }
+
+            setComments((prev) =>
+                prev.map((comment) =>
+                    comment.id === editingCommentId
+                        ? { ...comment, title, content, rating }
+                        : comment
+                )
+            );
+            setEditingCommentId(null);
+            setCommentUpdated((prev) => !prev);
+
+        } catch (err) {
+            console.error('리뷰 수정 실패:', err);
+            alert('리뷰 수정 중 문제가 발생했습니다.');
+        }
     };
 
-    const handleDeleteComment = (id) => {
-        fetch(`http://localhost:8080/api/comments/${id}`, { method: 'DELETE' })
-            .then(() => setComments((prev) => prev.filter((comment) => comment.id !== id)))
-            .catch((error) => console.error('Error deleting comment:', error));
-        window.location.reload();
+    const handleDeleteComment = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8080/api/comments/${id}`, { method: 'DELETE' });
+
+            if (!response.ok) {
+                throw new Error('리뷰 삭제에 실패했습니다.');
+            }
+
+            setComments((prev) => prev.filter((comment) => comment.id !== id));
+            setCommentUpdated((prev) => !prev);
+        } catch (err) {
+            console.error('리뷰 삭제 실패:', err);
+            alert('리뷰 삭제 중 문제가 발생했습니다.');
+        }
     };
 
     const hasUserCommented = comments.some((comment) => comment.email === email);
@@ -119,9 +126,7 @@ function Comment({ productId }) {
                                         <div className="d-flex justify-content-end p-2">
                                             <button
                                                 className="btn btn-outline-dark btn-sm mx-2"
-                                                onClick={() =>
-                                                    setEditingCommentId(comment.id)
-                                                }
+                                                onClick={() => setEditingCommentId(comment.id)}
                                             >
                                                 <i className="bi bi-pencil"></i>
                                             </button>
@@ -141,18 +146,16 @@ function Comment({ productId }) {
                 ))
             ) : (
                 <div className="text-center mt-4">
-                    <i className="bi bi-emoji-frown" style={{fontSize: '3rem', color: '#6c757d'}}></i>
+                    <i className="bi bi-emoji-frown" style={{ fontSize: '3rem', color: '#6c757d' }}></i>
                     <h4 className="my-3 text-muted">리뷰가 비어 있어요.</h4>
-                    <p className="text-muted">
-                        리뷰를 작성해주시면 더 나은 서비스를 제공하는데 도움이 됩니다.
-                    </p>
+                    <p className="text-muted">리뷰를 작성해주시면 더 나은 서비스를 제공하는데 도움이 됩니다.</p>
                 </div>
             )}
 
             {isLogin && !hasUserCommented && (
                 <div className="mb-3">
                     <button
-                        className="btn btn-dark mb-2 "
+                        className="btn btn-dark mb-2"
                         onClick={() => setShowInput((prev) => !prev)}
                     >
                         {showInput ? '취소' : '리뷰 작성하기'}
@@ -163,5 +166,4 @@ function Comment({ productId }) {
         </div>
     );
 }
-
 export default Comment;
