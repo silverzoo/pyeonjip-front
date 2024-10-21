@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchDeleteOrder, fetchUpdateOrder } from '../../../utils/Api/AdminUtils';
+import { fetchDeleteOrder, fetchUpdateOrder } from '../../../api/AdminUtils';
 
 function OrderItem({ order, isSelected, onSelect, onDelete }) {
     const [isExpanded, setIsExpanded] = useState(false);
