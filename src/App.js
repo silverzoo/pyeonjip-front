@@ -21,9 +21,11 @@ function App() {
                 </HiddenUtils>
             </div>
                 <CartProvider>
+                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
             <div className='rightSide'>
                 <RightSide/>
             </div>
+                    </HiddenUtils>
             <div className='content'>
                 <AppRouter/>
             </div>
