@@ -6,16 +6,13 @@ const handleErrorResponse = async (response) => {
         const errorData = await response.json();
         throw new Error(errorData.message);
     }
-}
+};
 
 // 모든 카테고리 가져오기
 export const fetchGetCategories = async () => {
-    try {
-        const response = await axiosInstance.get('/api/category');
-        return response.data;
-    } catch (error) {
-        await handleErrorResponse(error);
-    }
+    const response = await fetch('/api/category');
+    await handleErrorResponse(response);
+    return await response.json();
 };
 
 // ADMIN - 모든 주문목록 가져오기
