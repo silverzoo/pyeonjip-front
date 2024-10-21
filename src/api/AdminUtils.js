@@ -30,7 +30,7 @@ export const fetchGetOrders = async (page = 0, size = 5, sortField = 'createdAt'
 // ADMIN - 배송상태 수정
 export const fetchUpdateOrder = async (orderId, deliveryStatus) => {
     try {
-        const response = await axiosInstance.patch(`/api/admin/orders/${orderId}`, {
+        const response = await axiosInstance.patch(`/api/admin/orders/${orderId}?deliveryStatus=${deliveryStatus}`, {
             deliveryStatus
         });
         return response.data;

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchDeleteOrder, fetchUpdateOrder } from '../../../api/AdminUtils';
+import {toast} from "react-toastify";
 
 function OrderItem({ order, onDelete }) {
     const [isExpanded, setIsExpanded] = useState(false);
@@ -29,11 +30,27 @@ function OrderItem({ order, onDelete }) {
 
     const handleEdit = async (event) => {
         event.stopPropagation();
+
+        // 현재 값과 선택한 값이 동일한지 체크
+        if (selectedDeliveryStatus === order.deliveryStatus) {
+            toast.warn('수정할 사항이 없습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return;
+        }
+
         try {
             await fetchUpdateOrder(order.id, selectedDeliveryStatus);
-            alert('배송 상태가 업데이트되었습니다.');
+            toast.success('배송 상태가 업데이트되었습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
