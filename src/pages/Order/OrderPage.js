@@ -54,9 +54,9 @@ function OrderPage() {
 
         // 유저 정보 설정
         setUserEmail(userData.email);
-        setRecipient(userData.name);
-        setPhoneNumber(userData.phoneNumber);
-        setAddress(userData.address); // 기존 주소 설정 
+        setRecipient(userData.name || '');
+        setPhoneNumber(userData.phoneNumber || '');
+        setAddress(userData.address || ''); // 기존 주소 설정 
         setGrade(userData.grade);
       } catch (error) {
         console.error('유저 데이터를 가져오는 중 오류 발생:', error.message);
@@ -282,7 +282,7 @@ function OrderPage() {
                 type="text"
                 name="address"
                 value={address}
-                readOnly // 직접 수정하지 못하도록 설정
+                onChange={(e) => setAddress(e.target.value)}
               />
               <button
                 className="address-search"
