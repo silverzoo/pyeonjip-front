@@ -1,0 +1,36 @@
+.custom-table-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px; 
+  }
+  
+  .custom-table {
+    border-collapse: collapse; 
+    text-align: center;
+    margin: 0 auto;
+    font-size: 0.8rem;
+    font-weight: 500;
+    width: 100%;
+  }
+  
+  .custom-table th, .custom-table td {
+    padding: 10px;
+    border-bottom: 1px solid #e0e0e0;
+    text-align: center;
+  }
+  
+  .custom-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .custom-table td {
+    background-color: #ffffff;
+  }
+  
+  .grade-benefits{
+    margin-top: 150px;
+    font-size: 0.8rem;
+    font-weight: 100;
+  }
