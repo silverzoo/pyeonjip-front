@@ -12,15 +12,25 @@
 .content {
   width: 100%;
   max-width: 960px;
-  margin: 30px 200px 0;
+  margin: 30px auto;
   box-sizing: border-box;
+  flex-grow: 1;
 }
 
 .app {
   display: flex;
-  justify-content: space-between; /* 좌우로 요소들 분배 */
+  /*justify-content: space-around; !* 좌우로 요소들 분배 *!*/
+  flex-direction: column;
   width: 100%;
   min-height: 100vh; /* 페이지 전체 높이 */
+}
+
+/* 메인 레이아웃 */
+.main-layout {
+  display: flex;
+  flex: 1; /* 남은 공간을 채움 */
+  width: 100%;
+  justify-content: space-around; /* 좌우로 요소 분배 */
 }
 
 .leftSide {
@@ -30,4 +40,13 @@
   left: 0;
   height: 100vh; /* 브라우저 높이에 맞게 고정 */
   box-sizing: border-box;
+}
+
+/* 푸터 */
+footer {
+  height: 250px;
+  background-color: #dedede;
+  text-align: start;
+  padding: 10px 0;
+  margin-top: auto; /* 푸터를 하단으로 밀기 */
 }
