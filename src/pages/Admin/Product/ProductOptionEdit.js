@@ -22,7 +22,7 @@ function ProductOptionEdit() {
 
     // 옵션 정보 수정 함수
     const handleUpdate = () => {
-        fetch(`http://localhost:8080/api/products/details/${detailId}`, {
+        fetch(`http://localhost:8080/api/admin/products/details/${detailId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

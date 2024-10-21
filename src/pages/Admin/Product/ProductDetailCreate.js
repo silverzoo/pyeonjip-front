@@ -23,7 +23,7 @@ function ProductDetailCreate() {
     // 폼 제출 핸들러 (옵션 추가)
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch(`http://localhost:8080/api/products/${productId}/details`, {
+        fetch(`http://localhost:8080/api/admin/products/${productId}/details`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

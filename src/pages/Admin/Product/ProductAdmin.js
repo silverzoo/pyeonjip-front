@@ -51,7 +51,7 @@ function ProductAdmin() {
     // 선택된 제품 일괄 삭제
     const handleBulkDelete = () => {
         const promises = selectedProducts.map(id =>
-            fetch(`http://localhost:8080/api/products/${id}`, {
+            fetch(`http://localhost:8080/api/admin/products/${id}`, {
                 method: 'DELETE',
             })
                 .then(response => {
