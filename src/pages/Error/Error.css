@@ -1,0 +1,19 @@
+.error-not-found {
+    margin-top: 40px;
+    text-align: center;
+}
+
+.not-found-title {
+    margin-bottom: 50px;
+}
+
+.not-found-content p {
+    margin: 3px 0;
+}
+
+
+.error-back-btn button {
+    margin-top: 50px;
+    font-size: 14px;
+    color: #6c757d;
+}

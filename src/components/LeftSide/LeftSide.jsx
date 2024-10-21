@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import logo from '../../logo.svg';
 import './LeftSide.css';
 import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
 import Admin from "./Tab/Admin";
 import { useAuth } from "../../context/AuthContext";
+import {fetchGetCategories} from "../../utils/Api/AdminUtils";
 
 const LeftSide = () => {
     const { isAdmin } = useAuth();
+    const navigate = useNavigate();
     const location = useLocation();
     const [categories, setCategories] = useState([]);
     const [expandedMenus, setExpandedMenus] = useState({
@@ -17,27 +19,26 @@ const LeftSide = () => {
     });
 
     useEffect(() => {
-        fetch('/api/category')
-            .then(response => response.json())
-            .then(data => setCategories(data))
-            .catch(error => console.error(error));
-    }, []);
+        const fetchData = () => {
+            fetchGetCategories()
+                .then(data => {
+                    setCategories(data);
+                })
+                .catch(error => {
+                    alert(error.message);
+                    navigate('/');
+                });
+        };
+        fetchData();
+    }, [navigate]);
 
     useEffect(() => {
         const path = location.pathname;
 
         const newState = {
-            SHOP: false,
-            ADMIN: false,
+            SHOP: path.startsWith('/category'),
+            ADMIN: path.startsWith('/admin'),
         };
-
-        if (path.startsWith('/admin')) {
-            newState.ADMIN = true;
-        }
-
-        if (path.startsWith('/category')) {
-            newState.SHOP = true;
-        }
 
         setExpandedMenus(newState);
     }, [location]);
@@ -49,6 +50,9 @@ const LeftSide = () => {
             [menuName]: !currentExpandedState,
         }));
     };
+
+    const isShopActive = expandedMenus.SHOP;
+    const isAdminActive = location.pathname.startsWith('/admin');
 
     return (
         <div className='left-side-container'>
@@ -63,6 +67,7 @@ const LeftSide = () => {
                     onToggle={() => handleTapToggle('SHOP')}
                     hasChildren={true}
                     className={`toggle-icon ${expandedMenus.SHOP ? 'expanded' : ''}`}
+                    isActive={isShopActive}
                 />
                 <div className={`collapse-content ${expandedMenus.SHOP ? 'expanded' : ''}`}>
                     {expandedMenus.SHOP && <Category categories={categories} />}
@@ -76,6 +81,7 @@ const LeftSide = () => {
                         onToggle={() => handleTapToggle('ADMIN')}
                         hasChildren={true}
                         className={`toggle-icon ${expandedMenus.ADMIN ? 'expanded' : ''}`}
+                        isActive={isAdminActive}
                     />
                 )}
                 <div className={`collapse-content ${expandedMenus.ADMIN ? 'expanded' : ''}`}>
