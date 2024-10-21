@@ -1,3 +1,9 @@
+.order-page {
+  min-height: calc(100vh - 200px); 
+  padding-bottom: 400px; 
+  position: relative;
+}
+
 .order-product-item {
   display: flex;
   justify-content: space-between;
