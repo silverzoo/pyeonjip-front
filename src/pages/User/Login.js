@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import {syncWithLocal} from "../../utils/cartUtils";
@@ -11,6 +11,7 @@ function Login() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
     const { handleContextLogin } = useAuth();
 
     const validateEmail = (email) => {
@@ -35,7 +36,7 @@ function Login() {
             return;
         }
 
-        const response = await fetch('http://localhost:8080/login', {
+        const response = await fetch('http://localhost:8080/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -56,9 +57,16 @@ function Login() {
                 localStorage.removeItem('cart');
 
 
-                //이전페이지로 리다이렉트
-                //Todo : 로그인 창에서 새로고침 할 시 좋지않은 유저경험... 수정필요
-                navigate(-1);
+                // 로그인 후 이전페이지로 리다이렉트
+                // 단, restrictedPages 내의 URL에 해당되면 홈으로 리다이렉트
+                const restrictedPages = ['/signup/result'];
+                const fromPage = location.state?.from || '/';  // 이전 페이지 경로
+                if (!restrictedPages.includes(fromPage)) {
+                    navigate(fromPage);
+                } else {
+                    navigate("/");  // 예외 페이지일 경우 메인 페이지로 리다이렉트
+                }
+
 
             } else {
                 setErrorMessage('Access 토큰을 가져오지 못했습니다.');
