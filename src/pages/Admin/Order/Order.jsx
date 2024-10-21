@@ -4,6 +4,7 @@ import './Order.css';
 import Search from "../Search/Search";
 import { fetchGetOrders, fetchDeleteOrder } from "../../../api/AdminUtils";
 import { useNavigate } from "react-router-dom";
+import {toast} from "react-toastify";
 
 function AdminOrder() {
     const navigate = useNavigate();
@@ -11,35 +12,36 @@ function AdminOrder() {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [email, setEmail] = useState('');
-
+    const [sortOrder, setSortOrder] = useState('desc');
 
     useEffect(() => {
         window.feather.replace();
     }, []);
 
     useEffect(() => {
-
         const fetchData = async () => {
             try {
-                const data = await fetchGetOrders(currentPage, 5, 'createdAt', 'desc', email);
+                const data = await fetchGetOrders(currentPage, 5, 'createdAt', sortOrder, email);
                 setOrders(data.content);
                 setTotalPages(data.totalPages);
             } catch (error) {
-                alert(error.message);
-                navigate('/admin');
+                toast.error(error.message, {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             }
         };
 
         fetchData();
-    }, [currentPage, email, navigate]);
+    }, [currentPage, email, sortOrder, navigate]);
 
     const handleDelete = async (deletedOrderId) => {
-        const confirmed = window.confirm('이 주문을 삭제하시겠습니까?');
-        if (!confirmed) return;
-
         try {
             await fetchDeleteOrder(deletedOrderId);
-            alert('삭제되었습니다.');
+            toast.success('삭제되었습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
 
             setOrders(prevOrders => {
                 const updatedOrders = prevOrders.filter(order => order.id !== deletedOrderId);
@@ -54,7 +56,7 @@ function AdminOrder() {
                 if (updatedOrders.length < 5) {
                     // 다음 페이지의 주문 데이터를 가져옵니다.
                     if (currentPage < totalPages - 1) {
-                        fetchGetOrders(currentPage + 1, 5, 'createdAt', 'desc', email)
+                        fetchGetOrders(currentPage + 1, 5, 'createdAt', sortOrder)
                             .then(data => {
                                 const remainingSpace = 5 - updatedOrders.length;
                                 const newOrders = data.content.slice(0, remainingSpace); // 필요한 수만큼 잘라서 추가
@@ -62,7 +64,10 @@ function AdminOrder() {
                                 setTotalPages(data.totalPages);
                             })
                             .catch(error => {
-                                alert(error.message);
+                                toast.error(error.message, {
+                                    position: "top-center",
+                                    autoClose: 2000,
+                                });
                             });
                         return updatedOrders; // 기존의 주문 리스트를 반환
                     }
@@ -72,21 +77,44 @@ function AdminOrder() {
                     return [...updatedOrders, ...fillItems];
                 }
 
-                return updatedOrders; // 업데이트된 주문 리스트 반환
+                return updatedOrders;
             });
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
+    const handleSortChange = async (event) => {
+        const newSortOrder = event.target.value;
+        setSortOrder(newSortOrder);
+        setCurrentPage(0);
 
-
+        try {
+            const data = await fetchGetOrders(0, 5, 'createdAt', newSortOrder);
+            setOrders(data.content);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
 
     return (
-        <div className=" card mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '960px' }}>
+        <div className="card mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '960px' }}>
             <h2 className="text-center mb-4">주문 관리</h2>
+            <div className="d-flex justify-content-between align-items-center mb-3">
+                <select value={sortOrder} onChange={handleSortChange} className="form-select w-auto">
+                    <option value="asc">생성일 오름차순</option>
+                    <option value="desc">생성일 내림차순</option>
+                </select>
+                <Search setEmail={setEmail} fetchGetOrders={fetchGetOrders} setOrders={setOrders} />
+            </div>
             <div className="admin-order-content">
-                <Search setEmail={setEmail}/>
                 <OrderList orders={orders} onDelete={handleDelete}/>
             </div>
 
