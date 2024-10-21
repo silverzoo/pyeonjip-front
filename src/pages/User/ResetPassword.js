@@ -36,20 +36,20 @@ function ResetPassword() {
 
         try {
             // 1. 이메일과 이름이 일치하는지 확인하는 API 호출
-            const checkResult = await fetchWithAuth('http://localhost:8080/api/user/check/reset', {
+            const checkResult = await fetchWithAuth('http://localhost:8080/api/auth/check', {
                 method: 'POST',
                 body: JSON.stringify({ name, email }),
             });
 
             if (checkResult.check) {
                 // 2. 일치하면 비밀번호 재설정 이메일 발송 API 호출
-                await fetchWithAuth('http://localhost:8080/api/user/check/reset/sendEmail', {
+                await fetchWithAuth('http://localhost:8080/api/auth/check/reset', {
                     method: 'POST',
                     body: JSON.stringify({ email, name }),
                 });
 
                 // 이메일 발송 성공 시 결과 화면으로 이동, 이메일 정보 전달
-                navigate('/reset-password-success', { state: { email } });
+                navigate('/reset/result', { state: { email } });
             } else {
                 setErrorMessage('입력하신 정보와 일치하는 사용자가 없습니다.');
                 setSuccessMessage('');
