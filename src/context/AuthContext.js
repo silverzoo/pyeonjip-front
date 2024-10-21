@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {jwtDecode} from 'jwt-decode';
 import {isAccessTokenValid} from "../utils/tokenUtils";
+import {logout} from "../utils/authUtils";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -9,7 +10,8 @@ export const AuthProvider = ({ children }) => {
     const [email, setEmail] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    const updateAuthState = () => {
+    // 의문: 꼭 동기 함수로 써야 되는지, 현재 비동기로 수정했음.
+    const updateAuthState = async () => {
         const token = localStorage.getItem('access');
         // Access 토큰 유효성 검증 추가. 더 정확한 로그인 상태 판단 가능
         if (isAccessTokenValid(token)) {
@@ -22,15 +24,21 @@ export const AuthProvider = ({ children }) => {
                 console.error('Token error:', error);
                 setIsLogin(false);
                 setIsAdmin(false);
+
+                // 로그아웃 로직으로 모든 토큰을 삭제
+                await logout();
             }
         } else {
             setIsLogin(false);
             setEmail(null);
             setIsAdmin(false);
 
-            // Access 토큰과 Refresh 토큰을 명시적으로 삭제한다.
-            localStorage.removeItem('access');
-            document.cookie = "refresh=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            // logout 로직으로 Access 토큰과 Refresh 토큰을 명시적으로 삭제한다.
+            // 원래 로그아웃 버튼을 클릭하면 로그아웃 로직이 두 번 실행된다.
+            // if 조건을 사용하여 그를 방지한다.
+            if (token) {
+                await logout();
+            }
         }
         console.log(email);
     };
@@ -53,9 +61,6 @@ export const AuthProvider = ({ children }) => {
 
     const handleContextLogout = () => {
         // Access 토큰과 Refresh 토큰을 명시적으로 삭제한다.
-        localStorage.removeItem('access');
-        document.cookie = "refresh=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
         const event = new Event('authChange');
         window.dispatchEvent(event);
     };
