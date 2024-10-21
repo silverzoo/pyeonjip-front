@@ -9,11 +9,11 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [items, setItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const { isLogin, email } = useAuth();
+    const { isLoggedIn, email } = useAuth();
 
     const loadCartData = useCallback(async () => {
         try {
-            if (isLogin) {
+            if (isLoggedIn) {
                 const response = await fetch(`http://localhost:8080/api/cart?email=${email}`);
                 const cartDetailDtos = await response.json();
                 setItems(cartDetailDtos);
@@ -31,11 +31,11 @@ export const CartProvider = ({ children }) => {
         } catch (error) {
             console.error('Error fetching cart data:', error);
         }
-    }, [isLogin, email]);
+    }, [isLoggedIn, email]);
 
     useEffect(() => {
         loadCartData();
-    }, [loadCartData, isLogin]);
+    }, [loadCartData, isLoggedIn]);
 
     return (
         <CartContext.Provider value={{
