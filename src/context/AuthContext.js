@@ -5,8 +5,7 @@ import {logout} from "../utils/authUtils";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // 초기 로그인 여부 판단에 Access 토큰 유효성 검증 추가
-    const [isLogin, setIsLogin] = useState(!!isAccessTokenValid(localStorage.getItem('access')));
+    const [isLogin, setIsLogin] = useState(false);
     const [email, setEmail] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
