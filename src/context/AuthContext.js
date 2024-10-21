@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
     const [email, setEmail] = useState(null);
     const [isAdmin, setIsAdmin] = useState(false);
 
-    const updateAuthState = async () => {
+    const updateAuthState = () => {
         const token = localStorage.getItem('access');
         // Access 토큰 유효성 검증 추가. 더 정확한 로그인 상태 판단 가능
         if (isAccessTokenValid(token)) {
@@ -37,7 +37,6 @@ export const AuthProvider = ({ children }) => {
                 localStorage.removeItem('access');
             }
         }
-        console.log(email);
     };
 
     useEffect(() => {
