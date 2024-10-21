@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Form, Table, Spinner, Container, Row, Col, Alert } from 'react-bootstrap';
+import {
+    Button, Form, Table, Spinner, Container, Alert, Modal
+} from 'react-bootstrap';
+import {
+    createCouponAPI,
+    createRandomCouponAPI,
+    deleteCouponAPI,
+    fetchCouponsAPI,
+    updateCouponAPI
+} from "../../../utils/CouponUtils";
 
 const CouponComponent = () => {
-    const [discount, setDiscount] = useState(0);
     const [coupons, setCoupons] = useState([]);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+    const [currentCoupon, setCurrentCoupon] = useState({
+        code: '',
+        discount: 0,
+        expiryDate: '',
+    });
 
     useEffect(() => {
         fetchCoupons();
@@ -13,25 +27,35 @@ const CouponComponent = () => {
 
     const fetchCoupons = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/coupon');
-            if (!response.ok) throw new Error('쿠폰 목록을 불러오는 데 실패했습니다.');
-            const data = await response.json();
+            setLoading(true);
+            const data = await fetchCouponsAPI();
             setCoupons(data);
         } catch (err) {
             setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
 
-    const createCoupon = async () => {
-        setLoading(true);
+    const handleModalOpen = (coupon = { code: '', discount: 0, expiryDate: '' }) => {
+        setCurrentCoupon(coupon);
+        setShowModal(true);
+    };
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setCurrentCoupon((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const saveCoupon = async () => {
         try {
-            const response = await fetch(`http://localhost:8080/api/coupon?discount=${discount}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ discount }),
-            });
-            if (!response.ok) throw new Error('쿠폰 생성에 실패했습니다.');
-            setDiscount(0);
+            setLoading(true);
+            if (currentCoupon.id) {
+                await updateCouponAPI(currentCoupon);
+            } else {
+                await createCouponAPI(currentCoupon);
+            }
+            setShowModal(false);
             fetchCoupons();
         } catch (err) {
             setError(err.message);
@@ -42,12 +66,9 @@ const CouponComponent = () => {
 
     const deleteCoupon = async (id) => {
         if (window.confirm('이 쿠폰을 삭제하시겠습니까?')) {
-            setLoading(true);
             try {
-                const response = await fetch(`http://localhost:8080/api/coupon?id=${id}`, {
-                    method: 'DELETE',
-                });
-                if (!response.ok) throw new Error('쿠폰 삭제에 실패했습니다.');
+                setLoading(true);
+                await deleteCouponAPI(id);
                 fetchCoupons();
             } catch (err) {
                 setError(err.message);
@@ -57,55 +78,43 @@ const CouponComponent = () => {
         }
     };
 
+    const createRandomCoupon = async () => {
+        const discount = prompt('할인율을 입력하세요 (0-100):', '10');
+        if (discount === null) return; // 취소 버튼 클릭 시 종료
+        try {
+            setLoading(true);
+            await createRandomCouponAPI(discount);
+            fetchCoupons();
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
-        <Container className="mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '900px' }}>
-            <h2 className="text-center mb-4">ADMIN - COUPON MANAGEMENT</h2>
+        <Container className=" card mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '900px' }}>
+            <h2 className="text-center mb-4">쿠폰 관리</h2>
 
             {error && <Alert variant="danger">{error}</Alert>}
 
-            <Form className="mb-4">
-                <Row className="align-items-center">
-                    <Col xs={8}>
-                        <Form.Group controlId="discount">
-                            <Form.Label style={{fontWeight: 'bold'}}>할인율 (%)</Form.Label>
-                            <Form.Control
-                                type="number"
-                                value={discount}
-                                onChange={(e) => setDiscount(e.target.value)}
-                                placeholder="할인율을 입력하세요"
-                                min={0}
-                                max={100}
-                                className="shadow-sm"
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col xs={4} className="text-end">
-                        <Button
-                            variant="dark"
-                            className="w-100 shadow-sm"
-                            onClick={createCoupon}
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <Spinner
-                                        as="span"
-                                        animation="border"
-                                        size="sm"
-                                        role="status"
-                                        aria-hidden="true"
-                                    />{' '}
-                                    생성 중...
-                                </>
-                            ) : (
-                                '쿠폰 생성'
-                            )}
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
+            <div className="d-flex justify-content-start align-items-center">
+            <Button
+                variant="dark"
+                className="mb-4 shadow-sm"
+                onClick={() => handleModalOpen()}
+            >
+                커스텀 쿠폰 생성
+            </Button>
 
-            <h3 className="mb-3">쿠폰 목록</h3>
+            <Button
+                variant=""
+                className="mb-4 ms-2 btn btn-outline-dark"
+                onClick={createRandomCoupon}
+            >
+                랜덤 쿠폰 생성
+            </Button>
+            </div>
             <Table striped bordered hover responsive className="shadow-sm">
                 <thead className="table-dark">
                 <tr>
@@ -128,8 +137,16 @@ const CouponComponent = () => {
                             <td>{new Date(coupon.expiryDate).toLocaleString()}</td>
                             <td>
                                 <Button
+                                    variant=""
+                                    size="sm"
+                                    className="me-2 btn btn-outline-dark"
+                                    onClick={() => handleModalOpen(coupon)}
+                                >
+                                    수정
+                                </Button>
+                                <Button
                                     variant="dark"
-                                    size="md"
+                                    size="sm"
                                     onClick={() => deleteCoupon(coupon.id)}
                                 >
                                     삭제
@@ -146,6 +163,53 @@ const CouponComponent = () => {
                 )}
                 </tbody>
             </Table>
+
+            <Modal show={showModal} onHide={() => setShowModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>{currentCoupon.id ? '쿠폰 수정' : '쿠폰 생성'}</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="code" className="mb-3">
+                            <Form.Label>쿠폰 코드</Form.Label>
+                            <Form.Control
+                                type="text"
+                                name="code"
+                                value={currentCoupon.code}
+                                onChange={handleInputChange}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="discount" className="mb-3">
+                            <Form.Label column="discount">할인율 (%)</Form.Label>
+                            <Form.Control
+                                type="number"
+                                name="discount"
+                                value={currentCoupon.discount}
+                                onChange={handleInputChange}
+                                min={0}
+                                max={100}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="expiryDate" className="mb-3">
+                            <Form.Label>만료 날짜</Form.Label>
+                            <Form.Control
+                                type="datetime-local"
+                                name="expiryDate"
+                                value={currentCoupon.expiryDate}
+                                onChange={handleInputChange}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShowModal(false)}>
+                        취소
+                    </Button>
+                    <Button variant="dark" onClick={saveCoupon} disabled={loading}>
+                        {loading ? '저장 중...' : '저장'}
+                    </Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };
