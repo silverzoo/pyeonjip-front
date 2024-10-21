@@ -7,7 +7,7 @@ function FindAccountResult() {
     const { email } = location.state || {};
 
     return (
-        <div className="user-container h-100 d-flex justify-content-center align-items-center card border-0">
+        <div className="user-container h-100 d-flex justify-content-center align-items-center card vh-100 border-0">
             <div className="col-md-6 user-form">
                 <h3 className="text-left mb-2">계정 찾기 결과</h3>
                 <hr />

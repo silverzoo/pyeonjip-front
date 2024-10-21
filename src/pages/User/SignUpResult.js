@@ -9,7 +9,7 @@ function SignUpResult() {
     const navigate = useNavigate();
 
     return (
-        <div className="user-container h-100 d-flex justify-content-center align-items-center">
+        <div className="user-container h-100 d-flex justify-content-center vh-100 align-items-center">
             <div className="col-md-6 user-form">
                 {name ? (
                     <h3 className="found-email"> 가입을 축하합니다, {name} 님! </h3>
