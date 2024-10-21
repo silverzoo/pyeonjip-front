@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { fetchDeleteOrder, fetchUpdateOrder } from '../../../utils/Api/AdminUtils';
+import { fetchDeleteOrder, fetchUpdateOrder } from '../../../api/AdminUtils';
 
-function OrderItem({ order, isSelected, onSelect, onDelete }) {
+function OrderItem({ order, onDelete }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [selectedDeliveryStatus, setSelectedDeliveryStatus] = useState(order.deliveryStatus);
@@ -19,19 +19,8 @@ function OrderItem({ order, isSelected, onSelect, onDelete }) {
         setIsExpanded(prev => !prev);
     };
 
-    const handleDelete = async (event) => {
-        event.stopPropagation();
-        if (window.confirm('정말로 이 주문을 삭제하시겠습니까?')) {
-            setIsDeleting(true);
-            try {
-                await fetchDeleteOrder(order.id);
-                onDelete(order.id);
-            } catch (error) {
-                alert(error.message);
-            } finally {
-                setIsDeleting(false);
-            }
-        }
+    const handleDelete = () => {
+        onDelete(order.id);
     };
 
     const handleDeliveryStatusChange = (event) => {
@@ -41,7 +30,7 @@ function OrderItem({ order, isSelected, onSelect, onDelete }) {
     const handleEdit = async (event) => {
         event.stopPropagation();
         try {
-            await fetchUpdateOrder(4, selectedDeliveryStatus); // 현재 선택된 배송 상태를 전송
+            await fetchUpdateOrder(order.id, selectedDeliveryStatus);
             alert('배송 상태가 업데이트되었습니다.');
         } catch (error) {
             alert(error.message);
@@ -50,7 +39,7 @@ function OrderItem({ order, isSelected, onSelect, onDelete }) {
 
     return (
         <>
-            <li className={`admin-order-item ${isSelected ? 'selected' : ''}`}>
+            <li className="admin-order-item">
                 <span onClick={toggleDetails}>{order.userName}</span>
                 <span onClick={toggleDetails}>{order.userEmail}</span>
                 <span onClick={toggleDetails}>{order.orderStatus}</span>

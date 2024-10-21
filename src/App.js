@@ -15,26 +15,32 @@ function App() {
 
         <div className="app">
             <AuthProvider>
-            <div className='leftSide'>
-                <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
-                    <LeftSide/>
-                </HiddenUtils>
-            </div>
-                <CartProvider>
+                <div className='leftSide'>
                     <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
-            <div className='rightSide'>
-                <RightSide/>
-            </div>
+                        <LeftSide/>
                     </HiddenUtils>
-            <div className='content'>
-                <AppRouter/>
-            </div>
-                </CartProvider>
+                </div>
+                    <CartProvider>
+                        <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                <div className='rightSide'>
+                    <RightSide/>
+                </div>
+                        </HiddenUtils>
+                <div className='content'>
+                    <AppRouter/>
+                </div>
+                    </CartProvider>
+
+                <div className='chatButton'>
+                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                        <ChatDashboardButton/>
+                    </HiddenUtils>
+                </div>
             </AuthProvider>
             <div className='footer'>
                 <Footer/>
             </div>
-            <ChatDashboardButton/>
+            
         </div>
 
     );
