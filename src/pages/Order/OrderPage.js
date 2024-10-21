@@ -188,16 +188,16 @@ function OrderPage() {
                   src={item.productImage}
                   alt={item.productName}
                   className="order-product-image"
-                  onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} //
-                  style={{ cursor: 'pointer' }} 
+                // onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} 
+                // style={{ cursor: 'pointer' }} 
                 />
                 <div className="order-product-details">
                   <div className="order-product-name"
-                  onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} // 클릭 이벤트
-                  style={{ cursor: 'pointer'}}
+                  // onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} 
+                  // style={{ cursor: 'pointer'}}
                   >
                     {item.productName}
-                    </div>
+                  </div>
                   <div className="order-product-detail-name">{item.productDetailName}</div>
                   <div className="order-product-quantity">수량: {item.quantity}</div>
                   <div className="order-product-price">{formatPriceWithCurrency(item.productPrice)}</div>
@@ -258,8 +258,10 @@ function OrderPage() {
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
-          <label>
-            연락처<span className="required-star">*</span>
+          <div style={{ marginTop: '-10px' }}>
+            <label>
+              연락처<span className="required-star">*</span>
+          <div className="phone-container" style={{ position: 'relative' }}>
             <input
               type="text"
               name="phoneNumber"
@@ -268,24 +270,28 @@ function OrderPage() {
               minLength={11} // 최소 11자리 
               onChange={handlePhoneChange}
             />
+          </div>
+             </label>
             {phoneError && <span className="error-text">{phoneError}</span>}
-          </label>
+          </div>
           <label>
             배송지 주소<span className="required-star">*</span>
-            <input
-              type="text"
-              name="address"
-              value={address}
-              readOnly // 직접 수정하지 못하도록 설정
-            />
-            <button 
-              className="address-search"
-              type="button" 
-              onClick={handleAddressSearch}
-              style={{position: 'absolute', right: 150, top: '650px'}}
+            <div className="address-container" style={{ position: 'relative' }}>
+              <input
+                className='address-input'
+                type="text"
+                name="address"
+                value={address}
+                readOnly // 직접 수정하지 못하도록 설정
+              />
+              <button
+                className="address-search"
+                type="button"
+                onClick={handleAddressSearch}
               >
-              배송지 변경
-            </button>
+                배송지 변경
+              </button>
+            </div>
           </label>
           <label>
             주문시 요청사항
