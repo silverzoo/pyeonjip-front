@@ -1,46 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { fetchDeleteOrder, fetchUpdateOrder } from '../../../utils/Api/AdminUtils';
 
-function OrderItem({ order, isSelected, onSelect }) {
+function OrderItem({ order, isSelected, onSelect, onDelete }) {
     const [isExpanded, setIsExpanded] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [selectedDeliveryStatus, setSelectedDeliveryStatus] = useState(order.deliveryStatus);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-        return new Date(dateString).toLocaleDateString(undefined, options);
+        return new Date(dateString).toLocaleDateString(undefined, options).replace(/\//g, '-');
     };
+
+    useEffect(() => {
+        setSelectedDeliveryStatus(order.deliveryStatus);
+    }, [order.deliveryStatus]);
 
     const toggleDetails = () => {
         setIsExpanded(prev => !prev);
     };
 
+    const handleDelete = async (event) => {
+        event.stopPropagation();
+        if (window.confirm('정말로 이 주문을 삭제하시겠습니까?')) {
+            setIsDeleting(true);
+            try {
+                await fetchDeleteOrder(order.id);
+                onDelete(order.id);
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                setIsDeleting(false);
+            }
+        }
+    };
+
+    const handleDeliveryStatusChange = (event) => {
+        setSelectedDeliveryStatus(event.target.value);
+    };
+
+    const handleEdit = async (event) => {
+        event.stopPropagation();
+        try {
+            await fetchUpdateOrder(4, selectedDeliveryStatus); // 현재 선택된 배송 상태를 전송
+            alert('배송 상태가 업데이트되었습니다.');
+        } catch (error) {
+            alert(error.message);
+        }
+    };
+
     return (
         <>
             <li className={`admin-order-item ${isSelected ? 'selected' : ''}`}>
-                <input
-                    type="checkbox"
-                    checked={isSelected}
-                    onChange={onSelect}
-                />
-                <p className="admin-order-id" onClick={toggleDetails} style={{ cursor: 'pointer' }}>
-                    주문 번호: {order.id} {isExpanded ? '▼' : '▲'}
-                </p>
-                <p><strong>주문자:</strong> {order.userName}</p>
-                <p><strong>전화번호:</strong> {order.phoneNumber}</p>
-                <p><strong>주문 상태:</strong> {order.orderStatus}</p>
-                <p><strong>총 금액:</strong> {order.totalPrice.toLocaleString()}원</p>
-                <p><strong>생성일:</strong> {formatDate(order.createdAt)}</p>
-                <p><strong>배송 상태:</strong> {order.deliveryStatus}</p>
+                <span onClick={toggleDetails}>{order.userName}</span>
+                <span onClick={toggleDetails}>{order.userEmail}</span>
+                <span onClick={toggleDetails}>{order.orderStatus}</span>
+                <span onClick={toggleDetails}>{order.totalPrice.toLocaleString()}원</span>
+                <span onClick={toggleDetails}>{formatDate(order.createdAt)}</span>
+                <span>
+                    <select value={selectedDeliveryStatus} onChange={handleDeliveryStatusChange}>
+                        <option value="READY">READY</option>
+                        <option value="SHIPPING">SHIPPING</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                        <option value="REFUNDING">REFUNDING</option>
+                    </select>
+                </span>
+                <button onClick={handleDelete} disabled={isDeleting}>
+                    {isDeleting ? '삭제 중...' : '삭제'}
+                </button>
+                <button onClick={handleEdit}>
+                    수정
+                </button>
             </li>
             {isExpanded && (
-                <ul className="order-details">
-                    <p><strong>주문 상세:</strong></p>
+                <div className="admin-order-details">
                     {order.orderDetails.map(detail => (
-                        <li key={detail.productDetailId}>
-                            <p><strong>제품명:</strong> {detail.productName}</p>
-                            <p><strong>수량:</strong> {detail.quantity}</p>
-                            <p><strong>제품 가격:</strong> {detail.productPrice.toLocaleString()}원</p>
-                        </li>
+                        <div key={detail.productDetailId} className="admin-order-detail-item">
+                            {detail.productImage && (
+                                <img src={detail.productImage} alt={detail.productName} className="product-image" />
+                            )}
+                            <div className="admin-order-detail-info">
+                                <span><strong>제품명:</strong> {detail.productName}</span>
+                                <span><strong>수량:</strong> {detail.quantity}</span>
+                                <span><strong>제품 가격:</strong> {detail.productPrice.toLocaleString()}원</span>
+                                <span><strong>총 금액:</strong> {detail.subTotalPrice.toLocaleString()}원</span>
+                            </div>
+                        </div>
                     ))}
-                </ul>
+                </div>
             )}
         </>
     );
