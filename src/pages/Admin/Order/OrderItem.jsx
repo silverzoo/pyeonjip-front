@@ -71,7 +71,7 @@ function OrderItem({ order, onDelete }) {
                                 <span><strong>제품명:</strong> {detail.productName}</span>
                                 <span><strong>수량:</strong> {detail.quantity}</span>
                                 <span><strong>제품 가격:</strong> {detail.productPrice.toLocaleString()}원</span>
-                                <span><strong>총 금액:</strong> {detail.subTotalPrice.toLocaleString()}원</span>
+                                <span><strong>금액:</strong> {detail.subTotalPrice.toLocaleString()}원</span>
                             </div>
                         </div>
                     ))}

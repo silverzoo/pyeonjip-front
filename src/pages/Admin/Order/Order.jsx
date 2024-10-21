@@ -12,6 +12,11 @@ function AdminOrder() {
     const [totalPages, setTotalPages] = useState(0);
     const [email, setEmail] = useState('');
 
+
+    useEffect(() => {
+        window.feather.replace();
+    }, []);
+
     useEffect(() => {
 
         const fetchData = async () => {
@@ -62,8 +67,8 @@ function AdminOrder() {
                         return updatedOrders; // 기존의 주문 리스트를 반환
                     }
 
-                    // 주문 수를 유지하기 위해 null 값으로 채우기
-                    const fillItems = Array(5 - updatedOrders.length).fill(null);
+                    // 주문 수를 유지하기 위해 빈 객체로 채우기
+                    const fillItems = Array(5 - updatedOrders.length).fill({ id: null, item: '', quantity: 0, createdAt: null }); // 더미 객체
                     return [...updatedOrders, ...fillItems];
                 }
 
@@ -75,15 +80,27 @@ function AdminOrder() {
     };
 
 
+
+
     return (
-        <div className="admin-order-page">
-            <div className="admin-order-title">주문 관리 페이지</div>
-            <Search setEmail={setEmail} />
-            <OrderList orders={orders} onDelete={handleDelete} />
-            <div className="pagination">
-                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))} disabled={currentPage === 0}>이전</button>
-                <span>페이지 {currentPage + 1} / {totalPages}</span>
-                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1))} disabled={currentPage === totalPages - 1}>다음</button>
+        <div className=" card mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '960px' }}>
+            <h2 className="text-center mb-4">주문 관리</h2>
+            <div className="admin-order-content">
+                <Search setEmail={setEmail}/>
+                <OrderList orders={orders} onDelete={handleDelete}/>
+            </div>
+
+            <div className="admin-order-pagination">
+                <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))} disabled={currentPage === 0}>
+                    <i data-feather="arrow-left"
+                       style={{width: '14px', height: '14px', marginTop: '-4px', marginRight: '3px'}}></i>
+                </button>
+                <span>{currentPage + 1} / {totalPages}</span>
+                <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages - 1))}
+                        disabled={currentPage === totalPages - 1}>
+                    <i data-feather="arrow-right"
+                       style={{width: '14px', height: '14px', marginTop: '-4px', marginLeft: '3px'}}></i>
+                </button>
             </div>
         </div>
     );
