@@ -53,7 +53,7 @@ function ProductOptionAdmin() {
 
     const handleProductUpdate = () => {
         const updatedProduct = { ...product, categoryId: selectedCategory };
-        fetch(`http://localhost:8080/api/products/${productId}`, {
+        fetch(`http://localhost:8080/admin/api/products/${productId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

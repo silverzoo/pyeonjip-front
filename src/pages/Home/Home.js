@@ -208,9 +208,6 @@ const CategoryList = () => {
             <div className="text-center mt-4">
                 <p>다양한 신제품들로 아늑하고 편안한 공간을 연출해 보세요.</p>
             </div>
-            <div className="text-center">
-                <p className="bottom-text mb-0"> Elice Cloud Track 4기 2차 프로젝트 5팀</p>
-            </div>
         </div>
 
     );
