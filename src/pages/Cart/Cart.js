@@ -19,6 +19,7 @@ function CartApp() {
     const [coupons, setCoupons] = useState([]);
     const [couponDiscount, setCouponDiscount] = useState(0);
     const [isCouponApplied, setIsCouponApplied] = useState(false);
+    const [couponId, setCouponId] = useState(null);
     const [totalPrice, setTotalPrice] = useState(0);
     const [previousTotal, setPreviousTotal] = useState(0);
     const [itemCount, setItemCount] = useState(0);
@@ -134,6 +135,7 @@ function CartApp() {
         }
         setCouponDiscount(coupon.discount);
         setIsCouponApplied(true);
+        setCouponId(coupon.id); 
         alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
     };
 
@@ -211,11 +213,13 @@ function CartApp() {
             orderDetails: items.map(item => ({
                 productName: item.name,
                 productDetailId: item.optionId,
+                productDetailName: item.optionName,
                 quantity: item.quantity,
                 productPrice: item.price,
                 productImage: item.url,
             })),
             cartTotalPrice: totalPrice,
+            couponId: couponId
         };
         console.log(checkoutData);
         const response = await fetch('http://localhost:8080/api/orders/checkout', {
