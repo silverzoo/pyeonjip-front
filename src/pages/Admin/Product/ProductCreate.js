@@ -80,7 +80,7 @@ function CreateProduct() {
         console.log("Submitting product data:", productData); // 제출 전 상태 확인
 
         // 상품 생성 요청
-        fetch("http://localhost:8080/api/products", {
+        fetch("http://localhost:8080/api/admin/products", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
