@@ -1,235 +1,247 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import './OrderPage.css'; 
+import './OrderPage.css';
 
 function OrderPage() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const orderData = location.state?.orderSummary;
+  const location = useLocation();
+  const navigate = useNavigate();
+  const orderData = location.state?.orderSummary;
 
-    const [userId, setUserId] = useState('');
-    const [recipient, setRecipient] = useState(''); // 수령인
-    const [phoneNumber, setPhoneNumber] = useState(''); // 연락처
-    const [address, setAddress] = useState(''); // 배송지 
-    const [requirement, setRequirement] = useState(''); // 요구사항
-    const [grade, setGrade] = useState(''); // 회원 등급
-    const [loading, setLoading] = useState(true); // 로딩
-    const [error, setError] = useState(''); // 에러
+  const [userEmail, setUserEmail] = useState('');
+  const [recipient, setRecipient] = useState(''); // 수령인
+  const [phoneNumber, setPhoneNumber] = useState(''); // 연락처
+  const [address, setAddress] = useState(''); // 배송지 
+  const [requirement, setRequirement] = useState(''); // 요구사항
+  const [grade, setGrade] = useState(''); // 회원 등급
+  const [error, setError] = useState(''); // 에러
 
-    // 사용자 정보 가져오기
-    useEffect(() => {
-        const fetchUserData = async () => {
-          const userId = 1;
-            try {
-                const response = await fetch(`http://localhost:8080/api/user/${userId}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const userData = await response.json();
+  // 사용자 정보 가져오기
+  useEffect(() => {
+    console.log('Location state:', location.state);
+    const fetchUserData = async () => {
+      const userEmail = location.state?.email;
 
-                // 유저 정보 설정
-                setUserId(1);
-                setRecipient(userData.name);
-                setPhoneNumber(userData.phoneNumber);
-                setAddress(userData.address);
-                setGrade(userData.grade);
+      console.log('Location state 전체:', location.state); 
+      console.log('Order data:', orderData);
+      console.log('User Email:', userEmail);
 
-                // 로딩 상태 업데이트
-                setLoading(false);
-            } catch (error) {
-                console.error('데이터를 가져오는 중 오류 발생:', error.message);
-                setError('데이터를 가져오는 중 오류가 발생했습니다.');
-                setLoading(false);
-            }
-        };
+      if (!userEmail) {
+        console.error("Order data가 없거나 email이 없습니다.");
+        return;
+      }
 
-        fetchUserData();
-    }, []);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!recipient || !phoneNumber || !address) {
-            alert('모든 필드를 입력해 주세요.');
-            return;
+      try {
+        const response = await fetch(`http://localhost:8080/api/user/${userEmail}`);
+        if (!response.ok) {
+          throw new Error(`HTTP 에러 발생, 현재 상태: ${response.status}`);
         }
+        const userData = await response.json();
 
-        try {
-          // 주문 데이터를 DTO에 맞춰 구성
-          const orderRequestData = {
-            recipient: recipient,
-            phoneNumber: phoneNumber,
-            address: address,
-            requirement: requirement,
-            orderDetails: orderData.orderDetail, // 주문 상세 정보를 포함
-        };
-
-            const orderCartData = {
-                userId: 1,
-                cartTotalPrice: orderData.cartTotalPrice,
-                orderDetails: orderData.orderDetail,
-            };
-
-                  const combinedOrderData = {
-                    orderRequestDto: orderRequestData,
-                    orderCartRequestDto: orderCartData,
-                    userId: 1,
-                };
-
-      const response = await fetch(`http://localhost:8080/api/orders?userId=${userId}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(combinedOrderData),    
-    });
-          console.log('응답 상태:', response.status);
-  
-          if (response.ok) {
-              console.log('주문이 성공적으로 완료되었습니다.');
-              navigate('/order-success');
-          } else {
-            const errorData = await response.json();
-            console.error('서버 오류:', errorData);
-            alert('주문에 실패했습니다. 다시 시도해 주세요.');
-          }
+        // 유저 정보 설정
+        setUserEmail(userData.email); 
+        setRecipient(userData.name);
+        setPhoneNumber(userData.phoneNumber);
+        setAddress(userData.address);
+        setGrade(userData.grade);
       } catch (error) {
-          console.error('주문 처리 중 오류 발생:', error);
-          alert('주문 처리 중 오류가 발생했습니다.');
+        console.error('유저 데이터를 가져오는 중 오류 발생:', error.message);
+        setError('유저 데이터를 가져오는 중 오류가 발생했습니다.');
       }
     };
+    fetchUserData();
+  }, [location.state]);
 
-    const handleBackToCart = () => {
-        navigate('/cart'); // 돌아가기 버튼 클릭 시 장바구니 페이지로 이동
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    if (loading) {
-        return <div>로딩 중...</div>;
+    if (!userEmail) {
+      console.error('유저 이메일이 없습니다.');
+      alert('유저 이메일을 찾을 수 없습니다.');
+      return;
+     }
+
+     console.log('Submitting order for userEmail:', userEmail);
+
+     if (!recipient || !phoneNumber || !address) {
+      alert('모든 필드를 입력해 주세요.');
+      return;
     }
 
-    if (error) {
-        return <div>{error}</div>;
+    try {
+      // 주문 데이터
+      const orderRequestData = {
+        recipient: recipient,
+        phoneNumber: phoneNumber,
+        address: address,
+        requirement: requirement,
+        orderDetails: orderData.orderDetail, // 주문 상세 정보 포함
+      };
+      const orderCartData = {
+        userEmail: userEmail, 
+        cartTotalPrice: orderData.cartTotalPrice,
+        orderDetails: orderData.orderDetail,
+      };
+      const combinedOrderData = {
+        orderRequestDto: orderRequestData,
+        orderCartRequestDto: orderCartData,
+        userEmail: userEmail, 
+      };
+
+      const response = await fetch(`http://localhost:8080/api/orders?userEmail=${userEmail}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(combinedOrderData),
+      });
+      console.log('응답 상태:', response.status);
+
+      if (response.ok) {
+        console.log('주문이 성공적으로 완료되었습니다.');
+        navigate('/order-success'); // 주문 성공 페이지 이동
+      } else {
+        const errorData = await response.json();
+        console.error('서버 오류:', errorData);
+        alert('주문에 실패했습니다. 다시 시도해 주세요.');
+      }
+    } catch (error) {
+      console.error('주문 처리 중 오류 발생:', error);
+      alert('주문 처리 중 오류가 발생했습니다.');
     }
+  };
 
-    if (!orderData) {
-        return <div>주문 데이터가 없습니다.</div>;
-    }
+  const handleBackToCart = () => {
+    navigate('/cart'); // 돌아가기 버튼 클릭 시 장바구니 페이지로 이동
+  };
 
-    console.log(orderData);
+  if (error) {
+    return <div>{error}</div>;
+  }
 
-    return (
-        <div className="order-page">
-            <main className="content">
-                {/* Product List */}
-                <section className="product-list">
-                    <h6 className="section-title">상품목록</h6>
-                    {orderData.orderDetail && orderData.orderDetail.length > 0 ? (
-                        <ul>
-                        {orderData.orderDetail.map((item, index) => (
-                            <li key={index} className="product-item">
-                                <img
-                                    src={item.productImage}
-                                    alt={item.productName}
-                                    className="product-image"
-                                />
-                                <div className="product-details">
-                                    <div className="product-name">{item.productName}</div>
-                                    <div className="product-price">₩{item.productPrice}</div>
-                                </div>
-                                <div className="product-summary">
-                                    <div className="product-quantity">수량: {item.quantity}</div>
-                                    <div className="subtotal-price"></div>
-                                      ₩{(item.quantity * item.productPrice)}
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    ) : (
-                        <li>상품 정보가 없습니다.</li>
-                    )}
-                </section>
+  if (!orderData) {
+    return <div>주문 데이터가 없습니다.</div>;
+  }
 
-                {/* 회원 등급 */}
-                <section className="membership">
-                    <h6>회원 등급: {grade}</h6>
-                </section>
+  console.log(orderData);
 
-                {/* 상품 정보 */}
-                <section className="order-summary">
-                    <div className="order-summary-left">
-                        <h6>총 결제 금액</h6>
-                    </div>
-                    <div className="order-summary-right">
-                        <div className="price-summary-item">
-                            <span className="price-summary-label">쿠폰 적용 후 가격</span>
-                            <span>₩{orderData.cartTotalPrice}</span>
-                        </div>
-                        <div className="price-summary-item">
-                            <span className="price-summary-label">배송비</span>
-                            <span>₩{orderData.deliveryPrice}</span>
-                        </div>
-                        <div className="price-summary-item">
-                            <span className="price-summary-label">회원 할인</span>
-                            <span>{orderData.discountRate * 100}%</span>
-                        </div>
-                        <div className="total-price">
-                            <span>=</span>
-                            <span className="final-price">₩{orderData.totalPrice}</span>
-                        </div>
-                    </div>
-                </section>
+  // 가격 포맷 함수 
+  const formatPriceWithWon = (price) => {
+    return new Intl.NumberFormat('ko-KR').format(price) + '원';
+  };
 
-                {/* 배송 정보 */}
-                <section className="delivery-info">
-                    <form onSubmit={handleSubmit}>
-                        <label>
-                            수령인
-                            <input
-                                type="text"
-                                name="name"
-                                value={recipient}
-                                onChange={(e) => setRecipient(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            연락처
-                            <input
-                                type="text"
-                                name="phoneNumber"
-                                value={phoneNumber}
-                                onChange={(e) => setPhoneNumber(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            배송지 주소
-                            <input
-                                type="text"
-                                name="address"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
-                            />
-                        </label>
-                        <label>
-                            주문요청사항
-                            <textarea
-                                name="requirement"
-                                value={requirement}
-                                onChange={(e) => setRequirement(e.target.value)}
-                            ></textarea>
-                        </label>
-                        <div className="actions">
-                            <button type="button" className="order-back-button" onClick={handleBackToCart}>
-                                돌아가기
-                            </button>
-                            <button type="submit" className="order-submit-button">
-                                주문하기
-                            </button>
-                        </div>
-                    </form>
-                </section>
-            </main>
+  const formatPriceWithCurrency = (price) => {
+    return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
+  };
+
+  return (
+    <div className="order-page">
+      {/* 상품 목록 */}
+      <section className="order-product-list">
+        <span className="order-section-title">상품목록</span>
+        {orderData.orderDetail && orderData.orderDetail.length > 0 ? (
+          <ul>
+            {orderData.orderDetail.map((item, index) => (
+              <li key={index} className="order-product-item">
+                <img
+                  src={item.productImage}
+                  alt={item.productName}
+                  className="order-product-image"
+                />
+                <div className="order-product-details">
+                  <div className="order-product-name">{item.productName}</div>
+                  <div className="order-product-quantity">수량: {item.quantity}</div>
+                  <div className="order-product-price">{formatPriceWithCurrency(item.productPrice)}</div>
+                </div>
+                <div className="order-total-price">{formatPriceWithCurrency(item.quantity * item.productPrice)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <li>상품 정보가 없습니다.</li>
+        )}
+      </section>
+
+      {/* 회원 등급 */}
+      <section className="order-membership">
+        <span className="order-membership">회원 등급</span>
+        <span>{grade}</span>
+      </section>
+
+      {/* 주문 상품 가격 */ }
+        < section className="order-summary">
+      <div className="order-summary-left">
+        <span className="order-summary-title">총 결제 금액</span>
+      </div>
+      <div className="order-summary-right">
+        <div className="price-summary-item">
+          <span className="price-summary-label">쿠폰 적용 후 가격</span>
+          <span>{formatPriceWithWon(orderData.cartTotalPrice)}</span>
         </div>
-    );
+        <div className="price-summary-item">
+          <span className="price-summary-label">배송비</span>
+          <span>{formatPriceWithWon(orderData.deliveryPrice)}</span>
+        </div>
+        <div className="price-summary-item">
+          <span className="price-summary-label">회원 할인</span>
+          <span>{orderData.discountRate * 100}%</span>
+        </div>
+        <div className="total-price">
+          <span className="final-price">{formatPriceWithCurrency(orderData.totalPrice)}</span>
+        </div>
+      </div>
+    </section>
+
+      {/* 주문 요청 정보 */ }
+  <section className="order-delivery-info">
+    <form onSubmit={handleSubmit}>
+      <label style={{ marginTop: '30px' }}>
+        수령인
+        <input
+          type="text"
+          name="recipient"
+          value={recipient}
+          onChange={(e) => setRecipient(e.target.value)}
+        />
+      </label>
+      <label>
+        연락처
+        <input
+          type="text"
+          name="phoneNumber"
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+        />
+      </label>
+      <label>
+        배송지 주소
+        <input
+          type="text"
+          name="address"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+        />
+      </label>
+      <label>
+        주문요청사항
+        <textarea
+          name="requirement"
+          value={requirement}
+          onChange={(e) => setRequirement(e.target.value)}
+        ></textarea>
+      </label>
+      <div className="order-actions">
+        <button type="button" className="order-back-button"  onClick={handleBackToCart}>
+          돌아가기
+        </button>
+        <button type="submit" className="order-submit-button">
+          주문하기
+        </button>
+      </div>
+    </form>
+  </section>
+    </div >
+  );
 }
 
 export default OrderPage;

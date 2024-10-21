@@ -1,30 +1,19 @@
-import React, { useState } from 'react';
-import './Search.css';
+import React from 'react';
 
-const Search = () => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [searchOption, setSearchOption] = useState('name');
-
-    const handleSearch = () => {
-        console.log(`Searching for ${searchTerm} by ${searchOption}`);
+function Search({ setEmail }) {
+    const handleSearch = (event) => {
+        setEmail(event.target.value);
     };
 
     return (
-        <div className="search-container">
-            <select value={searchOption} onChange={(e) => setSearchOption(e.target.value)}>
-                <option value="">상품명</option>
-                <option value="">구매자</option>
-                <option value="">카테고리</option>
-            </select>
-            <input
-                type="text"
-                placeholder="검색어 입력"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <button onClick={handleSearch}>검색하기</button>
-        </div>
+        <input
+            type="text"
+            placeholder="유저 이메일로 검색..."
+            onChange={handleSearch}
+            style={{marginBottom: '40px'}}
+            className="admin-order-search-input"
+        />
     );
-};
+}
 
 export default Search;

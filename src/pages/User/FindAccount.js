@@ -44,7 +44,7 @@ function FindAccount() {
     };
 
     return (
-        <div className="user-container h-100 d-flex justify-content-center align-items-center">
+        <div className="user-container h-100 d-flex justify-content-center align-items-center card border-0">
             <div className="col-md-6">
                 <div className="user-login-logo text-center mb-5">
                     <Link to="/"><img src={logo} alt="logo" width="140"/></Link>

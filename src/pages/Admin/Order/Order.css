@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
+    margin-top: 40px;
 }
 
 .admin-order-page * {
@@ -23,27 +24,18 @@
     margin-bottom: 10px;
 }
 
-.admin-order-delete-button {
-    padding: 8px 12px;
-    background-color: #212529;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.admin-order-delete-button:hover {
-    background-color: #212529;
-}
-
-.admin-order-item {
+.admin-order-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    border-radius: 4px;
+    padding: 10px;
+    background-color: black;
+    color: white;
+}
+
+.admin-order-header span {
+    flex: 1;
+    text-align: center;
 }
 
 .admin-order-item.selected {
@@ -55,17 +47,77 @@
     font-weight: bold;
 }
 
-input[type="checkbox"] {
-    width: 20px;
+.admin-order-item button {
+    background-color: black; /* 붉은 색상 */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 5px;
     cursor: pointer;
-    accent-color: gray;
+    transition: background-color 0.3s ease;
 }
 
-input[type="checkbox"]:checked {
-    accent-color: #212529;
+.admin-order-list {
+    width: 960px; /* 원하는 너비 */
+    margin: 0 auto; /* 중앙 정렬 */
+    list-style: none; /* 기본 리스트 스타일 제거 */
+    padding: 0; /* 기본 패딩 제거 */
 }
 
-input[type="checkbox"]:checked::before {
-    content: "";
-    background-color: gray;
+.admin-order-item {
+    display: flex; /* 플렉스 박스를 사용하여 정렬 */
+    justify-content: space-between; /* 각 항목 사이에 여백 추가 */
+    align-items: center; /* 수직 정렬 */
+    cursor: pointer;
+    padding: 10px;
+    border: 1px solid #ccc; /* 테두리 추가 */
+    margin-bottom: 10px; /* 항목 간의 간격 */
+    border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.admin-order-item span {
+    flex: 1; /* 각 span 요소가 같은 너비를 가지도록 설정 */
+    text-align: center; /* 중앙 정렬 */
+}
+
+.admin-order-details {
+    border: 1px solid #ccc;
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.admin-order-detail-item {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    padding: 5px 0;
+}
+
+
+.admin-order-detail-item img {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.admin-order-detail-info {
+    flex: 1;
+}
+
+
+.admin-order-search-input {
+    width: 200px;
+    height: 35px;
+}
+
+.admin-order-search-input::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+.admin-order-search-input:focus {
+    border-color: #000;
+    outline: none;
 }
