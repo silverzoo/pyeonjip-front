@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchWithAuth, getUserEmail, isLoggedIn } from '../../utils/authUtils';
-import './User.css'; // MyPage.css는 User.css로 변경
+import axiosInstance from '../../utils/axiosInstance';
+import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
+import './User.css';
 
 function MyPage() {
     const [user, setUser] = useState(null);
@@ -13,10 +14,13 @@ function MyPage() {
 
     const fetchUser = async (email) => {
         try {
-            const data = await fetchWithAuth(`http://localhost:8080/api/user/mypage?email=${email}`);
+            console.log('요청 시작');
+            // Axios 통신으로 인증 정보를 담아 요청
+            const { data } = await axiosInstance.get(`/api/user/mypage?email=${email}`);
             setUser(data);
+            console.log('데이터 가져오기 완료');
         } catch (error) {
-            if (error.message === '토큰이 유효하지 않습니다. 로그인이 필요합니다.') {
+            if (error.response?.status === 401) {
                 setErrorMessage('로그인이 필요합니다.');
                 navigate('/login');
             } else {
@@ -53,11 +57,11 @@ function MyPage() {
         switch (field) {
             case 'address':
                 updatedValue = user.address;
-                endpoint = `http://localhost:8080/api/user/address/${email}`;
+                endpoint = `/api/user/address/${email}`;  // baseURL이 axiosInstance에 설정되어 있으므로 상대 경로 사용함
                 break;
             case 'password':
                 updatedValue = prompt('새 비밀번호를 입력해주세요:');
-                endpoint = `http://localhost:8080/api/user/password/${email}`;
+                endpoint = `/api/user/password/${email}`;
                 break;
             default:
                 return;
@@ -65,24 +69,15 @@ function MyPage() {
 
         // PUT 요청 보내기
         try {
-            const response = await fetchWithAuth(endpoint, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ [field]: updatedValue }),
+            const response = await axiosInstance.put(endpoint, {
+                [field]: updatedValue
             });
 
-            if (response.ok) {
-                const success = await response.json();
-                if (success) {
-                    alert(`${field}이(가) 성공적으로 수정되었습니다.`);
-                    fetchUser(email);
-                } else {
-                    alert('수정하는 중 문제가 발생했습니다.1');
-                }
+            if (response.status === 200) {
+                alert(`${field}이(가) 성공적으로 수정되었습니다.`);
+                fetchUser(email);
             } else {
-                alert('수정하는 중 문제가 발생했습니다.2');
+                alert('수정하는 중 문제가 발생했습니다.');
             }
         } catch (error) {
             console.error('수정 요청 중 오류 발생:', error);
