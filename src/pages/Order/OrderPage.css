@@ -199,10 +199,15 @@
 .order-delivery-info input{
   width: 100%;
   padding: 10px;
-  height: 30px; /* 입력창의 세로 폭 설정 */
+  height: 30px; 
   border: 1px solid #ddd;
   box-sizing: border-box; 
   border-radius: 0;
+  transition: border-color 0.3s ease;
+}
+
+.order-delivery-info input.input-error {
+  border: 1px solid red; 
 }
 
 .order-delivery-info input,
@@ -281,6 +286,7 @@
 
 .phone-container{
   margin-bottom: -10px;
+  position: relative;
 }
 
 .address-container {
@@ -309,3 +315,7 @@
   background-color: black; /* 마우스 호버 시 배경색 */
   color: white; /* 마우스 호버 시 글씨 색상 */
 }
+
+/* .input-error:hover {
+  border-color:red;
+} */
