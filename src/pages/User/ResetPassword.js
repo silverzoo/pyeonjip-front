@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import logo from "../../logo.svg";
-import { fetchWithAuth } from '../../utils/authUtils';
 
 function ResetPassword() {
     const [email, setEmail] = useState('');
@@ -36,15 +35,24 @@ function ResetPassword() {
 
         try {
             // 1. 이메일과 이름이 일치하는지 확인하는 API 호출
-            const checkResult = await fetchWithAuth('http://localhost:8080/api/auth/check', {
+            const response = await fetch('http://localhost:8080/api/auth/check', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
                 body: JSON.stringify({ name, email }),
             });
 
-            if (checkResult.check) {
+            const checkResult = await response.json();
+
+            // 응답에서 data 필드의 값을 확인
+            if (checkResult.data === true) {
                 // 2. 일치하면 비밀번호 재설정 이메일 발송 API 호출
-                await fetchWithAuth('http://localhost:8080/api/auth/check/reset', {
+                await fetch('http://localhost:8080/api/auth/check/reset', {
                     method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                     body: JSON.stringify({ email, name }),
                 });
 
@@ -59,7 +67,6 @@ function ResetPassword() {
             setSuccessMessage('');
         }
     };
-
 
     return (
         <div className="reset-password-container d-flex flex-column align-items-center justify-content-start vh-100">
@@ -99,7 +106,6 @@ function ResetPassword() {
                 <div className="text-center">
                     <p className="bottom-text mb-0"> Elice Cloud Track 4기 2차 프로젝트 5팀</p>
                 </div>
-
             </div>
         </div>
     );
