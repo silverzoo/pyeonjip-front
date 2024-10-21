@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import OrderList from './OrderList';
 import './Order.css';
 import Search from "../Search/Search";
-import { fetchGetOrders } from "../../../utils/Api";
+import { fetchGetOrders } from "../../../utils/Api/AdminUtils";
 import { useNavigate } from "react-router-dom";
 
 function AdminOrder() {
