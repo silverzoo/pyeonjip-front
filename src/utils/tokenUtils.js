@@ -22,7 +22,7 @@ const isAccessTokenExist = (token) => {
 }
 
 // 토큰 만료 여부 확인
-const isAccessTokenExpired = (token) => {
+export const isAccessTokenExpired = (token) => {
     try {
         const decodedToken = jwtDecode(token);
         const currentTime = Date.now() / 1000;
