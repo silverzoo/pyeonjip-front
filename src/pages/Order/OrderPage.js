@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-// import SidePanelApp from '../components/RightSide';
 import './OrderPage.css';
 
 function OrderPage() {
@@ -17,6 +16,8 @@ function OrderPage() {
   const [grade, setGrade] = useState(''); // 회원 등급
   const [error, setError] = useState(''); // 전체 에러
   const [phoneError, setPhoneError] = useState(''); // 연락처 유효성 검사 에러 
+  const [recipientError, setRecipientError] = useState(''); // 수령인 유효성 검사 에러
+  const [addressError, setAddressError] = useState(''); // 배송지 유효성 검사 에러 
 
   // 연락처 유효성 검사
   const validatePhoneNumber = (phone) => {
@@ -40,7 +41,7 @@ function OrderPage() {
       const userEmail = location.state?.email;
 
       if (!userEmail) {
-        console.error("Order data가 없거나 email이 없습니다.");
+        console.error("email이 없습니다.");
         return;
       }
 
@@ -56,7 +57,7 @@ function OrderPage() {
         setUserEmail(userData.email);
         setRecipient(userData.name);
         setPhoneNumber(userData.phoneNumber);
-        setAddress(userData.address); // 기존 주소 설정 
+        setAddress(userData.address);
         setGrade(userData.grade);
       } catch (error) {
         console.error('유저 데이터를 가져오는 중 오류 발생:', error.message);
@@ -77,18 +78,33 @@ function OrderPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 연락처 유효성 검사
-    if (!validatePhoneNumber(phoneNumber)) {
+    let hasError = false;
+
+    if (!recipient) {
+      setRecipientError('수령인은 필수 입력 항목입니다.');
+      hasError = true;
+    } else {
+      setRecipientError('');
+    }
+
+    if (!phoneNumber) {
+      setPhoneError('연락처는 필수 입력 항목입니다.');
+      hasError = true;
+    } else if (!validatePhoneNumber(phoneNumber)) {
       setPhoneError('유효한 연락처를 입력해 주세요.');
-      return;
+      hasError = true;
     } else {
       setPhoneError('');
     }
 
-    if (!recipient || !phoneNumber || !address) {
-      alert('모든 필드를 입력해 주세요.');
-      return;
+    if (!address) {
+      setAddressError('배송지 주소는 필수 입력 항목입니다.');
+      hasError = true;
+    } else {
+      setAddressError('');
     }
+
+    if (hasError) return;
 
     try {
       // 주문 데이터
@@ -169,12 +185,6 @@ function OrderPage() {
     return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(price);
   };
 
-  const handleProductClick = (categoryId, productId, optionId) => {
-    // 상품 디테일 페이지로 이동하는 함수
-    navigate(`/category/${categoryId}/product-detail?productId=${productId}&optionId=${optionId}`);
-  };
-
-
   return (
     <div className="order-page">
       {/* 상품 목록 */}
@@ -188,14 +198,9 @@ function OrderPage() {
                   src={item.productImage}
                   alt={item.productName}
                   className="order-product-image"
-                // onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} 
-                // style={{ cursor: 'pointer' }} 
                 />
                 <div className="order-product-details">
-                  <div className="order-product-name"
-                  // onClick={() => handleProductClick(item.categoryId, item.productId, item.productDetailId)} 
-                  // style={{ cursor: 'pointer'}}
-                  >
+                  <div className="order-product-name">
                     {item.productName}
                   </div>
                   <div className="order-product-detail-name">{item.productDetailName}</div>
@@ -252,37 +257,41 @@ function OrderPage() {
             <span className="required-notice">*: 필수 입력 항목</span>
           </div>
           <input
-            className="recipient-input"
+            className={`recipient-input ${recipientError ? 'input-error' : ''}`}
             type="text"
             name="recipient"
             value={recipient}
             onChange={(e) => setRecipient(e.target.value)}
           />
+          {recipientError && <span className="error-text">{recipientError}</span>}
+
           <div style={{ marginTop: '-10px' }}>
             <label>
               연락처<span className="required-star">*</span>
-          <div className="phone-container" style={{ position: 'relative' }}>
-            <input
-              type="text"
-              name="phoneNumber"
-              value={phoneNumber}
-              maxLength={11} // 최대 11자리
-              minLength={11} // 최소 11자리 
-              onChange={handlePhoneChange}
-            />
-          </div>
-             </label>
+              <div className="phone-container" style={{ position: 'relative' }}>
+                <input
+                  type="text"
+                  name="phoneNumber"
+                  value={phoneNumber}
+                  maxLength={11} // 최대 11자리
+                  minLength={11} // 최소 11자리 
+                  onChange={handlePhoneChange}
+                  className={`order-input ${phoneError ? 'input-error' : ''}`}
+                />
+              </div>
+            </label>
             {phoneError && <span className="error-text">{phoneError}</span>}
           </div>
+
           <label>
             배송지 주소<span className="required-star">*</span>
             <div className="address-container" style={{ position: 'relative' }}>
               <input
-                className='address-input'
+                className={`address-input ${addressError ? 'input-error' : ''}`}
                 type="text"
                 name="address"
                 value={address}
-                readOnly // 직접 수정하지 못하도록 설정
+                onChange={(e) => setAddress(e.target.value)}
               />
               <button
                 className="address-search"
@@ -293,6 +302,8 @@ function OrderPage() {
               </button>
             </div>
           </label>
+          {addressError && <span className="error-text">{addressError}</span>}
+
           <label>
             주문시 요청사항
             <textarea
@@ -300,8 +311,10 @@ function OrderPage() {
               value={requirement}
               maxLength={100} // 글자수 제한 100자
               onChange={(e) => setRequirement(e.target.value)}
+              placeholder="(예: 부재 시 문 앞에 놓아주세요)"
             ></textarea>
           </label>
+          
           <div className="order-actions">
             <button type="button" className="order-back-button" onClick={handleBackToCart}>
               돌아가기
@@ -312,9 +325,6 @@ function OrderPage() {
           </div>
         </form>
       </section>
-
-      {/* 오른쪽 사이드 패널 */}
-      {/* <SidePanelApp /> */}
     </div >
   );
 }

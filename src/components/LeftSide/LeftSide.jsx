@@ -6,7 +6,7 @@ import ToggleIcon from "./ToggleIcon/ToggleIcon";
 import Category from "./Tab/Category";
 import Admin from "./Tab/Admin";
 import { useAuth } from "../../context/AuthContext";
-import {fetchGetCategories} from "../../utils/Api/AdminUtils";
+import {fetchGetCategories} from "../../api/AdminUtils";
 
 const LeftSide = () => {
     const { isAdmin } = useAuth();
