@@ -1,36 +1,36 @@
 .order-page {
-  min-height: calc(100vh - 200px); 
-  padding-bottom: 400px; 
+  min-height: calc(100vh - 200px);
+  padding-bottom: 400px;
   position: relative;
 }
 
 .order-product-item {
   display: flex;
   justify-content: space-between;
-  align-items: center; 
+  align-items: center;
   width: 100%;
-  gap: 20px; 
+  gap: 20px;
   padding: 20px 0;
   position: relative;
 }
 
-.order-product-list{
+.order-product-list {
   width: 100%;
   border-bottom: 0.9px solid black;
   margin-bottom: 10px;
 }
 
-.order-product-detail-name{
+.order-product-detail-name {
   font-size: 0.7rem;
-  font-weight:300;
+  font-weight: 300;
 }
 
 .order-product-item:not(:last-child)::after {
   content: '';
   position: absolute;
   bottom: 0;
-  left: -30px; 
-  width: calc(100% + 30px); 
+  left: -30px;
+  width: calc(100% + 30px);
   border-bottom: 0.9px solid #ddd;
 }
 
@@ -39,12 +39,12 @@
   position: absolute;
   bottom: 0;
   left: -30px;
-  width: calc(100% + 30px); 
+  width: calc(100% + 30px);
   border-bottom: 0.9px solid black;
 }
 
 .order-product-image {
-  width: 100px; 
+  width: 100px;
   height: auto;
 }
 
@@ -52,7 +52,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  flex: 1; 
+  flex: 1;
   margin-left: 20px;
   width: 60%;
 }
@@ -62,14 +62,14 @@
   font-weight: 500;
 }
 
-.price-summary-item{
+.price-summary-item {
   font-size: 0.7rem;
   font-weight: lighter;
 }
 
 .order-product-name {
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.8rem;
   margin-bottom: 5px;
 }
 
@@ -77,42 +77,43 @@
   text-align: center;
   font-size: 0.7rem;
   font-weight: 500;
-  margin-left: 500px; 
+  margin-left: 500px;
   margin-bottom: 20px;
 }
 
 .order-total-price {
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.8rem;
   text-align: right;
-  margin-right: 10px; /* 오른쪽 끝으로 */
+  margin-right: 10px;
+  /* 오른쪽 끝으로 */
   margin-bottom: 20px;
   margin-top: 20px;
 }
 
 .order-membership,
 .order-summary-title {
-  font-weight: 700;
+  font-weight: 650;
   font-size: 0.9rem;
   margin-bottom: 20px;
 }
 
-.order-summary-title{
-  border-bottom: 0.9px solid #ddd; 
+.order-summary-title {
+  border-bottom: 0.9px solid #ddd;
   margin-left: 40px;
 }
 
-.order-section-title{
+.order-section-title {
   font-weight: 700;
   font-size: 0.9rem;
 }
 
-.final-price{
+.final-price {
   font-weight: bold;
-  font-size: 0.7rem;
+  font-size: 0.9rem;
 }
 
-.order-membership{
+.order-membership {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -139,19 +140,20 @@
 .order-membership {
   margin-top: 20px;
 }
-.order-summary-left{
+
+.order-summary-left {
   margin-top: 50px;
 }
 
 .order-membership span:last-child {
-  font-weight: 700;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .price-summary-item {
   display: flex;
   justify-content: space-between;
-  width: 300px; 
+  width: 300px;
   font-size: 0.8rem;
 }
 
@@ -163,8 +165,8 @@
 .order-section-title {
   border-bottom: 0.9px solid black;
   padding-bottom: 10px;
-  display: block; 
-  width: 100%;    
+  display: block;
+  width: 100%;
 }
 
 .total-price {
@@ -175,11 +177,6 @@
   margin-top: 10px;
   border-top: 0.9px solid black;
   padding-top: 10px;
-}
-
-.final-price {
-  font-weight: bold;
-  font-size: 1.0rem;
 }
 
 .order-delivery-info {
@@ -196,18 +193,18 @@
   font-size: 0.7rem;
 }
 
-.order-delivery-info input{
+.order-delivery-info input {
   width: 100%;
   padding: 10px;
-  height: 30px; 
+  height: 30px;
   border: 1px solid #ddd;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   border-radius: 0;
   transition: border-color 0.3s ease;
 }
 
 .order-delivery-info input.input-error {
-  border: 1px solid red; 
+  border: 1px solid red;
 }
 
 .order-delivery-info input,
@@ -232,7 +229,8 @@
   margin-top: 50px;
 }
 
-.order-back-button, .order-submit-button {
+.order-back-button,
+.order-submit-button {
   position: relative;
   width: 50%;
   padding: 7px;
@@ -256,18 +254,18 @@
   color: white;
 }
 
-/* hover 시 그림자 효과 */
-.order-back-button:hover, .order-submit-button:hover {
-  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
-  transform: translateY(-3px); /* 살짝 올라가는 효과 */
+.order-back-button:hover,
+.order-submit-button:hover {
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
 }
 
 .error-text {
-  color: red;  
-  font-size: 11px; 
-  margin-top: -5px;  
-  margin-bottom: 0; 
-  display: block; 
+  color: red;
+  font-size: 11px;
+  margin-top: -5px;
+  margin-bottom: 0;
+  display: block;
   position: relative;
   top: -20px;
 }
@@ -279,12 +277,12 @@
 }
 
 .recipient-input {
-  max-width: 1000px; 
+  max-width: 1000px;
   font-size: 12px;
 }
 
 
-.phone-container{
+.phone-container {
   margin-bottom: -10px;
   position: relative;
 }
@@ -296,26 +294,22 @@
 
 .address-input {
   width: 100%;
-  padding-right: 10px; 
+  padding-right: 10px;
 }
 
 .address-search {
-  background-color: white; 
+  background-color: white;
   color: black;
-  border: 1px solid black; 
+  border: 1px solid black;
   border-radius: 5px;
-  cursor: pointer; 
-  font-size: 0.7rem;  
+  cursor: pointer;
+  font-size: 0.7rem;
   position: absolute;
-  top: -30px; 
+  top: -30px;
   right: 0;
 }
 
-.address-search:hover{
-  background-color: black; /* 마우스 호버 시 배경색 */
-  color: white; /* 마우스 호버 시 글씨 색상 */
+.address-search:hover {
+  background-color: black;
+  color: white;
 }
-
-/* .input-error:hover {
-  border-color:red;
-} */
