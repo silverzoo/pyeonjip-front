@@ -13,7 +13,8 @@
 
 .table th, .table td {
     padding: 12px 15px;
-    text-align: center;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    vertical-align: middle; /* 세로 가운데 정렬 */
     border: 1px solid #ddd;
 }
 
@@ -47,10 +48,9 @@
     outline: none;
 }
 
-/* 버튼 크기를 테이블 셀과 일치하도록 조정 */
+/* 테이블 셀 내부의 버튼을 가운데 정렬 */
 .table td .btn-dark-gray {
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: inline-block; /* flex 제거 */
+    text-align: center;
+    vertical-align: middle; /* 버튼 세로 중앙 정렬 */
 }

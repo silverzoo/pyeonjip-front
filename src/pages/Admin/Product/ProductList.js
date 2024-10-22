@@ -14,8 +14,6 @@ function ProductList({ products, selectedProducts, handleCheckboxChange, handleB
                         <tr>
                             <th>선택</th>
                             <th>이름</th>
-                            <th>카테고리</th>
-                            <th>가격</th>
                             <th>수정</th>
                         </tr>
                         </thead>
@@ -30,8 +28,6 @@ function ProductList({ products, selectedProducts, handleCheckboxChange, handleB
                                     />
                                 </td>
                                 <td>{product.name || 'N/A'}</td>
-                                <td>{product.categoryName || 'N/A'}</td>
-                                <td>{product.price ? product.price.toLocaleString() + '원' : 'N/A'}</td>
                                 <td>
                                     <button
                                         className="btn-dark-gray"
