@@ -146,8 +146,8 @@ function OrderPage() {
 
         // 쿠폰 비활성화 API 호출
         if (couponId) {
-          await fetch(`http://localhost:8080/api/coupon?id=${couponId}`, {
-            method: 'DELETE',
+          await fetch(`http://localhost:8080/api/coupon/use/${couponId}`, {
+            method: 'POST',
           });
           console.log('쿠폰이 성공적으로 비활성화되었습니다.');
         }
@@ -314,7 +314,7 @@ function OrderPage() {
               placeholder="(예: 부재 시 문 앞에 놓아주세요)"
             ></textarea>
           </label>
-          
+
           <div className="order-actions">
             <button type="button" className="order-back-button" onClick={handleBackToCart}>
               돌아가기

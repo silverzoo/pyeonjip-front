@@ -236,7 +236,8 @@ function CartApp() {
                 state: { 
                     orderSummary: orderSummary, 
                     cartItems: items, 
-                    email: email
+                    email: email,
+                    couponId: couponId
                 },
              });// 결제 페이지로 이동
         } else {
