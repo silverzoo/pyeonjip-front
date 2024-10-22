@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
 import './User.css';
+import './MyPage.css'
 
 function MyPage() {
     const [user, setUser] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('회원 정보');
-    const [editField, setEditField] = useState('');
+    const [purchaseHistory, setPurchaseHistory] = useState([]);
+    const [gradeInfo, setGradeInfo] = useState(null);
     const navigate = useNavigate();
 
     const fetchUser = async (email) => {
@@ -31,26 +33,54 @@ function MyPage() {
         }
     };
 
+    // 구매 내역을 가져오는 함수
+    const fetchPurchaseHistory = async (email) => {
+        try {
+            const { data } = await axiosInstance.get(`/api/orders?email=${email}`);
+            setPurchaseHistory(data);
+        } catch (error) {
+            setPurchaseHistory([]);
+        }
+    };
+
+    // 나의 등급을 가져오는 함수
+    const fetchUserGrade = async (email) => {
+        try {
+            const { data } = await axiosInstance.get(`/api/user/${email}`);
+            setGradeInfo(data);
+        } catch (error) {
+            setErrorMessage('등급 정보를 가져오는 중 오류가 발생했습니다.');
+        }
+    };
+
+    // 탭에 따라 데이터를 가져오는 함수
+    const fetchDataByTab = (email) => {
+        if (activeTab === '구매 내역') {
+            fetchPurchaseHistory(email);
+        } else if (activeTab === '나의 등급') {
+            fetchUserGrade(email);
+        }
+    };
+
     useEffect(() => {
         if (!isLoggedIn()) {
             setErrorMessage('로그인이 필요합니다.');
             navigate('/login');
             return;
         }
-
         const email = getUserEmail();
         if (email) {
             fetchUser(email);
+            fetchDataByTab(email);
         } else {
             setErrorMessage('유저 정보를 불러오는 데 실패했습니다.');
             setLoading(false);
         }
-    }, [navigate]);
+    }, [navigate, activeTab]);
 
     const handleEdit = async (field) => {
-        setEditField(field);
-
         const email = getUserEmail();
+        // setEditField(field);
 
         let updatedValue;
         let endpoint;
@@ -84,6 +114,93 @@ function MyPage() {
             alert('수정 요청에 실패했습니다.');
         }
     };
+
+// 가격 포맷 함수 
+  const formatPriceWithWon = (price) => {
+    return new Intl.NumberFormat('ko-KR').format(price) + '원';
+  };
+
+    // 구매 내역 렌더링 함수
+const renderPurchaseHistory = () => (
+    <div>
+        <table className="custom-table">
+            <thead>
+                <tr>
+                    <th>상품</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                    <th>주문상태</th>
+                    <th>배송상태</th>
+                    <th>주문일자</th>
+                </tr>
+            </thead>
+            <tbody>
+                {purchaseHistory.length > 0 ? (
+                    purchaseHistory.map((order) =>
+                        order.orderDetails.map((item) => (
+                            <tr key={`${order.id}-${item.productDetailId}`}>
+                                <td>
+                                    <img
+                                        src={item.productImage}
+                                        alt={item.productName}
+                                        style={{ width: '80px', height: '80px' }}
+                                    />
+                                </td>
+                                <td>{item.productName}</td>
+                                <td>{item.quantity}</td>
+                                <td>{formatPriceWithWon(item.subTotalPrice)}</td>
+                                <td>{order.orderStatus}</td>
+                                <td>{order.deliveryStatus}</td>
+                                <td>{order.createdAt}</td>
+                            </tr>
+                        ))
+                    )
+                ) : (
+                    <tr>
+                        <td colSpan="7" style={{ textAlign: 'center' }}>구매 내역이 없습니다.</td>
+                    </tr>
+                )}
+            </tbody>
+        </table>
+    </div>
+);
+
+    // 나의 등급 렌더링 함수
+    const renderUserGrade = () => (
+        <div style={{ fontWeight: 'bold' }}>
+            {gradeInfo ? (
+                <p>
+                    {user.name}님의 현재 등급은
+                    <span style={{ color: 'lightgreen', textDecoration: 'underline' }}> {gradeInfo.grade} </span>
+                    입니다.
+                    <div className="grade-benefits">
+                        <h6 style={{ fontSize: '0.9rem', textDecoration: 'underline' }}>등급 혜택 안내</h6>
+                        <p>최고의 고객님들께 드리는 특별 혜택을 만나보세요.</p>
+
+                        <ul>
+                            <li>
+                                <strong>🥇 GOLD 등급</strong> <br />
+                                <span>누적 구매 금액이 <strong>3,000,000원</strong> 이상일 때 GOLD 등급으로 승급됩니다.</span><br />
+                                <span>GOLD 등급 고객님은 <strong>무료 배송</strong> 혜택과 함께 <strong>모든 상품 10% 할인</strong>을 적용받으실 수 있습니다.</span><br />
+                            </li>
+                            <li style={{ marginTop: '20px' }}>
+                                <strong>🥈 SILVER 등급</strong> <br />
+                                <span>누적 구매 금액이 <strong>2,000,000원</strong> 이상일 때 SILVER 등급으로 승급됩니다.</span><br />
+                                <span>SILVER 등급 고객님은 <strong>모든 상품 5% 할인</strong> 혜택을 적용받으실 수 있습니다.</span>
+                            </li>
+                        </ul>
+
+                        <div className="grade-note">
+                            <p><em>등급은 누적 구매 금액에 따라 자동으로 승급됩니다.</em></p>
+                        </div>
+                    </div>
+                </p>
+            ) : (
+                <p>등급 정보를 불러오는 중입니다...</p>
+            )}
+        </div>
+    );
 
     const renderContent = () => {
         switch (activeTab) {
@@ -129,9 +246,9 @@ function MyPage() {
                     </div>
                 );
             case '구매 내역':
-                return <p>구매 내역 내용</p>;
+                return renderPurchaseHistory();
             case '나의 등급':
-                return <p>나의 등급 정보</p>;
+                return renderUserGrade();
             default:
                 return null;
         }
@@ -147,7 +264,7 @@ function MyPage() {
                     <h3 className="text-left mb-2">마이페이지</h3>
                 </div>
                 <div className="user-body">
-                    <hr/>
+                    <hr />
                     <div className="tab-container user-tab-container">
                         {['회원 정보', '구매 내역', '나의 등급'].map((tab, index) => (
                             <React.Fragment key={tab}>
@@ -161,7 +278,7 @@ function MyPage() {
                             </React.Fragment>
                         ))}
                     </div>
-                    <hr/>
+                    <hr />
                     <div className="user-content-container">
                         {loading ? (
                             <p>유저 정보를 불러오는 중입니다...</p>

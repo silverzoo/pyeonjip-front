@@ -7,6 +7,7 @@ import WaitingRoom from './WaitingRoom';
 import ActiveChatRoom from './ActiveChatRoom';
 import useWebSocket from './UseWebSocket';
 import ChatDashboard from '../../components/Chat/ChatDashboard';
+import { getUserRole } from '../../utils/authUtils';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Chat.css';
 
@@ -30,8 +31,13 @@ const ChatPage = () => {
   const [currentRoom, setCurrentRoom] = useState(null);
   const [showChatDashboard, setShowChatDashboard] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
   const [userRole, setUserRole] = useState('');
+  
+  const navigate = useNavigate();
+  const isAdmin = useCallback(() => userRole === 'ADMIN', [userRole]);
+  const location = useLocation();
+  const contextMenuRef = useRef(null);
+  const chatBodyRef = useRef(null);
 
   const categories = [
     { name: "주문/환불 문의", icon: "bi-cash-stack" },
@@ -41,15 +47,19 @@ const ChatPage = () => {
     { name: "이전 문의 내역", icon: "bi-hourglass-bottom" }
   ];
 
-  const handleOpenChatDashboard = () => {
+  const handleOpenChatDashboard = useCallback(() => {
     console.log('Opening chat dashboard');
-    setShowChatDashboard(true);
-  };
+    if (isAdmin()) {
+      setShowChatDashboard(true);
+    } else {
+      navigate('/chat');
+    }
+  }, [isAdmin, navigate]);
 
-  const handleCloseChatDashboard = () => {
+  const handleCloseChatDashboard = useCallback(() => {
     console.log('Closing chat dashboard');
     setShowChatDashboard(false);
-  };
+  }, []);
 
   const handleCategorySelect = async (selectedCategory) => {
     setCategory(selectedCategory);
@@ -58,7 +68,9 @@ const ChatPage = () => {
     if (selectedCategory === '이전 문의 내역') {
       const userId = userEmail; // 실제 사용자 ID로 변경 필요
       try {
-        const response = await fetch(`http://localhost:8080/api/chat/chat-room-list/${userId}`);
+        const response = await fetch(`http://localhost:8080/api/chat/chat-room-list/${userId}`,{
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('access')}` }
+        });
         const chatRoomsData = await response.json();
         setChatRooms(chatRoomsData);
         
@@ -161,25 +173,30 @@ const ChatPage = () => {
     userEmail  
   );
 
-  const navigate = useNavigate();
-  const location = useLocation();
-  const contextMenuRef = useRef(null);
-  const chatBodyRef = useRef(null);
   
   const loadChatMessages = useCallback(async (roomId) => {
     try {
-      const response = await fetch(`http://localhost:8080/api/chat/chat-message-history/${roomId}`);
+      const response = await fetch(`http://localhost:8080/api/chat/chat-message-history/${roomId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('access')}` }
+      });
       if (!response.ok) throw new Error('Failed to load chat messages');
       const chatMessages = await response.json();
       console.log('Loaded messages:', chatMessages);
-      setMessages(chatMessages);
+      const formattedMessages = chatMessages.map(msg => ({
+        id: msg.id,
+        text: msg.message,
+        sent: msg.senderEmail === userEmail,
+        received: msg.senderEmail !== userEmail,
+        timestamp: new Date(msg.timestamp)
+      }));
+      setMessages(formattedMessages);
       if (chatBodyRef.current) {
         chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
       }
     } catch (error) {
       console.error('Error loading chat messages:', error);
     }
-  }, []);
+  }, [userEmail]);
 
   const handleRoomSelect = useCallback(async (roomId) => {
     try {
@@ -192,12 +209,15 @@ const ChatPage = () => {
       console.log('Fetched room data:', roomData);
       setCurrentRoom(roomData);
       setChatRoomId(roomId);
+      setCategory(roomData.category);
+      setIsViewingChatRoom(true);
+      await loadChatMessages(roomId);
       window.history.pushState(null, '', `/chat?chatRoomId=${roomId}`);
     } catch (error) {
       console.error('Error fetching chat room:', error);
       alert('채팅방 정보를 불러오는데 실패했습니다.');
     }
-  }, []);
+  }, [loadChatMessages]);
 
   
 
@@ -274,8 +294,6 @@ const ChatPage = () => {
     setChatRoomId(null);
     setMessages([]);
   };
-  
-  
 
   const handleSendMessage = () => {
     const newMessage = messageInput.trim();
@@ -336,7 +354,7 @@ const ChatPage = () => {
   };
 
   const shouldShowInputContainer = () => {
-    return currentRoom && currentRoom.status === 'ACTIVE';
+    return isViewingChatRoom && currentRoom && currentRoom.status === 'ACTIVE';
   };
 
   useEffect(() => {
@@ -385,32 +403,42 @@ const ChatPage = () => {
           ))}
         </div>
       </div>
-    ) : currentRoom ? (
-        <div className="chat-container">
-          <div className="chat-header">
-            <button className="chat-back-button" onClick={handleBackToList}>
-              <i className="bi bi-chevron-left"></i>
-            </button>
-            <span>{category}</span>
-            <button className="chat-home-button" onClick={handleHomeClick} aria-label="홈으로 이동">
-              <i className="bi bi-house-fill"></i>
-            </button>
-          </div>
-  
-          <div className="chat-body" ref={chatBodyRef}>
-            {currentRoom.status === 'WAITING' ? (
-              <WaitingRoom room={currentRoom} onRoomActivated={handleRoomActivated} />
-            ) : (
-              <ActiveChatRoom
-                room={currentRoom}
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                onEditMessage={handleEditMessage}
-                onDeleteMessage={handleDeleteMessage}
-                onContextMenu={handleContextMenu}
-              />
-            )}
-          </div>
+    ) : currentRoom || category === '이전 문의 내역' ? (
+      <div className="chat-container">
+        <div className="chat-header">
+          <button className="chat-back-button" onClick={handleBackToList}>
+            <i className="bi bi-chevron-left"></i>
+          </button>
+          <span>{category}</span>
+          <button className="chat-home-button" onClick={handleHomeClick} aria-label="홈으로 이동">
+            <i className="bi bi-house-fill"></i>
+          </button>
+        </div>
+
+        <div className="chat-body" ref={chatBodyRef}>
+          {!isViewingChatRoom && category === '이전 문의 내역' ? (
+            <div className="chat-history-list">
+              {chatRooms.map((room) => (
+                <div key={room.id} className="chat-history-item" onClick={() => handleRoomSelect(room.id)}>
+                  <div className="chat-history-category">{room.category}</div>
+                  <div className="chat-history-date">{new Date(room.createdAt).toLocaleString()}</div>
+                </div>
+              ))}
+              {showNoHistoryMessage && <div className="no-history-message">이전 문의 내역이 없습니다.</div>}
+            </div>
+          ) : currentRoom && currentRoom.status === 'WAITING' ? (
+            <WaitingRoom room={currentRoom} onRoomActivated={handleRoomActivated} />
+          ) : (
+            <ActiveChatRoom
+              room={currentRoom}
+              messages={messages}
+              onSendMessage={handleSendMessage}
+              onEditMessage={handleEditMessage}
+              onDeleteMessage={handleDeleteMessage}
+              onContextMenu={handleContextMenu}
+            />
+          )}
+        </div>
           
           {shouldShowInputContainer() && (
             <div className="chat-input-container">
@@ -419,7 +447,7 @@ const ChatPage = () => {
                 placeholder="메시지를 입력하세요..."
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                onKeyUp={(e) => e.key === 'Enter' && handleSendMessage()}
               />
               <button 
                 onClick={handleSendMessage} 

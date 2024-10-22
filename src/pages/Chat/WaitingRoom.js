@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import './Chat.css';
 
 const WaitingRoom = ({ room, onRoomActivated }) => {
   console.log('Rendering WaitingRoom with room:', room); 
@@ -36,7 +37,8 @@ const WaitingRoom = ({ room, onRoomActivated }) => {
   }, [room.id, onRoomActivated]);
 
   return (
-    <div className="waiting-room">
+    <div className="chat-waiting-room">
+      <div className="chat-loading-spinner"></div>
       <h2>대기 중</h2>
       <p>카테고리: {room.category}</p>
       <p>관리자가 곧 응답할 예정입니다. 잠시만 기다려주세요.</p>
