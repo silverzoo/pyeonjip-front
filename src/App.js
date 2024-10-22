@@ -31,7 +31,7 @@ function App() {
                 </div>
                     </CartProvider>
 
-                <div className='chatButton'>
+                <div className='chatDashboardButton'>
                     <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
                         <ChatDashboardButton/>
                     </HiddenUtils>
