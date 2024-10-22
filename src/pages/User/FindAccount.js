@@ -22,12 +22,14 @@ function FindAccount() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 }
             });
 
 
             if (response.ok) {
-                const email = await response.text(); // 서버에서 이메일 반환
+                const data = await response.json(); // 서버에서 이메일 반환
+                const email = data.email;
                 navigate('/found', { state: { email } }); // 이메일을 다음 페이지로 전달
             } else if (response.status === 404) {
                 setErrorMessage('계정을 찾을 수 없습니다.');
