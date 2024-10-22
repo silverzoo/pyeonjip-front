@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Comment.css';
 import CommentForm from './CommentForm';
+import {toast} from "react-toastify";
 
 function Comment({ productId, setCommentUpdated, comments, setComments, email, isLoggedIn}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
@@ -28,7 +29,10 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
             setCommentUpdated((prev) => !prev);
         } catch (err) {
             console.error('리뷰 저장 실패:', err);
-            alert('리뷰 저장 중 문제가 발생했습니다. 다시 시도해주세요.');
+            toast.error('리뷰 저장 중 문제가 발생했습니다. 다시 시도해주세요.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
@@ -79,6 +83,7 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
     const hasUserCommented = comments.some((comment) => comment.email === email);
 
     return (
+
         <div className="card border-0 p-3 rounded">
             <h6 className="mb-1">
                 <i className="bi bi-chat-left-text me-2"></i>
@@ -164,6 +169,7 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
                 </div>
             )}
         </div>
+
     );
 }
 export default Comment;
