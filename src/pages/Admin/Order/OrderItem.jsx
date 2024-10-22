@@ -63,14 +63,14 @@ function OrderItem({ order, onDelete }) {
 
     return (
         <>
-            <li className="admin-order-item">
-                <span onClick={toggleDetails} style={{ color: '#343a40', fontWeight: 'bold', fontSize: '14px'}}>{order.id}</span>
-                <span onClick={toggleDetails}>{order.userName}</span>
-                <span onClick={toggleDetails}>{order.userEmail}</span>
+            <div className="admin-order-item">
+                <span onClick={toggleDetails} style={{flexGrow: '0', width: '300px', color: '#343a40', fontWeight: 'bold', fontSize: '14px'}}>{order.id}</span>
+                <span onClick={toggleDetails} style={{flexGrow: '0', width: '500px'}}>{order.userName}</span>
+                <span onClick={toggleDetails} style={{flexGrow: '0'}}>{order.userEmail}</span>
                 <span onClick={toggleDetails}>{order.phoneNumber}</span>
-                <span onClick={toggleDetails}>{order.orderStatus}</span>
+                <span onClick={toggleDetails} style={{flexGrow: '0', width: '500px'}}>{order.orderStatus}</span>
                 <span onClick={toggleDetails}>{formatDate(order.createdAt)}</span>
-                <span>
+                <span style={{ marginLeft: 'auto'}}>
                     <select className='form-select' value={selectedDeliveryStatus} onChange={handleDeliveryStatusChange}>
                         <option value="READY">READY</option>
                         <option value="SHIPPING">SHIPPING</option>
@@ -78,7 +78,7 @@ function OrderItem({ order, onDelete }) {
                         <option value="REFUNDING">REFUNDING</option>
                     </select>
                 </span>
-                <span style={{ marginRight: '10px'}}>
+                <span>
                     <button onClick={handleDelete} disabled={isDeleting}>
                         {isDeleting ? '삭제 중...' : '삭제'}
                     </button>
@@ -86,7 +86,7 @@ function OrderItem({ order, onDelete }) {
                         수정
                     </button>
                 </span>
-            </li>
+            </div>
             {isExpanded && (
                 <div className="admin-order-details">
                     {order.orderDetails.map(detail => (
