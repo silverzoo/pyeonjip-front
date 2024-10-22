@@ -12,6 +12,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
+import {toast, ToastContainer} from "react-toastify";
 
 const ANIMATION_DURATION = 400;
 
@@ -34,7 +35,7 @@ function CartApp() {
 
     // 쿠폰 데이터 로드
     useEffect(() => {
-        fetch('http://localhost:8080/api/coupon')
+        fetch('/api/coupon')
             .then((response) => response.json())
             .then((coupons) => {
                 setCoupons(coupons);
@@ -58,7 +59,11 @@ function CartApp() {
         if (isNaN(validatedValue) || validatedValue < min) {
             validatedValue = 0;
         } else if (validatedValue > maxQuantity) {
-            alert(`보유 재고가 ${maxQuantity}개 입니다.`);
+            toast.warn(`보유 재고가 ${maxQuantity}개 입니다.`,{
+                position: "top-center",
+                autoClose: 2000,
+            });
+            //alert(`보유 재고가 ${maxQuantity}개 입니다.`);
             validatedValue = maxQuantity;
         }
         const updatedItems = [...items];
@@ -122,21 +127,33 @@ function CartApp() {
         const coupon = coupons.find(c => c.code === couponCode);
 
         if (!coupon) {
-            return alert('유효하지 않은 쿠폰 코드입니다.');
+            return toast.warn('유효하지 않은 코드입니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
         if (!coupon.active) {
-            return alert('이미 사용한 쿠폰입니다.');
+            return toast.warn('이미 사용한 코드입니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
 
         const expiryDate = new Date(coupon.expiryDate);
         const currentDate = new Date();
         if (currentDate > expiryDate) {
-            return alert('만료된 쿠폰입니다.');
+            return toast.warn('만료된 코드입니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
         setCouponDiscount(coupon.discount);
         setIsCouponApplied(true);
-        setCouponId(coupon.id); 
-        alert(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`);
+        setCouponId(coupon.id);
+        toast.success(`쿠폰이 적용되었습니다: ${coupon.discount}% 할인`, {
+            position: "top-center",
+            autoClose: 2000,
+        });
     };
 
     // 쿠폰 적용
@@ -222,7 +239,7 @@ function CartApp() {
             couponId: couponId
         };
         console.log(checkoutData);
-        const response = await fetch('http://localhost:8080/api/orders/checkout', {
+        const response = await fetch('/api/orders/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -231,8 +248,7 @@ function CartApp() {
         });
         if (response.ok || response.status === 204) {
             const orderSummary = await response.json();
-            console.log('체크아웃 완료');
-            navigate('/order', { 
+            navigate('/order', {
                 state: { 
                     orderSummary: orderSummary, 
                     cartItems: items, 
@@ -242,12 +258,12 @@ function CartApp() {
              });// 결제 페이지로 이동
         } else {
             const errorData = await response.json();
-            console.error(`체크아웃 실패 ${errorData}`);
         }
     };
     return (
         <>
         <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
+            <ToastContainer />
             <div className="row d-flex justify-content-between align-items-end h-100">
                 <div className="col-12 col-xl-12">
                     <div className="card border-1 card-registration card-registration-2">

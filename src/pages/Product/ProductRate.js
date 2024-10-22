@@ -11,7 +11,7 @@ function ProductRate({ productId }) {
         const idToFetch = productId || idFromQuery;
 
         if (idToFetch) {
-            fetch(`http://localhost:8080/api/comments/product-rating/${idToFetch}`)
+            fetch(`/api/comments/product-rating/${idToFetch}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (Array.isArray(data)) {
