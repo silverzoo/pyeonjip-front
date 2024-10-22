@@ -67,7 +67,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const handleContextLogout = () => {
-        // Access 토큰과 Refresh 토큰을 명시적으로 삭제한다.
         const event = new Event('authChange');
         window.dispatchEvent(event);
     };

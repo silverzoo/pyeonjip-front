@@ -25,6 +25,8 @@ import FindAccount from "../User/FindAccount";
 import FindAccountResult from "../User/FindAccountResult";
 import NotFound from "../Error/NotFound";
 import AdminLayout from "../Admin/AdminLayout";
+import ResetPassword from "../User/ResetPassword";
+import ResetPasswordResult from "../User/ResetPasswordResult";
 
 function AppRouter() {
 
@@ -45,6 +47,8 @@ function AppRouter() {
             <Route path="/order" element={<OrderPage/>}/>
             <Route path="/order-success" element={<OrderSuccess/>}/>
             <Route path="/chat" element={<ChatPage/>}/>
+            <Route path="/reset" element={<ResetPassword/>}/>
+            <Route path="/reset/result" element={<ResetPasswordResult/>}/>
 
             <Route path="/admin" element={<AdminLayout/>}>
                 <Route index element={<AdminMain/>}/>

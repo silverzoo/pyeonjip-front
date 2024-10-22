@@ -25,7 +25,7 @@ const SidePanelApp = () => {
     // 로그아웃 핸들러
     const handleLogout = async () => {
         try {
-            const response = await fetch('http://localhost:8080/logout', {
+            const response = await fetch('http://localhost:8080/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
             });
