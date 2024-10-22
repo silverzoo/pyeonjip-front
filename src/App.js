@@ -21,8 +21,7 @@ function App() {
                     </div>
                 </HiddenUtils>
                 <CartProvider>
-                    <HiddenUtils
-                        whitelist={['/chat', '/login', '/signup', '/reset-password', 'order', '/find', '/not-found']}>
+                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', 'order', '/find', '/not-found']}>
                         <div className='rightSide'>
                             <RightSide/>
                         </div>
