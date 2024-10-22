@@ -58,7 +58,7 @@ const CategoryList = () => {
     ];
 
     return (
-        <div style={{width: '980px'}}>
+        <div>
 
 
             <div
