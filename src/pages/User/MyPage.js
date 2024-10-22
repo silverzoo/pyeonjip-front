@@ -176,21 +176,21 @@ function MyPage() {
     // 구매 내역 탭
     const renderPurchaseHistory = () => (
         <div className="custom-table-container">
-        <table className="custom-table">
-            <thead>
-                <tr>
-                    <th>상품</th>
-                    <th>상품명</th>
-                    <th>수량</th>
-                    <th>금액</th>
-                    <th>결제 금액</th>
-                    <th>배송상태</th>
-                    <th>주문일자</th>
-                    <th></th>
+            <table className="custom-table">
+                <thead>
+                    <tr>
+                        <th>상품</th>
+                        <th>상품명</th>
+                        <th>수량</th>
+                        <th>금액</th>
+                        <th>결제 금액</th>
+                        <th>배송상태</th>
+                        <th>주문일자</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    {purchaseHistory.length > 0 ? (
+                    {purchaseHistory && purchaseHistory.length > 0 ? (
                         purchaseHistory.map((order) => (
                             <React.Fragment key={order.id}>
                                 {order.orderDetails.map((item, index) => (
