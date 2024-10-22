@@ -1,6 +1,6 @@
 import { debounce } from 'lodash';
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import { addServerCart, addLocalCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
@@ -22,6 +22,7 @@ function SandboxApp() {
 
     const [currentPage, setCurrentPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
 
@@ -33,7 +34,7 @@ function SandboxApp() {
             // setItems([]);
             // setCurrentPage(0);
             try {
-                if (!categoryId || categoryId === 'all') {
+                if (!categoryId ) {
                     const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=9`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
@@ -41,10 +42,18 @@ function SandboxApp() {
 
                 } else {
                     const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
+                    if (categoryResponse.status === 404) {
+                        navigate('/not-found');
+                        return;  // 404일 때는 함수 실행 종료
+                    }
                     const categoryIds = await categoryResponse.json();
 
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
                     const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
+                    if(productResponse.status === 404) {
+                        navigate('/not-found');
+                    }
+
                     const products = await productResponse.json();
                     setItems(products);
                     setHasMore(false);
