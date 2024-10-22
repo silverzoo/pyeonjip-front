@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import logo from "../../logo.svg";
 
@@ -8,7 +8,10 @@ function SignUp() {
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [passwordHint, setPasswordHint] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
+    // 전화번호 필드를 세 개로 나눔
+    const [phoneNumberPart1, setPhoneNumberPart1] = useState('');
+    const [phoneNumberPart2, setPhoneNumberPart2] = useState('');
+    const [phoneNumberPart3, setPhoneNumberPart3] = useState('');
     const [address, setAddress] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
@@ -16,10 +19,14 @@ function SignUp() {
     const handleSignup = async (event) => {
         event.preventDefault();
 
-        if (!email || !name || !password || !passwordHint || !phoneNumber || !address) {
+        // 모든 필드를 확인
+        if (!email || !name || !password || !passwordHint || !phoneNumberPart1 || !phoneNumberPart2 || !phoneNumberPart3 || !address) {
             setErrorMessage('모든 항목을 입력해주세요.');
             return;
         }
+
+        // 전화번호를 세 파트로 나눈 값을 결합하여 하나의 전화번호로 만듦
+        const phoneNumber = `${phoneNumberPart1}${phoneNumberPart2}${phoneNumberPart3}`;
 
         const response = await fetch('http://localhost:8080/api/user/signup', {
             method: 'POST',
@@ -31,7 +38,13 @@ function SignUp() {
 
         if (response.ok) {
             navigate('/signup/result', { state: { name, email } });
-        } else {
+        } else if (response === 409) {
+            // Todo: 예외처리 손보기
+            setErrorMessage('중복')
+        }
+
+        else {
+            // 경고창을 띄움
             setErrorMessage('회원가입에 실패했습니다. 다시 시도해주세요.');
         }
     };
@@ -98,16 +111,38 @@ function SignUp() {
                             required
                         />
                     </div>
+                    {/* 전화번호 필드를 세 개로 나눔 */}
                     <div className="form-group mb-3">
                         <label htmlFor="phoneNumber">전화번호</label>
-                        <input
-                            type="tel"
-                            className="form-control user-form-control"
-                            id="phoneNumber"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            required
-                        />
+                        <div className="d-flex">
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={phoneNumberPart1}
+                                onChange={(e) => setPhoneNumberPart1(e.target.value)}
+                                maxLength={3}
+                                required
+                                style={{ width: '100px', marginRight: '5px' }}
+                            />
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={phoneNumberPart2}
+                                onChange={(e) => setPhoneNumberPart2(e.target.value)}
+                                maxLength={4}
+                                required
+                                style={{ width: '120px', marginRight: '5px' }}
+                            />
+                            <input
+                                type="text"
+                                className="form-control"
+                                value={phoneNumberPart3}
+                                onChange={(e) => setPhoneNumberPart3(e.target.value)}
+                                maxLength={4}
+                                required
+                                style={{ width: '120px' }}
+                            />
+                        </div>
                     </div>
                     <div className="form-group mb-3">
                         <label htmlFor="address">주소</label>
@@ -118,7 +153,7 @@ function SignUp() {
                             value={address}
                             onChange={(e) => setAddress(e.target.value)}
                             required
-                            style={{marginBottom: '40px'}}
+                            style={{ marginBottom: '40px' }}
                         />
                     </div>
                     {errorMessage && <p className="text-danger">{errorMessage}</p>}

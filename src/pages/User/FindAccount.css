@@ -5,6 +5,9 @@
     position: relative; top: -50px;
 }
 
+.user-find-btn {
+    text-decoration: underline;
+}
 
 .find-result-btn {
 
