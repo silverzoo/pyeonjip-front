@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ProductList from './ProductList';
 import './ProductAdmin.css';
+import axiosInstance from "../../../utils/axiosInstance";
 
 function ProductAdmin() {
     const [products, setProducts] = useState([]);
@@ -13,29 +14,31 @@ function ProductAdmin() {
 
     // 대카테고리 목록 조회
     useEffect(() => {
-        fetch("http://localhost:8080/api/category")
-            .then(response => response.json())
-            .then(data => {
-                console.log("Fetched categories:", data); // 대카테고리 데이터 확인용 로그
-                setCategories(data);
-            })
-            .catch(error => console.error("Error fetching categories:", error));
+        const fetchCategories = async () => {
+            try {
+                const response = await axiosInstance.get('/api/category');
+                console.log("Fetched categories:", response.data); // 대카테고리 데이터 확인용 로그
+                setCategories(response.data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            }
+        };
+
+        fetchCategories();
     }, []);
 
     // 전체 상품 조회 useEffect
     useEffect(() => {
         const fetchAllProducts = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/products/all`);
-                const data = await response.json();
-                console.log("Fetched all products:", data); // 전체 상품 데이터 확인용 로그
-                setProducts(data);
+                const response = await axiosInstance.get('/api/products/all');
+                console.log("Fetched all products:", response.data); // 전체 상품 데이터 확인용 로그
+                setProducts(response.data);
             } catch (error) {
                 console.error("Error fetching all products:", error);
             }
         };
 
-        // 카테고리가 선택되지 않은 경우에만 전체 상품을 불러옴
         if (!selectedCategory) {
             fetchAllProducts();
         }
@@ -46,18 +49,14 @@ function ProductAdmin() {
         const fetchProductsByCategory = async () => {
             try {
                 if (selectedCategory) {
-                    // 상위 카테고리 ID로 하위 카테고리들을 가져옴
-                    const categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${selectedCategory}`);
-                    const categoryIds = await categoryResponse.json();
+                    const categoryResponse = await axiosInstance.get(`/api/category?categoryIds=${selectedCategory}`);
+                    const categoryIds = categoryResponse.data;
 
-                    // 여러 하위 카테고리 ID를 쿼리 파라미터로 변환
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
-                    const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
-                    const products = await productResponse.json();
+                    const productResponse = await axiosInstance.get(`/api/products/categories?${queryParams}`);
+                    const products = productResponse.data;
 
-                    // 상품 목록을 업데이트
                     setProducts(products);
-                    setHasMore(false); // 상품이 모두 로드되었다고 가정
                 }
             } catch (error) {
                 console.error('Error fetching products by category:', error);
@@ -78,31 +77,6 @@ function ProductAdmin() {
         );
     };
 
-    // 선택된 제품 일괄 삭제
-    const handleBulkDelete = () => {
-        const promises = selectedProducts.map(id =>
-            fetch(`http://localhost:8080/api/admin/products/${id}`, {
-                method: 'DELETE',
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to delete product with ID ' + id);
-                    }
-                    return response;
-                })
-        );
-
-        Promise.all(promises)
-            .then(() => {
-                setProducts(products.filter(product => !selectedProducts.includes(product.id)));
-                setSelectedProducts([]);
-                alert('선택한 제품이 삭제되었습니다.');
-            })
-            .catch(error => {
-                console.error("Error deleting products:", error);
-                alert('제품 삭제 중 오류가 발생했습니다.');
-            });
-    };
 
     const paginatedProducts = products.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
@@ -149,7 +123,6 @@ function ProductAdmin() {
                         products={paginatedProducts}
                         selectedProducts={selectedProducts}
                         handleCheckboxChange={handleCheckboxChange}
-                        handleBulkDelete={handleBulkDelete}
                     />
                     <div className="pagination">
                         <button onClick={handlePreviousPage} disabled={currentPage === 0}>이전</button>

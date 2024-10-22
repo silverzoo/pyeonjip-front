@@ -17,7 +17,7 @@ function ProductOptionEdit() {
     useEffect(() => {
         const fetchOption = async () => {
             try {
-                const response = await axiosInstance.get(`http://localhost:8080/api/products/details/${detailId}`);
+                const response = await axiosInstance.get(`/api/products/details/${detailId}`); // 환경 변수 사용
                 setOption(response.data);
             } catch (error) {
                 console.error('Error fetching option:', error);
@@ -32,7 +32,7 @@ function ProductOptionEdit() {
         const token = localStorage.getItem('token'); // 저장된 JWT 토큰 가져오기
 
         try {
-            const response = await axiosInstance.put(`http://localhost:8080/api/admin/products/details/${detailId}`, option, {
+            const response = await axiosInstance.put(`/api/admin/products/details/${detailId}`, option, {
                 headers: {
                     'Authorization': `Bearer ${token}`, // Authorization 헤더 추가
                 },
