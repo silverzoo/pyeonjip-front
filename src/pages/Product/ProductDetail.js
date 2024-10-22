@@ -23,7 +23,7 @@ function ProductDetail() {
     const [modalMessage, setModalMessage] = useState('');
     const [commentUpdated, setCommentUpdated] = useState(false);
     const [comments, setComments] = useState([]);
-    const { isLogin, email, setIsLogin } = useAuth();
+    const { isLoggedIn, email, setIsLoggedIn } = useAuth();
     const {loadCartData} = useCart();
 
     const [product, setProduct] = useState({
@@ -77,7 +77,7 @@ function ProductDetail() {
             quantity: 1,
         };
 
-        if (isLogin) {
+        if (isLoggedIn) {
             addServerCart(cartItem, email);
         } else {
             addLocalCart(cartItem, selectedOption);
@@ -263,7 +263,7 @@ function ProductDetail() {
                             data-mdb-parent="#accordionFlushExample"
                         >
                             <div className="accordion-body">
-                                <Comment comments={comments} setComments={setComments} isLogin={isLogin} email={email} productId={productId} setCommentUpdated={setCommentUpdated} />
+                                <Comment comments={comments} setComments={setComments} isLoggedIn={isLoggedIn} email={email} productId={productId} setCommentUpdated={setCommentUpdated} />
                             </div>
                         </div>
                     </div>
