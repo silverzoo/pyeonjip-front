@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../utils/axiosInstance'; // Axios 인스턴스 가져오기
 
 function ProductList({ products, setProducts }) {
+    const [categories, setCategories] = useState([]); // 카테고리 상태 추가
     const navigate = useNavigate();
+
+    // 카테고리 목록을 가져오는 함수
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const { data } = await axiosInstance.get('/api/admin/category');
+                setCategories(data); // 자식 카테고리 목록 설정
+                console.log("Fetched categories:", data);
+            } catch (error) {
+                console.error('카테고리 불러오기 실패:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     // 삭제 처리 함수
     const handleDelete = async (productId) => {
@@ -27,6 +43,12 @@ function ProductList({ products, setProducts }) {
         }
     };
 
+    // 카테고리 ID에 해당하는 카테고리 이름을 가져오는 함수
+    const getCategoryNameById = (categoryId) => {
+        const category = categories.find(cat => cat.id === categoryId);
+        return category ? category.name : '카테고리 없음'; // 카테고리가 없을 경우 기본 값
+    };
+
     return (
         <div className="product-list">
             <h2 className="mb-4">상품 목록</h2>
@@ -37,7 +59,7 @@ function ProductList({ products, setProducts }) {
                         <tr>
                             <th>이름</th>
                             <th>설명</th>
-                            <th>카테고리</th>
+                            <th>카테고리 이름</th>
                             <th>작업</th>
                         </tr>
                         </thead>
@@ -46,7 +68,7 @@ function ProductList({ products, setProducts }) {
                             <tr key={product.id}>
                                 <td>{product.name || 'N/A'}</td>
                                 <td>{product.description || '설명 없음'}</td>
-                                <td>{product.category?.name || '카테고리 없음'}</td>
+                                <td>{getCategoryNameById(product.categoryId)}</td>
                                 <td>
                                     <button
                                         className="btn-dark-gray me-2"
@@ -65,6 +87,7 @@ function ProductList({ products, setProducts }) {
                         ))}
                         </tbody>
                     </table>
+
                     <button
                         className="btn-black mt-3"
                         onClick={() => navigate('/admin/createproduct')}
