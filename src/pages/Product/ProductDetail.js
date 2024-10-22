@@ -17,7 +17,6 @@ function ProductDetail() {
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
-
     const [commentUpdated, setCommentUpdated] = useState(false);
     const [comments, setComments] = useState([]);
     const { isLoggedIn, email} = useAuth();
@@ -41,7 +40,7 @@ function ProductDetail() {
     }, []);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/products/${productId}`)
+        fetch(`/api/products/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
@@ -60,7 +59,7 @@ function ProductDetail() {
             })
             .catch((error) => console.error('Error fetching product details:', error));
 
-        fetch(`http://localhost:8080/api/comments/product/${productId}`)
+        fetch(`/api/comments/product/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setComments(Array.isArray(data) ? data : []);
@@ -73,7 +72,7 @@ function ProductDetail() {
         if(selectedOption.quantity <= 0) {
             toast.warn(`재고가 부족합니다.`,{
                 position: "top-center",
-                autoClose: 2000,
+                autoClose: 3000,
             });
             return;
         }
@@ -91,7 +90,8 @@ function ProductDetail() {
         loadCartData();
         toast.success(`${product.name}이(가) 장바구니에 추가되었습니다.`,{
             position: "top-center",
-            autoClose: 2000,
+            autoClose: 3000,
+            style: { width: "1500px" }
         });
     };
 
@@ -273,7 +273,7 @@ function ProductDetail() {
                     </div>
                 </div>
             </div>
-            <ToastContainer></ToastContainer>
+            <ToastContainer/>
         </div>
     );
 }
