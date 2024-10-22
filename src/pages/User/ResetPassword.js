@@ -1,15 +1,23 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './User.css';
 import logo from "../../logo.svg";
 
 function ResetPassword() {
-    const [email, setEmail] = useState('');
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState(location.state?.email || '');
     const [name, setName] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
-    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!email) {
+            setErrorMessage("이메일 정보가 없습니다.");
+        }
+    }, [email]);
 
     const validateEmail = (email) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,19 +53,20 @@ function ResetPassword() {
 
             const checkResult = await response.json();
 
-            // 응답에서 data 필드의 값을 확인
             if (checkResult.data === true) {
-                // 2. 일치하면 비밀번호 재설정 이메일 발송 API 호출
-                await fetch('http://localhost:8080/api/auth/check/reset', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, name }),
-                });
-
-                // 이메일 발송 성공 시 결과 화면으로 이동, 이메일 정보 전달
+                // 2. 이메일 발송 성공 시 결과 화면으로 이동, 이메일 정보 전달
+                // 이메일 발송 API가 호출되기 전에 리다이렉트 시키기로 했음.
                 navigate('/reset/result', { state: { email } });
+
+                // 3. 일치하면 비밀번호 재설정 이메일 발송 API 호출
+                await fetch('http://localhost:8080/api/auth/check/reset', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+            },
+                body: JSON.stringify({ email, name }),
+            });
+
             } else {
                 setErrorMessage('입력하신 정보와 일치하는 사용자가 없습니다.');
                 setSuccessMessage('');
