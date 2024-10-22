@@ -5,7 +5,6 @@ import { addServerCart, addLocalCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
-import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 import ProductRate from "./ProductRate";
@@ -14,27 +13,23 @@ import {toast, ToastContainer} from "react-toastify";
 function SandboxApp() {
     const [items, setItems] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState({});
-    const [showModal, setShowModal] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
     const [hoveredImages, setHoveredImages] = useState({});
     const { categoryId } = useParams();
     const [animationKey, setAnimationKey] = useState(0);
-    const MODAL_DURATION = 1000;
-
     const [currentPage, setCurrentPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
 
-    const { isLoggedIn, email, setIsLoggedIn } = useAuth();
+    const { isLoggedIn, email} = useAuth();
     const {loadCartData} = useCart();
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
-                    const response = await fetch(`http://localhost:8080/api/products/all-pages?page=${currentPage}&size=9`);
+                    const response = await fetch(`/api/products/all-pages?page=${currentPage}&size=9`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
                     setHasMore(data.content.length > 0);
@@ -42,7 +37,7 @@ function SandboxApp() {
                     let categoryResponse;
 
                     try {
-                        categoryResponse = await fetch(`http://localhost:8080/api/category?categoryIds=${categoryId}`);
+                        categoryResponse = await fetch(`/api/category?categoryIds=${categoryId}`);
 
                         if (!categoryResponse.ok) {
                             throw new Error(`Category fetch failed with status: ${categoryResponse.status}`);
@@ -58,7 +53,7 @@ function SandboxApp() {
 
                     const categoryIds = await categoryResponse.json();
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
-                    const productResponse = await fetch(`http://localhost:8080/api/products/categories?${queryParams}`);
+                    const productResponse = await fetch(`/api/products/categories?${queryParams}`);
                     if (productResponse.status === 404) {
                         navigate('/not-found');
                     }
@@ -102,12 +97,6 @@ function SandboxApp() {
         };
     }, [hasMore, loading]);
 
-    const showModalMessage = (message) => {
-        setModalMessage(message);
-        setShowModal(true);
-        setTimeout(() => setShowModal(false), MODAL_DURATION);
-    };
-
     const addToCart = (item) => {
         const selectedDetail = selectedOptions[item.id] || item.productDetails[0];
         const cartItem = {
@@ -121,7 +110,11 @@ function SandboxApp() {
             addLocalCart(cartItem, selectedDetail);
         }
         loadCartData();
-        showModalMessage(`${item.name}의 ${selectedDetail.name}이(가) 장바구니에 추가되었습니다.`);
+        toast.info(`${item.name}이(가) 장바구니에 추가되었습니다.`,{
+            position: "top-center",
+            autoClose: 3000,
+            style: { width: "400px" }
+        });
     };
 
     const handleOptionSelect = (itemId, detail) => {
@@ -198,7 +191,6 @@ function SandboxApp() {
                                                                             <ProductRate productId={item.id}/>
                                                                         </Link>
                                                                         <div>
-                                                                            {/*<h6 style={{ fontSize: '12px' }}>옵션</h6>*/}
                                                                             <div
                                                                                 className="thumbnail-container d-flex mb-3 gap-2">
                                                                                 {item.productDetails.map((detail, index) => (
@@ -233,12 +225,6 @@ function SandboxApp() {
                                                                             </button>
                                                                         </div>
                                                                     </div>
-                                                                    {/*<button*/}
-                                                                    {/*    className="btn btn-outline-dark border-2 rounded-2"*/}
-                                                                    {/*    onClick={() => addToCart(item)}>*/}
-                                                                    {/*    <i className="bi bi-bag-plus" style={{fontWeight: 'bolder'}}></i>*/}
-                                                                    {/*</button>*/}
-
                                                                 </div>
                                                             </div>
                                                             <hr/>
@@ -261,10 +247,6 @@ function SandboxApp() {
                     </div>
                 </div>
             </div>
-
-            <Modal show={showModal} onHide={() => setShowModal(false)}>
-                <Modal.Body>{modalMessage}</Modal.Body>
-            </Modal>
         </section>
     );
 }
