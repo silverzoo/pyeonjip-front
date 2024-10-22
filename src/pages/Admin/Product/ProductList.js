@@ -1,29 +1,49 @@
 import React from 'react';
-import ProductItem from './ProductItem';
 import { useNavigate } from 'react-router-dom';
 
 function ProductList({ products, selectedProducts, handleCheckboxChange, handleBulkDelete }) {
-    const navigate = useNavigate(); // navigate 훅 사용
+    const navigate = useNavigate();
 
-    // 상품 생성 페이지로 이동하는 함수
-    const navigateToCreateProduct = () => {
-        navigate('/admin/createproduct'); // 원하는 경로로 이동
-    };
     return (
         <div className="product-list">
             <h2 className="mb-4">상품 목록</h2>
             {products.length > 0 ? (
                 <div>
-                    <ul className="list-group">
+                    <table className="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>선택</th>
+                            <th>이름</th>
+                            <th>카테고리</th>
+                            <th>가격</th>
+                            <th>수정</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         {products.map(product => (
-                            <ProductItem
-                                key={product.id}
-                                product={product}
-                                isSelected={selectedProducts.includes(product.id)}
-                                handleCheckboxChange={handleCheckboxChange}
-                            />
+                            <tr key={product.id}>
+                                <td>
+                                    <input
+                                        type="checkbox"
+                                        checked={selectedProducts.includes(product.id)}
+                                        onChange={() => handleCheckboxChange(product.id)}
+                                    />
+                                </td>
+                                <td>{product.name || 'N/A'}</td>
+                                <td>{product.categoryName || 'N/A'}</td>
+                                <td>{product.price ? product.price.toLocaleString() + '원' : 'N/A'}</td>
+                                <td>
+                                    <button
+                                        className="btn-dark-gray"
+                                        onClick={() => navigate(`/admin/edit-product/${product.id}`)}
+                                    >
+                                        Edit
+                                    </button>
+                                </td>
+                            </tr>
                         ))}
-                    </ul>
+                        </tbody>
+                    </table>
                     <button
                         className="btn-black mt-3"
                         onClick={handleBulkDelete}
@@ -33,7 +53,7 @@ function ProductList({ products, selectedProducts, handleCheckboxChange, handleB
                     </button>
                     <button
                         className="btn-black mt-3"
-                        onClick={navigateToCreateProduct}
+                        onClick={() => navigate('/admin/createproduct')}
                     >
                         상품 생성
                     </button>
