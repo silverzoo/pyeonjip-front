@@ -262,7 +262,7 @@ function CartApp() {
     };
     return (
         <>
-        <section className="container-fluid" style={{width: '110%', marginTop: '10vh'}}>
+        <section className="container-fluid" style={{marginTop: '10vh'}}>
             <ToastContainer />
             <div className="row d-flex justify-content-between align-items-end h-100">
                 <div className="col-12 col-xl-12">

@@ -105,12 +105,12 @@ function AdminOrder() {
     };
 
     return (
-        <div className="card mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: '960px' }}>
+        <div className="card mt-5 p-2 border rounded shadow-sm">
             <h2 className="text-center mb-4">주문 관리</h2>
-            <div className="d-flex justify-content-between align-items-center mb-3">
+             <div className="d-flex justify-content-between align-items-center mb-4 px-2">
                 <select value={sortOrder} onChange={handleSortChange} className="form-select w-auto">
-                    <option value="asc">생성일 오름차순</option>
-                    <option value="desc">생성일 내림차순</option>
+                    <option value="desc">최신순</option>
+                    <option value="asc">오래된순</option>
                 </select>
                 <Search setEmail={setEmail} fetchGetOrders={fetchGetOrders} setOrders={setOrders} />
             </div>
