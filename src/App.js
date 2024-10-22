@@ -15,34 +15,31 @@ function App() {
 
         <div className="app">
             <AuthProvider>
-                <div className='leftSide'>
-                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                    <div className='leftSide'>
                         <LeftSide/>
+                    </div>
+                </HiddenUtils>
+                <CartProvider>
+                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', 'order', '/find', '/not-found']}>
+                        <div className='rightSide'>
+                            <RightSide/>
+                        </div>
                     </HiddenUtils>
-                </div>
-                    <CartProvider>
-                        <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
-                <div className='rightSide'>
-                    <RightSide/>
-                </div>
-                        </HiddenUtils>
-                <div className='content'>
-                    <AppRouter/>
-                </div>
-                    </CartProvider>
-
-                <div className='chatButton'>
-                    <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                    <div className='content'>
+                        <AppRouter/>
+                    </div>
+                </CartProvider>
+                <HiddenUtils whitelist={['/chat', '/login', '/signup', '/reset-password', '/find', '/not-found']}>
+                    <div className='chatButton'>
                         <ChatDashboardButton/>
-                    </HiddenUtils>
-                </div>
+                    </div>
+                </HiddenUtils>
             </AuthProvider>
             <div className='footer'>
                 <Footer/>
             </div>
-            
         </div>
-
     );
 }
 export default App;

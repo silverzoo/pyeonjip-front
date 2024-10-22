@@ -29,7 +29,7 @@ function CartApp() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
 
-    const { isLogin, email, setIsLogin } = useAuth();
+    const { isLoggedIn, email, setIsLoggedIn } = useAuth();
     const { items, setItems, loadCartData } = useCart();
 
     // 쿠폰 데이터 로드
@@ -66,7 +66,7 @@ function CartApp() {
         setItems(updatedItems);
 
 
-        if (isLogin) {// 로그인 상태일 때 수량 변경 API 호출
+        if (isLoggedIn) {// 로그인 상태일 때 수량 변경 API 호출
             const cartItem = {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
@@ -159,10 +159,10 @@ function CartApp() {
 
             if (updatedCartItems.length < 0) {
                 return;
-            } else if (isLogin === false) {
+            } else if (isLoggedIn === false) {
                 // 로컬 스토리지에 업데이트된 장바구니 저장
                 updateLocalStorage(updatedCartItems);
-            } else if (isLogin) {
+            } else if (isLoggedIn) {
                 deleteCartItem(email, targetOptionId);
             }
 
@@ -182,7 +182,7 @@ function CartApp() {
             const clearedItems = [];
             setItems(clearedItems);
 
-            if (isLogin === false) {
+            if (isLoggedIn === false) {
                 // 로컬 스토리지에서 장바구니 비우기
                 updateLocalStorage([]);
             } else {
@@ -202,7 +202,7 @@ function CartApp() {
     const handleCheckout = async (e) => {
         e.preventDefault(); // 기본 폼 제출 방지
 
-        if (!isLogin) {
+        if (!isLoggedIn) {
             setShowModal(true); // 모달 표시
             return;
         }

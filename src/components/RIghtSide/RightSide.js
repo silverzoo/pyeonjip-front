@@ -7,7 +7,6 @@ import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 
 const ANIMATION_DURATION = 400;
-const BUTTON_WHITELIST = ['/login', '/chat', '/order', '/signup', '/signup/result', '/find', '/found'];
 
 const SidePanelApp = () => {
     const [isCartOpen, setCartOpen] = useState(false);
@@ -16,7 +15,7 @@ const SidePanelApp = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const { isLogin, email, setIsLogin, handleContextLogout } = useAuth();
+    const { isLoggedIn, email, setIsLoggedIn, handleContextLogout } = useAuth();
     const { items, setItems, loadCartData } = useCart();
 
     useEffect(() => {
@@ -81,7 +80,7 @@ const SidePanelApp = () => {
         updatedItems[index].quantity = validatedValue;
         setItems(updatedItems);
 
-        if (isLogin) {
+        if (isLoggedIn) {
             const cartItem = {
                 optionId: updatedItems[index].optionId,
                 quantity: updatedItems[index].quantity,
@@ -102,9 +101,9 @@ const SidePanelApp = () => {
 
             if (updatedCartItems.length < 0) {
                 return;
-            } else if (isLogin === false) {
+            } else if (isLoggedIn === false) {
                 updateLocalStorage(updatedCartItems);
-            } else if (isLogin) {
+            } else if (isLoggedIn) {
                 deleteCartItem(email, targetOptionId);
             }
             setAnimatedItems((prevAnimatedItems) => prevAnimatedItems.filter((i) => i !== index));
@@ -140,11 +139,8 @@ const SidePanelApp = () => {
         navigate('/mypage');
     };
 
-    const isButtonVisible = !BUTTON_WHITELIST.includes(location.pathname);
-
     return (
         <div className="App">
-            {isButtonVisible && (
             <div style={{
                 position: 'fixed',
                 right: '30px',
@@ -153,17 +149,17 @@ const SidePanelApp = () => {
                 flexDirection: 'column',
                 gap: '10px'
             }}>
-                {isLogin ? (
+                {isLoggedIn ? (
                     <>
                         <span
                             className="text-dark"
-                            style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
+                            style={{cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold'}}
                             onClick={goToMyPage}>
                             마이페이지
                         </span>
                         <span
                             className="text-dark"
-                            style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
+                            style={{cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold'}}
                             onClick={handleLogout}>
                             로그아웃
                         </span>
@@ -171,7 +167,7 @@ const SidePanelApp = () => {
                 ) : (
                     <span
                         className="text-dark"
-                        style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
+                        style={{cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold'}}
                         onClick={goToLoginPage}>
                         로그인
                     </span>
@@ -180,12 +176,11 @@ const SidePanelApp = () => {
                 {location.pathname !== '/cart' && (
                     <span
                         className="text-dark"
-                        style={{ cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold' }}
+                        style={{cursor: 'pointer', fontSize: '14px', fontWeight: 'semibold'}}
                         onClick={toggleCart}>
                         장바구니
                      </span>)}
             </div>
-                )}
             <div
                 className={`offcanvas offcanvas-end ${isCartOpen ? 'show' : ''}`}
                 tabIndex="-1"
@@ -206,7 +201,7 @@ const SidePanelApp = () => {
                     {items.length === 0 ? (
                         <div>
                             <div className="text-center my-5">
-                                <i className="bi bi-emoji-frown my-5" style={{ fontSize: '7rem' }}></i>
+                                <i className="bi bi-emoji-frown my-5" style={{fontSize: '7rem'}}></i>
                                 <h2 className="my-4 bold">장바구니가 비어 있어요.</h2>
                                 <h6 className="text-muted">장바구니에 추가한 아이템이 보이지 않으면 로그인 해주세요.</h6>
                             </div>
