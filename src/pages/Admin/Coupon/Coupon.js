@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
-    Button, Form, Container, Alert, Modal
+    Button, Form, Container, Modal, Alert
 } from 'react-bootstrap';
 import {
     createCouponAPI,
@@ -10,6 +10,8 @@ import {
     updateCouponAPI
 } from "../../../utils/CouponUtils";
 import { MDBTable, MDBTableHead, MDBTableBody } from 'mdb-react-ui-kit';
+import { ToastContainer, toast } from 'react-toastify'; // Import Toast components
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
 
 const CouponComponent = () => {
     const [coupons, setCoupons] = useState([]);
@@ -21,7 +23,7 @@ const CouponComponent = () => {
         code: '',
         discount: 0,
         expiryDate: '',
-        active: true, // 활성화 상태 추가
+        active: true,
     });
     const [randomDiscount, setRandomDiscount] = useState(10);
     const [couponToDelete, setCouponToDelete] = useState(null);
@@ -31,17 +33,14 @@ const CouponComponent = () => {
     }, []);
 
     const fetchCoupons = async () => {
-        try {
-            const data = await fetchCouponsAPI();
-            setCoupons(data);
-        } catch (err) {
-            setError(err.message);
-        }
+        const data = await fetchCouponsAPI();
+        setCoupons(data);
     };
 
     const handleModalOpen = (coupon = { code: '', discount: 0, expiryDate: '', active: true }) => {
         setCurrentCoupon(coupon);
         setShowModal(true);
+        setError(''); // Reset error message
     };
 
     const handleInputChange = (e) => {
@@ -50,20 +49,54 @@ const CouponComponent = () => {
     };
 
     const handleToggleActive = () => {
-        setCurrentCoupon((prev) => ({ ...prev, active: !prev.active })); // 활성화 상태 토글
+        setCurrentCoupon((prev) => ({ ...prev, active: !prev.active }));
+    };
+
+    const validateCoupon = () => {
+        const isDuplicate = coupons.some(coupon => coupon.code === currentCoupon.code && coupon.id !== currentCoupon.id);
+        if (isDuplicate) {
+            setShowModal(false);
+            toast.error("중복된 코드이름입니다.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return false;
+        }
+        if (currentCoupon.discount < 0 || currentCoupon.discount > 99 || !currentCoupon.code.trim()
+            || currentCoupon.discount === '' || currentCoupon.discount === null || !currentCoupon.expiryDate) {
+            setShowModal(false);
+            toast.error("올바른 값을 입력해 주세요", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return false;
+        }
+        setError('');
+        return true;
     };
 
     const saveCoupon = async () => {
+        if (!validateCoupon()) return; // Validate before proceeding
+
         try {
             if (currentCoupon.id) {
                 await updateCouponAPI(currentCoupon);
             } else {
                 await createCouponAPI(currentCoupon);
             }
+
+            // Close the modal and fetch coupons only after saving is successful
             setShowModal(false);
             fetchCoupons();
-        } catch (err) {
-            setError(err.message);
+            toast.success("쿠폰이 저장되었습니다.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        } catch (error) {
+            toast.error("올바른 값을 입력해 주세요", {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
@@ -74,13 +107,13 @@ const CouponComponent = () => {
 
     const deleteCoupon = async () => {
         if (couponToDelete) {
-            try {
-                await deleteCouponAPI(couponToDelete);
-                setShowDeleteModal(false);
-                fetchCoupons();
-            } catch (err) {
-                setError(err.message);
-            }
+            await deleteCouponAPI(couponToDelete);
+            setShowDeleteModal(false);
+            fetchCoupons();
+            toast.success("쿠폰이 삭제되었습니다.",{
+                position: "top-center",
+                    autoClose: 2000,}
+        )
         }
     };
 
@@ -90,18 +123,21 @@ const CouponComponent = () => {
     };
 
     const createRandomCoupon = async () => {
-        try {
-            await createRandomCouponAPI(randomDiscount);
-            setShowRandomCouponModal(false);
-            fetchCoupons();
-        } catch (err) {
-            setError(err.message);
-        }
+        await createRandomCouponAPI(randomDiscount);
+        setShowRandomCouponModal(false);
+        fetchCoupons();
+        toast.success("쿠폰이 생성되었습니다.",{
+            position: "top-center",
+            autoClose: 2000,}
+        )
     };
 
     return (
         <Container className="card border-0 p-5 border rounded" style={{ marginTop: '20px' }}>
+            <ToastContainer /> {/* Add ToastContainer here */}
             <h2 className="text-center mb-5">쿠폰 관리</h2>
+
+            {error && <Alert variant="danger">{error}</Alert>} {/* Display error messages */}
 
             <MDBTable border responsive className="rounded hvlo-table my-5">
                 <MDBTableHead>
@@ -255,7 +291,7 @@ const CouponComponent = () => {
                 </Modal.Footer>
             </Modal>
 
-            {/* 쿠폰 삭제 확인 모달 */}
+            {/* 삭제 확인 모달 */}
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)}>
                 <Modal.Header closeButton>
                     <Modal.Title>쿠폰 삭제 확인</Modal.Title>
@@ -272,8 +308,6 @@ const CouponComponent = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-
-            {error && <Alert variant="danger">{error}</Alert>}
         </Container>
     );
 };
