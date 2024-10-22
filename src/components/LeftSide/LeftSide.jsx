@@ -62,7 +62,7 @@ const LeftSide = () => {
             <div className="left-side-menu">
                 <ToggleIcon
                     label="SHOP"
-                    to="/category/all"
+                    to="/category"
                     isExpanded={expandedMenus.SHOP}
                     onToggle={() => handleTapToggle('SHOP')}
                     hasChildren={true}

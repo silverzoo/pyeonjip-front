@@ -24,39 +24,43 @@ import MyPage from "../User/MyPage";
 import FindAccount from "../User/FindAccount";
 import FindAccountResult from "../User/FindAccountResult";
 import NotFound from "../Error/NotFound";
+import AdminLayout from "../Admin/AdminLayout";
 
 function AppRouter() {
 
-        return (
-            <Routes>
-                    <Route path="/category/:categoryId" element={<Sandbox/>}/>
-                    <Route path="/category" element={<Sandbox/>}/>
-                    <Route path="/category/:categoryId/product-detail" element={<ProductDetail/>}/>
-                    <Route path="/cart" element={<Cart/>}/>
-                    <Route path="/" element={<Home/>}/>
-                    <Route path="/admin" element={<AdminMain/>}/>
-                    <Route path="/admin/category" element={<AdminCategory/>}/>
-                    <Route path="/admin/order" element={<AdminOrder/>}/>
-                    <Route path="/login" element={<Login/>}/>
-                    <Route path="/logout" element={<Logout/>}/>
-                    <Route path="/signup" element={<SignUp/>}/>
-                    <Route path="/signup/result" element={<SignUpResult/>}/>
-                    <Route path="/mypage" element={<MyPage/>}/>
-                    <Route path="/find" element={<FindAccount/>}/>
-                    <Route path="/found" element={<FindAccountResult/>}/>
-                    <Route path="/order" element={<OrderPage/>}/>
-                    <Route path="/order-success" element={<OrderSuccess/>}/>
-                    <Route path="/chat" element={<ChatPage/>}/>
-                    <Route path="/admin/product" element={<ProductAdmin/>}/>
-                    <Route path="/admin/edit-product/:productId" element={<ProductOptionAdmin/>}/>
-                    <Route path="/admin/edit-option/:detailId" element={<ProductOptionEdit/>}/>
-                    <Route path="/admin/createProduct" element={<ProductCreate/>}/>
-                    <Route path="/admin/product/:productId/add-option" element={<ProductDetailCreate/>}/>
-                    <Route path="/admin/coupon" element={<Coupon/>}/>
+    return (
+        <Routes>
+            <Route path="/category/:categoryId" element={<Sandbox/>}/>
+            <Route path="/category" element={<Sandbox/>}/>
+            <Route path="/category/:categoryId/product-detail" element={<ProductDetail/>}/>
+            <Route path="/cart" element={<Cart/>}/>
+            <Route path="/" element={<Home/>}/>
+            <Route path="/login" element={<Login/>}/>
+            <Route path="/logout" element={<Logout/>}/>
+            <Route path="/signup" element={<SignUp/>}/>
+            <Route path="/signup/result" element={<SignUpResult/>}/>
+            <Route path="/mypage" element={<MyPage/>}/>
+            <Route path="/find" element={<FindAccount/>}/>
+            <Route path="/found" element={<FindAccountResult/>}/>
+            <Route path="/order" element={<OrderPage/>}/>
+            <Route path="/order-success" element={<OrderSuccess/>}/>
+            <Route path="/chat" element={<ChatPage/>}/>
 
-                    <Route path="*" element={<Navigate to="/not-found" replace />} />
-                    <Route path="/not-found" element={<NotFound />} />
-            </Routes>
-        );
+            <Route path="/admin" element={<AdminLayout/>}>
+                <Route index element={<AdminMain/>}/>
+                <Route path="category" element={<AdminCategory/>}/>
+                <Route path="order" element={<AdminOrder/>}/>
+                <Route path="product" element={<ProductAdmin/>}/>
+                <Route path="edit-product/:productId" element={<ProductOptionAdmin/>}/>
+                <Route path="edit-option/:detailId" element={<ProductOptionEdit/>}/>
+                <Route path="createProduct" element={<ProductCreate/>}/>
+                <Route path="product/:productId/add-option" element={<ProductDetailCreate/>}/>
+                <Route path="coupon" element={<Coupon/>}/>
+            </Route>
+
+            <Route path="*" element={<Navigate to="/not-found" replace/>}/>
+            <Route path="/not-found" element={<NotFound/>}/>
+        </Routes>
+    );
 }
 export default AppRouter;

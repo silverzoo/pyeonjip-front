@@ -10,7 +10,7 @@ function OrderList({ orders, onDelete }) {
                 <span><strong>주문 상태</strong></span>
                 <span><strong>총 금액</strong></span>
                 <span><strong>생성일</strong></span>
-                <span><strong>배송 상태</strong></span>
+                <span style={{marginRight: '115px'}}><strong>배송 상태</strong></span>
             </div>
             <ul className="admin-order-list">
                 {orders.map((order) => (

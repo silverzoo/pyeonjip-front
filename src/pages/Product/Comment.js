@@ -4,7 +4,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Comment.css';
 import CommentForm from './CommentForm';
 
-function Comment({ productId, setCommentUpdated, comments, setComments, email, isLogin}) {
+function Comment({ productId, setCommentUpdated, comments, setComments, email, isLoggedIn}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [showInput, setShowInput] = useState(false);
 
@@ -152,7 +152,7 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
                 </div>
             )}
 
-            {isLogin && !hasUserCommented && (
+            {isLoggedIn && !hasUserCommented && (
                 <div className="mb-3">
                     <button
                         className="btn btn-dark mb-2"

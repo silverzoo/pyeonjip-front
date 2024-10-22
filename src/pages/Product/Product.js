@@ -25,7 +25,7 @@ function SandboxApp() {
     const [loading, setLoading] = useState(false);
 
 
-    const { isLogin, email, setIsLogin } = useAuth();
+    const { isLoggedIn, email, setIsLoggedIn } = useAuth();
     const {loadCartData} = useCart();
 
     useEffect(() => {
@@ -97,7 +97,7 @@ function SandboxApp() {
             quantity: 1,
         };
 
-        if (isLogin) {
+        if (isLoggedIn) {
             addServerCart(cartItem, email);
         } else {
             addLocalCart(cartItem, selectedDetail);
