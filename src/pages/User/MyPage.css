@@ -1,18 +1,21 @@
 .custom-table-container {
-    width: 100%;
+    width: 100%; /* 부모 컨테이너를 화면에 꽉 채움 */
     display: flex;
-    justify-content: center;
-    margin-top: 20px; 
-  }
-  
-  .custom-table {
-    border-collapse: collapse; 
+    justify-content: center; /* 자식 요소를 중앙으로 정렬 */
+    margin-top: 20px;
+}
+
+.custom-table {
+    border-collapse: collapse;
     text-align: center;
-    margin: 0 auto;
     font-size: 0.8rem;
     font-weight: 500;
-    width: 110%;
-  }
+    width: 200%; /* 테이블 너비를 부모 컨테이너의 90%로 설정 */
+    min-width: 800px;
+    max-width: 1500px; /* 테이블의 최대 너비 제한 */
+    margin-left: auto; /* 자동으로 왼쪽 여백을 추가 */
+    margin-right: auto; /* 자동으로 오른쪽 여백을 추가 */
+}
   
   .custom-table th, .custom-table td {
     padding: 10px;

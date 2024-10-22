@@ -45,6 +45,7 @@ function MyPage() {
         }
     };
 
+    // 주문 취소 확인
     const handleCancelOrder = (orderId) => {
         toast.info(
             <div>
@@ -76,6 +77,7 @@ function MyPage() {
         );
     };
 
+    // 주문 취소 성공, 실패
     const handleConfirmCancel = async (orderId) => {
         try {
             toast.dismiss();
@@ -171,18 +173,20 @@ function MyPage() {
         return new Intl.NumberFormat('ko-KR').format(price) + '원';
     };
 
+    // 구매 내역 탭
     const renderPurchaseHistory = () => (
-        <div>
-            <table className="custom-table">
-                <thead>
-                    <tr>
-                        <th>상품</th>
-                        <th>상품명</th>
-                        <th>수량</th>
-                        <th>금액</th>
-                        <th>결제 금액</th>
-                        <th>배송상태</th>
-                        <th>주문일자</th>
+        <div className="custom-table-container">
+        <table className="custom-table">
+            <thead>
+                <tr>
+                    <th>상품</th>
+                    <th>상품명</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                    <th>결제 금액</th>
+                    <th>배송상태</th>
+                    <th>주문일자</th>
+                    <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -200,17 +204,17 @@ function MyPage() {
                                                         style={{ width: '80px', height: '80px' }}
                                                     />
                                                 </td>
-                                                <td style={{ width: '110px' }}>{item.productName}</td>
-                                                <td style={{ width: '45px' }}>{item.quantity}</td>
-                                                <td style={{ width: '85px' }}>{formatPriceWithWon(item.subTotalPrice)}</td>
+                                                <td style={{ width: '130px' }}>{item.productName}</td>
+                                                <td style={{ width: '50px' }}>{item.quantity}</td>
+                                                <td style={{ width: '110px' }}>{formatPriceWithWon(item.subTotalPrice)}</td>
                                                 <>
-                                                    <td rowSpan={order.orderDetails.length} style={{ width: '85px' }}>
+                                                    <td rowSpan={order.orderDetails.length} style={{ width: '110px' }}>
                                                         {formatPriceWithWon(order.totalPrice)}
                                                     </td>
-                                                    <td rowSpan={order.orderDetails.length}>
+                                                    <td rowSpan={order.orderDetails.length} style={{ width: '50px' }}>
                                                         {order.deliveryStatus}
                                                     </td>
-                                                    <td rowSpan={order.orderDetails.length} style={{ width: '95px' }}>
+                                                    <td rowSpan={order.orderDetails.length} style={{ width: '100px' }}>
                                                         {order.createdAt}
                                                     </td>
                                                     <td rowSpan={order.orderDetails.length}>
@@ -259,11 +263,11 @@ function MyPage() {
                     )}
                 </tbody>
             </table>
-            {/* ToastContainer 추가 */}
             <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
         </div>
     );
 
+    // 나의 등급 탭
     const renderUserGrade = () => (
         <div style={{ fontWeight: 'bold' }}>
             {gradeInfo ? (
