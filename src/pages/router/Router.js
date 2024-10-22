@@ -24,6 +24,8 @@ import MyPage from "../User/MyPage";
 import FindAccount from "../User/FindAccount";
 import FindAccountResult from "../User/FindAccountResult";
 import NotFound from "../Error/NotFound";
+import ResetPassword from "../User/ResetPassword";
+import ResetPasswordResult from "../User/ResetPasswordResult";
 
 function AppRouter() {
 
@@ -53,6 +55,8 @@ function AppRouter() {
                     <Route path="/admin/createProduct" element={<ProductCreate/>}/>
                     <Route path="/admin/product/:productId/add-option" element={<ProductDetailCreate/>}/>
                     <Route path="/admin/coupon" element={<Coupon/>}/>
+                    <Route path="/reset" element={<ResetPassword/>}/>
+                    <Route path="/reset/result" element={<ResetPasswordResult/>}/>
 
                     <Route path="*" element={<Navigate to="/not-found" replace />} />
                     <Route path="/not-found" element={<NotFound />} />
