@@ -5,19 +5,17 @@ import axiosInstance from "../../../utils/axiosInstance";
 
 function ProductAdmin() {
     const [products, setProducts] = useState([]);
-    const [selectedProducts, setSelectedProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const pageSize = 5;
-    const [hasMore, setHasMore] = useState(true);
 
     // 대카테고리 목록 조회
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const response = await axiosInstance.get('/api/category');
-                console.log("Fetched categories:", response.data); // 대카테고리 데이터 확인용 로그
+                console.log("Fetched categories:", response.data);
                 setCategories(response.data);
             } catch (error) {
                 console.error("Error fetching categories:", error);
@@ -32,7 +30,7 @@ function ProductAdmin() {
         const fetchAllProducts = async () => {
             try {
                 const response = await axiosInstance.get('/api/products/all');
-                console.log("Fetched all products:", response.data); // 전체 상품 데이터 확인용 로그
+                console.log("Fetched all products:", response.data);
                 setProducts(response.data);
             } catch (error) {
                 console.error("Error fetching all products:", error);
@@ -44,19 +42,13 @@ function ProductAdmin() {
         }
     }, [selectedCategory]);
 
-    // 카테고리 선택 시 해당 카테고리의 하위 카테고리 상품을 불러오는 useEffect 추가
+    // 카테고리 선택 시 해당 카테고리의 상품 불러오기
     useEffect(() => {
         const fetchProductsByCategory = async () => {
             try {
                 if (selectedCategory) {
-                    const categoryResponse = await axiosInstance.get(`/api/category?categoryIds=${selectedCategory}`);
-                    const categoryIds = categoryResponse.data;
-
-                    const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
-                    const productResponse = await axiosInstance.get(`/api/products/categories?${queryParams}`);
-                    const products = productResponse.data;
-
-                    setProducts(products);
+                    const productResponse = await axiosInstance.get(`/api/products/category/${selectedCategory}`);
+                    setProducts(productResponse.data);
                 }
             } catch (error) {
                 console.error('Error fetching products by category:', error);
@@ -67,16 +59,6 @@ function ProductAdmin() {
             fetchProductsByCategory();
         }
     }, [selectedCategory]);
-
-    // 제품 체크박스 선택 처리
-    const handleCheckboxChange = (id) => {
-        setSelectedProducts((prevSelected) =>
-            prevSelected.includes(id)
-                ? prevSelected.filter(productId => productId !== id)
-                : [...prevSelected, id]
-        );
-    };
-
 
     const paginatedProducts = products.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
@@ -103,7 +85,6 @@ function ProductAdmin() {
                     className="form-select"
                     value={selectedCategory}
                     onChange={(event) => {
-                        console.log("Category selected:", event.target.value); // 선택된 카테고리 로그
                         setSelectedCategory(event.target.value);
                         setCurrentPage(0); // 카테고리 선택 시 페이지를 0으로 초기화
                     }}
@@ -121,8 +102,7 @@ function ProductAdmin() {
                 <>
                     <ProductList
                         products={paginatedProducts}
-                        selectedProducts={selectedProducts}
-                        handleCheckboxChange={handleCheckboxChange}
+                        setProducts={setProducts} // setProducts를 props로 넘겨서 삭제 후 업데이트 가능
                     />
                     <div className="pagination">
                         <button onClick={handlePreviousPage} disabled={currentPage === 0}>이전</button>
