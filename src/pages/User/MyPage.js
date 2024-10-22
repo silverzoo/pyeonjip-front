@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../utils/axiosInstance';
 import { getUserEmail, isLoggedIn } from '../../utils/authUtils';
+import { ToastContainer, toast } from 'react-toastify';
 import './User.css';
 import './MyPage.css'
 
@@ -12,12 +13,12 @@ function MyPage() {
     const [activeTab, setActiveTab] = useState('회원 정보');
     const [purchaseHistory, setPurchaseHistory] = useState([]);
     const [gradeInfo, setGradeInfo] = useState(null);
+    const [canceledOrders, setCanceledOrders] = useState([]);
     const navigate = useNavigate();
 
     const fetchUser = async (email) => {
         try {
             console.log('요청 시작');
-            // Axios 통신으로 인증 정보를 담아 요청
             const { data } = await axiosInstance.get(`/api/user/mypage?email=${email}`);
             setUser(data);
             console.log('데이터 가져오기 완료');
@@ -39,7 +40,60 @@ function MyPage() {
             const { data } = await axiosInstance.get(`/api/orders?email=${email}`);
             setPurchaseHistory(data);
         } catch (error) {
-            setPurchaseHistory([]);
+            console.error("오류");
+            setPurchaseHistory();
+        }
+    };
+
+    const handleCancelOrder = (orderId) => {
+        toast.info(
+            <div>
+                <span style={{ marginBottom: '10px' }}>
+                    <i className="fas fa-info-circle"></i>
+                </span>
+                <p style={{ margin: 0 }}>정말로 이 주문을 취소하시겠습니까?</p>
+                <div style={{ display: 'flex', marginLeft: '75px', fontSize: '0.9rem' }}>
+                    <button
+                        onClick={() => handleConfirmCancel(orderId)}
+                        style={{ color: 'green' }}
+                    >
+                        예
+                    </button>
+                    <button
+                        onClick={() => toast.dismiss()}
+                        style={{ color: 'red' }}
+                    >
+                        아니오
+                    </button>
+                </div>
+            </div>,
+            {
+                position: "top-center",
+                autoClose: 3000,
+                closeOnClick: false,
+                closeButton: false,
+            }
+        );
+    };
+
+    const handleConfirmCancel = async (orderId) => {
+        try {
+            toast.dismiss();
+            await axiosInstance.patch(`/api/orders/${orderId}`);
+            toast.success("주문이 취소되었습니다.", {
+                position: "top-center",
+                autoClose: 2000,
+            });
+
+            setCanceledOrders([...canceledOrders, orderId]);
+
+            const email = getUserEmail();
+            fetchPurchaseHistory(email);
+        } catch (error) {
+            toast.error("이미 배송이 진행되었습니다!", {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
@@ -80,14 +134,12 @@ function MyPage() {
 
     const handleEdit = async (field) => {
         const email = getUserEmail();
-        // setEditField(field);
-
         let updatedValue;
         let endpoint;
         switch (field) {
             case 'address':
                 updatedValue = user.address;
-                endpoint = `/api/user/address/${email}`;  // baseURL이 axiosInstance에 설정되어 있으므로 상대 경로 사용함
+                endpoint = `/api/user/address/${email}`;
                 break;
             case 'password':
                 updatedValue = prompt('새 비밀번호를 입력해주세요:');
@@ -97,7 +149,6 @@ function MyPage() {
                 return;
         }
 
-        // PUT 요청 보내기
         try {
             const response = await axiosInstance.put(endpoint, {
                 [field]: updatedValue
@@ -115,58 +166,104 @@ function MyPage() {
         }
     };
 
-// 가격 포맷 함수 
-  const formatPriceWithWon = (price) => {
-    return new Intl.NumberFormat('ko-KR').format(price) + '원';
-  };
+    // 가격 포맷 함수 
+    const formatPriceWithWon = (price) => {
+        return new Intl.NumberFormat('ko-KR').format(price) + '원';
+    };
 
-    // 구매 내역 렌더링 함수
-const renderPurchaseHistory = () => (
-    <div>
-        <table className="custom-table">
-            <thead>
-                <tr>
-                    <th>상품</th>
-                    <th>상품명</th>
-                    <th>수량</th>
-                    <th>금액</th>
-                    <th>주문상태</th>
-                    <th>배송상태</th>
-                    <th>주문일자</th>
-                </tr>
-            </thead>
-            <tbody>
-                {purchaseHistory.length > 0 ? (
-                    purchaseHistory.map((order) =>
-                        order.orderDetails.map((item) => (
-                            <tr key={`${order.id}-${item.productDetailId}`}>
-                                <td>
-                                    <img
-                                        src={item.productImage}
-                                        alt={item.productName}
-                                        style={{ width: '80px', height: '80px' }}
-                                    />
-                                </td>
-                                <td>{item.productName}</td>
-                                <td>{item.quantity}</td>
-                                <td>{formatPriceWithWon(item.subTotalPrice)}</td>
-                                <td>{order.orderStatus}</td>
-                                <td>{order.deliveryStatus}</td>
-                                <td>{order.createdAt}</td>
-                            </tr>
-                        ))
-                    )
-                ) : (
+    const renderPurchaseHistory = () => (
+        <div>
+            <table className="custom-table">
+                <thead>
                     <tr>
-                        <td colSpan="7" style={{ textAlign: 'center' }}>구매 내역이 없습니다.</td>
+                        <th>상품</th>
+                        <th>상품명</th>
+                        <th>수량</th>
+                        <th>금액</th>
+                        <th>결제 금액</th>
+                        <th>배송상태</th>
+                        <th>주문일자</th>
                     </tr>
-                )}
-            </tbody>
-        </table>
-    </div>
-);
+                </thead>
+                <tbody>
+                    {purchaseHistory.length > 0 ? (
+                        purchaseHistory.map((order) => (
+                            <React.Fragment key={order.id}>
+                                {order.orderDetails.map((item, index) => (
+                                    <tr key={`${order.id}-${item.productDetailId}-${index}`}>
+                                        {index === 0 && (
+                                            <>
+                                                <td>
+                                                    <img
+                                                        src={item.productImage}
+                                                        alt={item.productName}
+                                                        style={{ width: '80px', height: '80px' }}
+                                                    />
+                                                </td>
+                                                <td style={{ width: '110px' }}>{item.productName}</td>
+                                                <td style={{ width: '45px' }}>{item.quantity}</td>
+                                                <td style={{ width: '85px' }}>{formatPriceWithWon(item.subTotalPrice)}</td>
+                                                <>
+                                                    <td rowSpan={order.orderDetails.length} style={{ width: '85px' }}>
+                                                        {formatPriceWithWon(order.totalPrice)}
+                                                    </td>
+                                                    <td rowSpan={order.orderDetails.length}>
+                                                        {order.deliveryStatus}
+                                                    </td>
+                                                    <td rowSpan={order.orderDetails.length} style={{ width: '95px' }}>
+                                                        {order.createdAt}
+                                                    </td>
+                                                    <td rowSpan={order.orderDetails.length}>
+                                                        {order.orderStatus === 'CANCEL' ? (
+                                                            <button
+                                                                className="btn btn-cancel-success"
+                                                                disabled
+                                                            >
+                                                                취소 완료
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                className="btn btn-danger"
+                                                                onClick={() => handleCancelOrder(order.id)}
+                                                                style={{ fontSize: '0.6rem' }}
+                                                            >
+                                                                주문 취소
+                                                            </button>
+                                                        )}
+                                                    </td>
+                                                </>
+                                            </>
+                                        )}
+                                        {index > 0 && (
+                                            <>
+                                                <td>
+                                                    <img
+                                                        src={item.productImage}
+                                                        alt={item.productName}
+                                                        style={{ width: '80px', height: '80px' }}
+                                                    />
+                                                </td>
+                                                <td>{item.productName}</td>
+                                                <td>{item.quantity}</td>
+                                                <td>{formatPriceWithWon(item.subTotalPrice)}</td>
+                                            </>
+                                        )}
+                                    </tr>
+                                ))}
+                            </React.Fragment>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="9" style={{ textAlign: 'center' }}>구매 내역이 없습니다.</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+            {/* ToastContainer 추가 */}
+            <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} closeOnClick pauseOnHover />
+        </div>
+    );
 
-    // 나의 등급 렌더링 함수
     const renderUserGrade = () => (
         <div style={{ fontWeight: 'bold' }}>
             {gradeInfo ? (
@@ -177,7 +274,6 @@ const renderPurchaseHistory = () => (
                     <div className="grade-benefits">
                         <h6 style={{ fontSize: '0.9rem', textDecoration: 'underline' }}>등급 혜택 안내</h6>
                         <p>최고의 고객님들께 드리는 특별 혜택을 만나보세요.</p>
-
                         <ul>
                             <li>
                                 <strong>🥇 GOLD 등급</strong> <br />
@@ -190,7 +286,6 @@ const renderPurchaseHistory = () => (
                                 <span>SILVER 등급 고객님은 <strong>모든 상품 5% 할인</strong> 혜택을 적용받으실 수 있습니다.</span>
                             </li>
                         </ul>
-
                         <div className="grade-note">
                             <p><em>등급은 누적 구매 금액에 따라 자동으로 승급됩니다.</em></p>
                         </div>
