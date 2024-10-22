@@ -2,7 +2,7 @@
     position: fixed;
     bottom: 80px;
     right: 20px;
-    width: 300px;
+    width: 470px;
     max-height: 400px;
     overflow-y: auto;
     background-color: white;
@@ -33,7 +33,7 @@
   }
   
   .waiting-room-item button {
-    background-color: #007bff;
+    background-color: black;
     color: white;
     border: none;
     padding: 5px 10px;
@@ -42,5 +42,5 @@
   }
   
   .waiting-room-item button:hover {
-    background-color: #0056b3;
+    background-color: #7d7d7d;
   }
