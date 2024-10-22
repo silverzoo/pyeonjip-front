@@ -44,7 +44,6 @@ function ProductDetail() {
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
-                console.log(data);
                 const option = data.productDetails.find(detail => detail.id === parseInt(optionId));
                 setSelectedOption(option || data.productDetails[0]); // 기본 옵션 설정
 
@@ -88,10 +87,10 @@ function ProductDetail() {
             addLocalCart(cartItem, selectedOption);
         }
         loadCartData();
-        toast.success(`${product.name}이(가) 장바구니에 추가되었습니다.`,{
+        toast.info(`${product.name}이(가) 장바구니에 추가되었습니다.`,{
             position: "top-center",
             autoClose: 3000,
-            style: { width: "1500px" }
+            style: { width: "400px" }
         });
     };
 

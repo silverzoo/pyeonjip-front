@@ -110,9 +110,10 @@ function SandboxApp() {
             addLocalCart(cartItem, selectedDetail);
         }
         loadCartData();
-        toast.success(`${item.name}이(가) 장바구니에 추가되었습니다.`,{
+        toast.info(`${item.name}이(가) 장바구니에 추가되었습니다.`,{
             position: "top-center",
-            autoClose: 2000,
+            autoClose: 3000,
+            style: { width: "400px" }
         });
     };
 
