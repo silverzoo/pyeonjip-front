@@ -14,7 +14,7 @@ export const CartProvider = ({ children }) => {
     const loadCartData = useCallback(async () => {
         try {
             if (isLoggedIn) {
-                const response = await fetch(`api/cart?email=${email}`);
+                const response = await fetch(`/api/cart?email=${email}`);
                 const cartDetailDtos = await response.json();
                 setItems(cartDetailDtos);
                 console.log('Cart 동기화 완료:', cartDetailDtos);
