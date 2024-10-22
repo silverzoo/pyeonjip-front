@@ -19,7 +19,7 @@ function ChatDashboard({ onClose, onRoomActivated  }) {
 
   const fetchWaitingRooms = async () => {
     try {
-      const data = await fetchWithAuth('http://localhost:8080/api/chat/waiting-rooms');
+      const data = await fetchWithAuth('/api/chat/waiting-rooms');
       console.log('Fetched waiting rooms:', data);
       setWaitingRooms(data);
     } catch (error) {
@@ -36,7 +36,7 @@ function ChatDashboard({ onClose, onRoomActivated  }) {
         throw new Error('인증 토큰이 없습니다.');
       }
   
-      const response = await fetch(`http://localhost:8080/api/chat/activate-room/${roomId}`, {
+      const response = await fetch(`/api/chat/activate-room/${roomId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -11,7 +11,7 @@
     margin: 0 auto;
     font-size: 0.8rem;
     font-weight: 500;
-    width: 100%;
+    width: 110%;
   }
   
   .custom-table th, .custom-table td {
@@ -33,4 +33,19 @@
     margin-top: 150px;
     font-size: 0.8rem;
     font-weight: 100;
+  }
+
+  .btn-danger{
+    font-size: 0.6rem;
+    padding: 3px 5px;  
+    border-radius: 4px; /* 모서리를 둥글게 */
+    cursor: pointer; 
+    background-color: rgb(161, 23, 23);
+  }
+
+  .btn-cancel-success{
+    padding: 3px 5px;  
+    font-size: 0.6rem;
+    color: white;
+    background-color: black;
   }
