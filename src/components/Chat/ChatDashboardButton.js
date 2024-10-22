@@ -5,13 +5,18 @@ import ChatDashboard from './ChatDashboard';
 
 function ChatDashboardButton() {
   const [showDashboard, setShowDashboard] = useState(false);
-  const { isAdmin } = useAuth();
+  const { isAdmin, isLoggedIn } = useAuth();
 
   const toggleDashboard = () => {
-    if (isAdmin) {
-      setShowDashboard(!showDashboard);
-    } else {
-      window.location.href = '/chat';  // isAdmin이 false면 /chat 페이지로 이동
+    if(isLoggedIn){
+      if (isAdmin) {
+        setShowDashboard(!showDashboard);
+      } else {
+        window.location.href = '/chat';  // isAdmin이 false면 /chat 페이지로 이동
+      }
+    }else{
+        alert("로그인이 필요한 서비스입니다.");
+        window.location.href = '/login';
     }
   };
 
