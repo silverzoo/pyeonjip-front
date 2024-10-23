@@ -146,12 +146,20 @@
 }
 
 .admin-order-detail-totalPrice {
-    /*flex: 1;*/
+    /*flex-direction: column;*/
+    /*display: flex;*/
+    /*justify-content: flex-end;*/
+    /*align-items: center;*/
+    /*margin: 20px 28px 20px 0;*/
+}
+
+.admin-order-detail-totalPrice span {
     display: flex;
     justify-content: flex-end;
     align-items: center;
     margin: 20px 28px 20px 0;
 }
+
 
 
 .admin-order-search-input {

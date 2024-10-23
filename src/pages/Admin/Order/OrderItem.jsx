@@ -98,12 +98,14 @@ function OrderItem({ order, onDelete }) {
                                 <span style={{ marginRight: '20px' }}><strong>제품명:</strong> {detail.productName}</span>
                                 <span style={{ flexGrow: '2', marginRight: '20px'}}><strong>옵션:</strong> {detail.productDetailName}</span>
                                 <span style={{ flexGrow: '0', width: '200px'}}><strong>수량:</strong> {detail.quantity}</span>
-                                <span><strong>금액:</strong> {detail.subTotalPrice.toLocaleString()}원</span>
+                                <span><strong>금액:&nbsp;</strong> {detail.subTotalPrice.toLocaleString()}원</span>
                             </div>
                         </div>
                     ))}
                     <div className="admin-order-detail-totalPrice">
-                        <span><strong>총 주문 금액:</strong> {order.totalPrice.toLocaleString()}원</span>
+                        <span><strong>배송비:&nbsp;</strong> {order.deliveryPrice.toLocaleString()}원</span>
+                        <span><strong>등급 할인:&nbsp;</strong> {order.discountRate * 100}%</span>
+                        <span><strong>최종 금액:&nbsp;</strong> {order.totalPrice.toLocaleString()}원</span>
                     </div>
                 </div>
 
