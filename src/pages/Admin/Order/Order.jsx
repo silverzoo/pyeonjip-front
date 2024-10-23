@@ -105,7 +105,7 @@ function AdminOrder() {
     };
 
     return (
-        <div className="card mt-5 p-2 border rounded shadow-sm">
+        <div className="card mt-5 mb-5 p-2 border rounded shadow-sm">
             <h2 className="text-center mb-4 mt-3">주문 관리</h2>
              <div className="d-flex justify-content-between align-items-center mb-4 px-3">
                 <select value={sortOrder} onChange={handleSortChange} className="form-select w-auto">
