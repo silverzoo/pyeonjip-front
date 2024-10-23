@@ -99,6 +99,7 @@ function AdminOrder() {
         const newSortOrder = event.target.value;
         setSortOrder(newSortOrder);
         setCurrentPage(0);
+        setEmail('');
 
         try {
             const data = await fetchGetOrders(0, 5, 'createdAt', newSortOrder);
@@ -114,7 +115,7 @@ function AdminOrder() {
 
     const handleSearch = async (searchEmail) => {
         setEmail(searchEmail);
-        setCurrentPage(0); // 첫 페이지로 이동
+        setCurrentPage(0);
 
         try {
             const data = await fetchGetOrders(0, 5, 'createdAt', sortOrder, searchEmail);
@@ -136,7 +137,7 @@ function AdminOrder() {
                     <option value="desc">최신순</option>
                     <option value="asc">오래된순</option>
                 </select>
-                <Search setEmail={setEmail} onSearch={handleSearch} />
+                 <Search setEmail={setEmail} email={email} />
             </div>
             <div className="admin-order-content">
                 <OrderList orders={orders} onDelete={handleDelete}/>
