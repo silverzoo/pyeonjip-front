@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-function Search({ setEmail, fetchGetOrders, setOrders }) {
+function Search({ setEmail}) {
     const [searchKeyword, setSearchKeyword] = useState('');
 
     const handleSearch = async (event) => {
