@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import axiosInstance from '../../../utils/axiosInstance'; // Axios 인스턴스 가져오기
 
 function ProductDetailCreate() {
     const { productId } = useParams(); // URL에서 productId를 가져옴
@@ -23,27 +24,22 @@ function ProductDetailCreate() {
     // 폼 제출 핸들러 (옵션 추가)
     const handleSubmit = (e) => {
         e.preventDefault();
-        fetch(`http://localhost:8080/api/admin/products/${productId}/details`, {
-            method: 'POST',
+
+        const token = localStorage.getItem('token'); // 저장된 JWT 토큰 가져오기
+        axiosInstance.post(`/api/admin/products/${productId}/details`, option, {
             headers: {
+                'Authorization': `Bearer ${token}`, // Authorization 헤더 추가
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(option),
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('옵션 추가 실패');
-            }
-            return response.json();
-        })
-        .then(data => {
-            alert('옵션이 성공적으로 추가되었습니다.');
-            navigate(`/admin/edit-product/${productId}`); // 옵션 목록 페이지로 이동
-        })
-        .catch(error => {
-            console.error(error);
-            alert('옵션 추가 중 오류가 발생했습니다.');
-        });
+            .then(response => {
+                alert('옵션이 성공적으로 추가되었습니다.');
+                navigate(`/admin/edit-product/${productId}`); // 옵션 목록 페이지로 이동
+            })
+            .catch(error => {
+                console.error('옵션 추가 중 오류가 발생했습니다:', error);
+                alert('옵션 추가 중 오류가 발생했습니다.');
+            });
     };
 
     return (
@@ -84,7 +80,7 @@ function ProductDetailCreate() {
                     />
                 </div>
                 <div className="form-group">
-                    <label>옵션 이미지 URL:</label>
+                    <label>메인 이미지:</label>
                     <input
                         type="text"
                         className="form-control"
@@ -93,7 +89,9 @@ function ProductDetailCreate() {
                         onChange={handleChange}
                     />
                 </div>
-                <button type="submit" className="btn btn-primary">옵션 추가</button>
+                <div className="text-end"> {/* 버튼을 오른쪽으로 정렬하기 위한 클래스 추가 */}
+                    <button type="submit" className="btn btn-secondary">옵션 추가</button> {/* 스타일 통일 */}
+                </div>
             </form>
         </div>
     );

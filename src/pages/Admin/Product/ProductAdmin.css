@@ -5,55 +5,52 @@
     border-radius: 8px;
 }
 
-/* 상품 목록 스타일 */
-.product-list h2 {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #333;
+/* 테이블 스타일 */
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 
-/* 상품 항목 스타일 */
-.list-group-item {
-    background-color: #fff;
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    vertical-align: middle; /* 세로 가운데 정렬 */
     border: 1px solid #ddd;
-    transition: box-shadow 0.3s ease;
 }
 
-.list-group-item:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.product-name {
-    font-size: 1.25rem;
-    color: #333;
-}
-
-/* 어두운 회색 버튼 스타일 */
-.btn-dark-gray {
-    background-color: #4d4d4d; /* 어두운 회색 */
+.table th {
+    background-color: #333;
     color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+}
+
+.table tr:hover {
+    background-color: #f2f2f2;
+}
+
+/* 버튼 스타일 개선 */
+.btn-dark-gray {
+    background-color: #6c757d; /* 더 부드러운 회색 */
+    color: white;
+    border: 1px solid #6c757d;
+    padding: 6px 10px;
+    font-size: 0.9rem;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .btn-dark-gray:hover {
-    background-color: #838383; /* 호버 시 더 어두운 회색 */
+    background-color: #5a6268; /* 호버 시 어두운 회색 */
+    color: #fff;
 }
 
-/* 검정색 버튼 스타일 */
-.btn-black {
-    background-color: #000000; /* 검정색 */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.btn-dark-gray:focus {
+    outline: none;
 }
 
-.btn-black:hover {
-    background-color: #333333; /* 호버 시 더 어두운 검정색 */
+/* 테이블 셀 내부의 버튼을 가운데 정렬 */
+.table td .btn-dark-gray {
+    display: inline-block; /* flex 제거 */
+    text-align: center;
+    vertical-align: middle; /* 버튼 세로 중앙 정렬 */
 }

@@ -5,25 +5,21 @@ import { addLocalCart, addServerCart } from "../../utils/cartUtils";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import './Product.css';
-import { Modal } from 'react-bootstrap';
 import {useAuth} from "../../context/AuthContext";
 import {useCart} from "../../context/CartContext";
 import Comment from "./Comment";
 import ProductDetailRate from "./ProductDetailRate";
+import {toast, ToastContainer} from "react-toastify";
 initMDB({ Collapse });
-
-const MODAL_DURATION = 1000; // Modal display duration
 
 function ProductDetail() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const productId = queryParams.get('productId');
     const optionId = queryParams.get('optionId');
-    const [showModal, setShowModal] = useState(false);
-    const [modalMessage, setModalMessage] = useState('');
     const [commentUpdated, setCommentUpdated] = useState(false);
     const [comments, setComments] = useState([]);
-    const { isLoggedIn, email, setIsLoggedIn } = useAuth();
+    const { isLoggedIn, email} = useAuth();
     const {loadCartData} = useCart();
 
     const [product, setProduct] = useState({
@@ -44,7 +40,7 @@ function ProductDetail() {
     }, []);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/api/products/${productId}`)
+        fetch(`/api/products/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
@@ -62,7 +58,7 @@ function ProductDetail() {
             })
             .catch((error) => console.error('Error fetching product details:', error));
 
-        fetch(`http://localhost:8080/api/comments/product/${productId}`)
+        fetch(`/api/comments/product/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setComments(Array.isArray(data) ? data : []);
@@ -72,10 +68,18 @@ function ProductDetail() {
     }, [productId, optionId, commentUpdated]);
 
     const addToCart = () => {
+        if(selectedOption.quantity <= 0) {
+            toast.warn(`재고가 부족합니다.`,{
+                position: "top-center",
+                autoClose: 3000,
+            });
+            return;
+        }
         const cartItem = {
             optionId: selectedOption.id,
             quantity: 1,
         };
+
 
         if (isLoggedIn) {
             addServerCart(cartItem, email);
@@ -83,13 +87,11 @@ function ProductDetail() {
             addLocalCart(cartItem, selectedOption);
         }
         loadCartData();
-        showModalMessage(`${product.name}의 ${selectedOption.name}이(가) 장바구니에 추가되었습니다.`);
-    };
-
-    const showModalMessage = (message) => {
-        setModalMessage(message);
-        setShowModal(true);
-        setTimeout(() => setShowModal(false), MODAL_DURATION);
+        toast.info(`${product.name}이(가) 장바구니에 추가되었습니다.`,{
+            position: "top-center",
+            autoClose: 3000,
+            style: { width: "400px" }
+        });
     };
 
     const handleOptionChange = (detail) => {
@@ -104,6 +106,7 @@ function ProductDetail() {
     };
 
     return (
+
         <div className="container card border-0" style={{ width: '105%' }}>
             <div className="row">
 
@@ -269,9 +272,7 @@ function ProductDetail() {
                     </div>
                 </div>
             </div>
-            <Modal show={showModal} onHide={() => setShowModal(false)} backdrop={false}>
-                <Modal.Body>{modalMessage}</Modal.Body>
-            </Modal>
+            <ToastContainer/>
         </div>
     );
 }

@@ -5,19 +5,20 @@ function OrderList({ orders, onDelete }) {
     return (
         <div>
             <div className="admin-order-header">
-                <span><strong>이름</strong></span>
-                <span><strong>이메일</strong></span>
-                <span><strong>주문 상태</strong></span>
-                <span><strong>총 금액</strong></span>
-                <span><strong>생성일</strong></span>
-                <span style={{marginRight: '115px'}}><strong>배송 상태</strong></span>
+                <span><strong></strong></span>
+                <span style={{marginLeft: '10px'}}><strong>이름</strong></span>
+                <span style={{marginLeft: '30px'}}><strong>이메일</strong></span>
+                <span style={{marginLeft: '50px'}}><strong>전화번호</strong></span>
+                <span><strong>주문상태</strong></span>
+                <span style={{marginRight: '40px'}}><strong>주문일</strong></span>
+                <span style={{marginRight: '210px'}}><strong>배송 상태</strong></span>
             </div>
             <ul className="admin-order-list">
                 {orders.map((order) => (
                     <OrderItem
                         key={order.id}
                         order={order}
-                        onDelete={onDelete}  // onDelete를 통해 부모 컴포넌트의 함수 전달
+                        onDelete={onDelete}
                     />
                 ))}
             </ul>
