@@ -78,7 +78,7 @@ function OrderItem({ order, onDelete }) {
                         <option value="REFUNDING">REFUNDING</option>
                     </select>
                 </span>
-                <span>
+                <span style={{ width: '1000px' }}>
                     <button onClick={handleDelete} disabled={isDeleting}>
                         {isDeleting ? '삭제 중...' : '삭제'}
                     </button>
