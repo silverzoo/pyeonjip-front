@@ -81,8 +81,8 @@ function ProductAdmin() {
     };
 
     return (
-        <div className="admin-product-page container">
-            <h1 className="my-4 text-center">상품 관리 페이지</h1>
+        <div className=" container card border-0 my-5">
+            <h2 className="my-4 text-center">상품 관리 페이지</h2>
 
             <div className="mb-4">
                 <label htmlFor="categorySelect">카테고리 선택:</label>
