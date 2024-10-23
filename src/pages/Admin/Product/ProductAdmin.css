@@ -54,3 +54,19 @@
     text-align: center;
     vertical-align: middle; /* 버튼 세로 중앙 정렬 */
 }
+
+.form-group{
+    margin-bottom: 20px;
+}
+
+.form-group label{
+    margin-bottom: 10px;
+}
+
+.form-control{
+    margin-bottom: 20px;
+}
+
+.btn-secondary{
+    margin-right : 10px
+}

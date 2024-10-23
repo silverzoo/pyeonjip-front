@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../utils/axiosInstance';  // Axios 인스턴스 가져오기
 import './ProductAdmin.css';
+import {toast} from "react-toastify";
 
 function CreateProduct() {
     const [productName, setProductName] = useState('');
@@ -86,12 +87,18 @@ function CreateProduct() {
         // 상품 생성 요청
         axiosInstance.post('/api/admin/products', productData)
             .then(response => {
-                alert('상품이 성공적으로 생성되었습니다.');
+                toast.success('상품이 성공적으로 생성되었습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
                 navigate('/admin/product');
             })
             .catch(error => {
                 console.error('상품 생성 중 오류가 발생했습니다:', error);
-                alert('상품 생성 중 오류가 발생했습니다.');
+                toast.error('상품 생성 중 오류가 발생했습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             });
     };
 
@@ -134,7 +141,7 @@ function CreateProduct() {
                         ))}
                     </select>
                 </div>
-
+                <hr></hr>
                 <h3>상품 옵션</h3>
                 {options.map((option, index) => (
                     <div key={index} className="form-group">
@@ -175,7 +182,7 @@ function CreateProduct() {
                         <button type="button" onClick={addOption} className="btn btn-secondary">옵션 추가</button>
                     </div>
                 ))}
-
+                <hr></hr>
                 <h3>상품 이미지</h3>
                 {productImages.map((image, index) => (
                     <div key={index} className="form-group">

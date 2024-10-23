@@ -46,7 +46,7 @@ function OrderPage() {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/user/${userEmail}`);
+        const response = await fetch(`/api/user/${userEmail}`);
         if (!response.ok) {
           throw new Error(`HTTP 에러 발생, 현재 상태: ${response.status}`);
         }
@@ -126,7 +126,7 @@ function OrderPage() {
         userEmail: userEmail,
       };
 
-      const response = await fetch(`http://localhost:8080/api/orders?userEmail=${userEmail}`, {
+      const response = await fetch(`/api/orders?email=${userEmail}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ function OrderPage() {
         console.log('주문이 성공적으로 완료되었습니다.');
 
         // 장바구니 비우기 API 호출
-        await fetch(`http://localhost:8080/api/cart?email=${userEmail}`, {
+        await fetch(`/api/cart?email=${userEmail}`, {
           method: 'DELETE',
         });
         console.log('장바구니가 성공적으로 비워졌습니다.');

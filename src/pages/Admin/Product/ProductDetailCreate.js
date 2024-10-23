@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../utils/axiosInstance'; // Axios 인스턴스 가져오기
+import axiosInstance from '../../../utils/axiosInstance';
+import {toast} from "react-toastify"; // Axios 인스턴스 가져오기
 
 function ProductDetailCreate() {
     const { productId } = useParams(); // URL에서 productId를 가져옴
@@ -33,12 +34,19 @@ function ProductDetailCreate() {
             },
         })
             .then(response => {
-                alert('옵션이 성공적으로 추가되었습니다.');
+                toast.success('옵션이 성공적으로 추가되었습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
                 navigate(`/admin/edit-product/${productId}`); // 옵션 목록 페이지로 이동
             })
             .catch(error => {
                 console.error('옵션 추가 중 오류가 발생했습니다:', error);
-                alert('옵션 추가 중 오류가 발생했습니다.');
+                toast.error('옵션 추가 중 오류가 발생했습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
+
             });
     };
 
