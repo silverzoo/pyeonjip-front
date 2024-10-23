@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useNavigate 추가
+import { useParams, useNavigate } from 'react-router-dom';
 import OptionList from './ProductOptionList';
 import ProductImageList from './ProductImageList';
+import axiosInstance from '../../../utils/axiosInstance'; // axiosInstance 임포트
 import './ProductAdmin.css';
 
 function ProductOptionAdmin() {
     const { productId } = useParams();
-    const navigate = useNavigate(); // useNavigate 사용
+    const navigate = useNavigate();
     const [options, setOptions] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [images, setImages] = useState([]);
@@ -23,45 +24,35 @@ function ProductOptionAdmin() {
     useEffect(() => {
         if (productId) {
             // 옵션 불러오기
-            fetch(`http://localhost:8080/api/products/${productId}/details`)
-                .then(response => response.json())
-                .then(data => setOptions(data))
+            axiosInstance.get(`/api/products/${productId}/details`)
+                .then(response => setOptions(response.data))
                 .catch(error => console.error('Error fetching options:', error));
 
             // 이미지 불러오기
-            fetch(`http://localhost:8080/api/products/${productId}/images`)
-                .then(response => response.json())
-                .then(data => setImages(data))
+            axiosInstance.get(`/api/products/${productId}/images`)
+                .then(response => setImages(response.data))
                 .catch(error => console.error('Error fetching images:', error));
 
             // 상품 정보 불러오기
-            fetch(`http://localhost:8080/api/products/${productId}`)
-                .then(response => response.json())
-                .then(data => {
-                    setProduct(data);
-                    setSelectedCategory(data.categoryId);
+            axiosInstance.get(`/api/products/${productId}`)
+                .then(response => {
+                    setProduct(response.data);
+                    setSelectedCategory(response.data.categoryId);
                 })
                 .catch(error => console.error('Error fetching product:', error));
 
-            // 카테고리 불러오기
-            fetch(`http://localhost:8080/api/category`)
-                .then(response => response.json())
-                .then(data => setCategories(data))
+            // 자식 카테고리만 불러오기
+            axiosInstance.get('/api/admin/category')
+                .then(response => setCategories(response.data))
                 .catch(error => console.error('Error fetching categories:', error));
         }
     }, [productId]);
 
     const handleProductUpdate = () => {
         const updatedProduct = { ...product, categoryId: selectedCategory };
-        fetch(`http://localhost:8080/admin/api/products/${productId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedProduct),
-        })
+        axiosInstance.put(`/api/admin/products/${productId}`, updatedProduct)
             .then(response => {
-                if (response.ok) {
+                if (response.status === 200) {
                     alert('상품 정보가 성공적으로 수정되었습니다.');
                 } else {
                     console.error('Error updating product');
@@ -156,9 +147,11 @@ function ProductOptionAdmin() {
                     </select>
                 </div>
 
-                <button className="btn btn-primary" onClick={handleProductUpdate}>
-                    상품 정보 수정
-                </button>
+                <div className="text-end"> {/* 버튼을 오른쪽으로 정렬하기 위한 클래스 추가 */}
+                    <button className="btn btn-secondary" onClick={handleProductUpdate}>
+                        상품 정보 수정
+                    </button>
+                </div>
             </div>
 
             <hr />
@@ -170,7 +163,7 @@ function ProductOptionAdmin() {
                     selectedOptions={selectedOptions}
                     handleCheckboxChange={handleCheckboxChange}
                     handleBulkDelete={handleBulkDeleteOptions}
-                    handleNavigateToAddOption={handleNavigateToAddOption} // 옵션 추가 함수 전달
+                    handleNavigateToAddOption={handleNavigateToAddOption}
                 />
             ) : (
                 <div>
