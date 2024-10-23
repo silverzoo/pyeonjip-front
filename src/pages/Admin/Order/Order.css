@@ -5,19 +5,6 @@
     box-sizing: border-box;
 }
 
-.admin-order-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 40px;
-    padding: 1rem; /* p-4에 해당 */
-    border: 1px solid #dee2e6; /* border */
-    border-radius: 0.4rem; /* rounded */
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); /* shadow-sm */
-    background-color: white; /* 배경색 추가 */
-}
-
 .admin-order-content {
     display: flex;
     flex-direction: column;
@@ -27,28 +14,47 @@
 .admin-order-pagination {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 
+/*.admin-order-header {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: space-between;*/
+/*    padding: 10px;*/
+
+/*    background-color: #343a40;*/
+/*    color: white;*/
+/*    width: 100%;*/
+/*    border: 1px solid #ccc;*/
+/*    margin-bottom: 10px;*/
+/*    border-radius: 5px;*/
+/*}*/
 .admin-order-header {
     display: flex;
+    flex: 1;
     align-items: center;
-    justify-content: space-between;
-    padding: 10px;
-
-    background-color: #343a40;
+    justify-content: flex-start;
+    width: 960px;
+    padding: 10px 10px;
+    border-bottom: 1px solid #eee;
     color: white;
-    width: 100%;
-    border: 1px solid #ccc;
-    margin-bottom: 10px;
     border-radius: 5px;
+    background-color: #343a40;
+    margin-bottom: 10px;
 }
 
 .admin-order-header span {
-    /*flex: 1;*/
+    display: flex;
+    align-items: center;
+    width: 100%;
+    /*margin-right: 120px;*/
+}
+
+.admin-order-header span {
     margin: 5px 10px;
-    /*text-align: center;*/
+    width: 100%;
 }
 
 .admin-order-item.selected {
@@ -60,9 +66,9 @@
 }
 
 .admin-order-item button {
-    background-color: rgb(248 249 250);
+    background-color: white;
     color: black;
-    border: none;
+    border: 1px solid #343a40;
     border-radius: 4px;
     padding: 8px 12px;
     margin-left: 5px;
@@ -83,17 +89,20 @@
 }
 
 .admin-order-item {
-    display: flex; /* 플렉스 박스를 사용하여 정렬 */
-    justify-content: space-between; /* 각 항목 사이에 여백 추가 */
-    align-items: center; /* 수직 정렬 */
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 10px 10px;
     cursor: pointer;
-    padding: 10px;
     border: 1px solid #ccc;
     margin-bottom: 10px;
     border-radius: 5px;
 }
 
 .admin-order-item span {
+    width: 100%;
     margin: 5px 10px;
 }
 

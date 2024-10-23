@@ -1,0 +1,95 @@
+.admin-category-list-container {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    margin: 10px 10px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    color: black;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-category-list {
+    display: flex;
+    width: 100%;
+}
+
+.admin-category-item {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    height: 500px;
+}
+
+.admin-category-divider {
+    width: 0.1px;
+    background-color: #ccc;
+    /*height: 100%;*/
+    align-self: stretch;
+}
+
+.admin-category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    color: white;
+    border-radius: 5px;
+    background-color: #343a40;
+    margin: 10px 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-category-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 10px 10px;
+    padding: 0 10px;
+}
+
+.admin-category-btn {
+    background-color: white;
+    color: #343a40;
+    border: 1px solid #343a40;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-category-btn:hover {
+    background-color: #343a40;
+    color: white;
+}
+
+.admin-category-header span {
+    margin-right: auto;
+}
+
+.category-item {
+    /*padding: 10px;*/
+    margin: 5px 0;
+    border: 1px solid transparent;
+    transition: background-color 0.2s;
+}
+
+.category-item.selected {
+    background-color: #eee; /* 원하는 색상으로 변경 */
+}
+
+.admin-category-create-btn {
+    background-color: white;
+    color: #343a40;
+    border: 1px solid #343a40;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
