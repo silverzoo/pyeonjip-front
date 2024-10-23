@@ -7,7 +7,6 @@ function SignUp() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordHint, setPasswordHint] = useState('');
     // 전화번호 필드를 세 개로 나눔
     const [phoneNumberPart1, setPhoneNumberPart1] = useState('');
     const [phoneNumberPart2, setPhoneNumberPart2] = useState('');
@@ -20,7 +19,7 @@ function SignUp() {
         event.preventDefault();
 
         // 모든 필드를 확인
-        if (!email || !name || !password || !passwordHint || !phoneNumberPart1 || !phoneNumberPart2 || !phoneNumberPart3 || !address) {
+        if (!email || !name || !password || !phoneNumberPart1 || !phoneNumberPart2 || !phoneNumberPart3 || !address) {
             setErrorMessage('모든 항목을 입력해주세요.');
             return;
         }
@@ -33,7 +32,7 @@ function SignUp() {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, name, password, passwordHint, phoneNumber, address }),
+            body: JSON.stringify({ email, name, password, phoneNumber, address }),
         });
 
         if (response.ok) {
@@ -97,17 +96,6 @@ function SignUp() {
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="form-group mb-3">
-                        <label htmlFor="passwordHint">비밀번호 힌트</label>
-                        <input
-                            type="text"
-                            className="form-control user-form-control"
-                            id="passwordHint"
-                            value={passwordHint}
-                            onChange={(e) => setPasswordHint(e.target.value)}
                             required
                         />
                     </div>
