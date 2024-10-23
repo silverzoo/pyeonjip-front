@@ -47,8 +47,14 @@ function ProductAdmin() {
         const fetchProductsByCategory = async () => {
             try {
                 if (selectedCategory) {
-                    const productResponse = await axiosInstance.get(`/api/products/category/${selectedCategory}`);
-                    setProducts(productResponse.data);
+                    const categoryResponse = await axiosInstance.get(`/api/category?categoryIds=${selectedCategory}`);
+                    const categoryIds = categoryResponse.data;
+
+                    const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
+                    const productResponse = await axiosInstance.get(`/api/products/categories?${queryParams}`);
+                    const products = productResponse.data;
+
+                    setProducts(products);
                 }
             } catch (error) {
                 console.error('Error fetching products by category:', error);
