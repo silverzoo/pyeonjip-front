@@ -57,7 +57,7 @@ function ProductList({ products, setProducts }) {
     };
 
     return (
-        <div className="product-list">
+        <div className="product-list card border-0">
             <h2 className="mb-4">상품 목록</h2>
             {products.length > 0 ? (
                 <div>
