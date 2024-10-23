@@ -38,8 +38,24 @@ const SidePanelApp = () => {
                 setItems([]);
                 //navigate('/');
                 loadCartData();
-                console.log('로그아웃');
-                window.location.reload();
+
+                const restrictedPages = ['/signup/result'];
+                const fromPage = location.state?.from || '/';  // 이전 페이지 경로
+
+                // 현재 경로가 "/admin"으로 시작하는지 확인
+                if (window.location.pathname.startsWith("/admin")) {
+                    navigate("/");  // "/admin" 경로일 경우 "/"로 리다이렉트
+                } else if (!restrictedPages.includes(fromPage)) {
+                    navigate(fromPage);  // 이전 페이지로 리다이렉트
+                } else {
+                    navigate("/");  // 예외 페이지일 경우 메인 페이지로 리다이렉트
+                }
+
+// 리다이렉트가 발생하지 않았을 때 reload 실행하기 - 안씀
+//                 if (!window.location.pathname.startsWith("/admin")) {
+//                     console.log('로그아웃');
+//                     window.location.reload();
+//                 }
             }
         } catch (error) {
             console.error('로그아웃 중 오류 발생:', error);
