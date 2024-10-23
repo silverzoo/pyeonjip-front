@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axiosInstance from '../../../utils/axiosInstance'; // Axios 인스턴스 가져오기
+import axiosInstance from '../../../utils/axiosInstance';
+import {toast} from "react-toastify"; // Axios 인스턴스 가져오기
 
 function ProductList({ products, setProducts }) {
     const [categories, setCategories] = useState([]); // 카테고리 상태 추가
@@ -31,14 +32,20 @@ function ProductList({ products, setProducts }) {
                         'Authorization': `Bearer ${token}`,
                     },
                 });
-                alert('상품이 성공적으로 삭제되었습니다.');
+                toast.success('성공적으로 삭제되었습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
 
                 // 삭제 후 전체 상품 목록을 다시 가져오기
                 const response = await axiosInstance.get('/api/products/all');
                 setProducts(response.data); // 업데이트된 상품 목록으로 상태 설정
             } catch (error) {
                 console.error('상품 삭제 중 오류가 발생했습니다:', error);
-                alert('상품 삭제 중 오류가 발생했습니다.');
+                toast.error('상품 삭제 중 오류가 발생했습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             }
         }
     };

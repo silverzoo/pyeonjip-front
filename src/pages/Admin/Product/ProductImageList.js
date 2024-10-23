@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {toast} from "react-toastify";
 
 function ProductImageList({ images, selectedImages, handleCheckboxChange, handleBulkDelete, handleImageUrlChange, handleAddImage }) {
     const [newImageUrl, setNewImageUrl] = useState(''); // 새로 추가할 이미지 URL 상태
@@ -9,7 +10,10 @@ function ProductImageList({ images, selectedImages, handleCheckboxChange, handle
             handleAddImage(newImageUrl); // 부모 컴포넌트로 이미지 추가 요청
             setNewImageUrl(''); // 입력 필드 초기화
         } else {
-            alert('이미지 URL을 입력해주세요.');
+            toast.info('이미지 URL을 입력해주세요.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
