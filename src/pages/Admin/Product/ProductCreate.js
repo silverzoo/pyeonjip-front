@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../utils/axiosInstance';  // Axios 인스턴스 가져오기
 import './ProductAdmin.css';
+import {toast} from "react-toastify";
 
 function CreateProduct() {
     const [productName, setProductName] = useState('');
@@ -86,12 +87,18 @@ function CreateProduct() {
         // 상품 생성 요청
         axiosInstance.post('/api/admin/products', productData)
             .then(response => {
-                alert('상품이 성공적으로 생성되었습니다.');
+                toast.success('상품이 성공적으로 생성되었습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
                 navigate('/admin/product');
             })
             .catch(error => {
                 console.error('상품 생성 중 오류가 발생했습니다:', error);
-                alert('상품 생성 중 오류가 발생했습니다.');
+                toast.error('상품 생성 중 오류가 발생했습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             });
     };
 

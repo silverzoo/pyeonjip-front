@@ -4,6 +4,7 @@ import OptionList from './ProductOptionList';
 import ProductImageList from './ProductImageList';
 import axiosInstance from '../../../utils/axiosInstance'; // axiosInstance 임포트
 import './ProductAdmin.css';
+import {toast} from "react-toastify";
 
 function ProductOptionAdmin() {
     const { productId } = useParams();
@@ -53,7 +54,10 @@ function ProductOptionAdmin() {
         axiosInstance.put(`/api/admin/products/${productId}`, updatedProduct)
             .then(response => {
                 if (response.status === 200) {
-                    alert('상품 정보가 성공적으로 수정되었습니다.');
+                    toast.success('상품 정보가 성공적으로 수정되었습니다.', {
+                        position: "top-center",
+                        autoClose: 2000,
+                    });
                 } else {
                     console.error('Error updating product');
                 }
