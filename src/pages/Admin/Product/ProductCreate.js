@@ -179,7 +179,6 @@ function CreateProduct() {
                         />
                         <button type="button" onClick={() => removeOption(index)} className="btn btn-secondary">옵션 삭제
                         </button>
-                        <button type="button" onClick={addOption} className="btn btn-secondary">옵션 추가</button>
                     </div>
                 ))}
                 <hr></hr>
@@ -197,7 +196,6 @@ function CreateProduct() {
                         />
                         <button type="button" onClick={() => removeImage(index)} className="btn btn-secondary">이미지 삭제</button>
 
-                        <button type="button" onClick={addImage} className="btn btn-secondary">이미지 추가</button>
 
 
                     </div>
@@ -205,6 +203,8 @@ function CreateProduct() {
 
 
                 <div>
+                    <button type="button" onClick={addOption} className="btn btn-secondary">옵션 추가</button>
+                    <button type="button" onClick={addImage} className="btn btn-secondary">이미지 추가</button>
                     <button type="submit" className="btn btn-secondary">상품 생성</button>
                 </div>
             </form>

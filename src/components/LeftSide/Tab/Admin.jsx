@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import ToggleIcon from '../ToggleIcon/ToggleIcon';
-import {useLocation} from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Admin() {
     const location = useLocation();
@@ -18,11 +18,6 @@ function Admin() {
         }));
     };
 
-    const isOrderActive = location.pathname.startsWith('/admin/order');
-    const isProductActive = location.pathname.startsWith('/admin/product');
-    const isCategoryActive = location.pathname.startsWith('/admin/category');
-    const isCouponActive = location.pathname.startsWith('/admin/coupon');
-
     return (
         <>
             <ToggleIcon
@@ -31,7 +26,6 @@ function Admin() {
                 isExpanded={expandedMenus.ORDER}
                 onToggle={() => handleToggle('ORDER')}
                 hasChildren={false}
-                isActive={isOrderActive}
             />
             <ToggleIcon
                 label="PRODUCT"
@@ -39,15 +33,13 @@ function Admin() {
                 isExpanded={expandedMenus.PRODUCT}
                 onToggle={() => handleToggle('PRODUCT')}
                 hasChildren={false}
-                isActive={isProductActive}
             />
             <ToggleIcon
                 label="CATEGORY"
                 to="/admin/category"
                 isExpanded={expandedMenus.CATEGORY}
-                onToggle={()=> handleToggle('CATEGORY')}
+                onToggle={() => handleToggle('CATEGORY')}
                 hasChildren={false}
-                isActive={isCategoryActive}
             />
             <ToggleIcon
                 label="COUPON"
@@ -55,7 +47,6 @@ function Admin() {
                 isExpanded={expandedMenus.COUPON}
                 onToggle={() => handleToggle('COUPON')}
                 hasChildren={false}
-                isActive={isCouponActive}
             />
         </>
     );
