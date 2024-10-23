@@ -1,11 +1,14 @@
 import './Category.css';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {fetchDeleteCategory, fetchGetCategories} from "../../../api/AdminUtils";
 import CategoryItem from "./CategoryItem";
+import CategoryCreate from "./CreateCategory";
+import {toast} from "react-toastify";
 
 function AdminCategory() {
     const [categories, setCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const categoryListRef = useRef(null);
 
     useEffect(() => {
         window.feather.replace();
@@ -25,24 +28,56 @@ function AdminCategory() {
     }, []);
 
 
-
+    // 카테고리 선택 시 호출
     const handleCategorySelect = (id) => {
         setSelectedCategoryId(id);
     };
 
+    // 전체 영역 클릭 시 선택 초기화
+    const handleClickOutside = () => {
+        setSelectedCategoryId(null);
+    };
+
+    // 렌더링 시 전체 클릭 핸들러 추가
+    useEffect(() => {
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, []);
+
     const handleDelete = async () => {
-        console.log("삭제 버튼 클릭됨"); // 로그 추가
+
         if (selectedCategoryId) {
             try {
                 await fetchDeleteCategory(selectedCategoryId);
+                toast.success('카테고리가 삭제되었습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
                 const updatedCategories = await fetchGetCategories();
                 setCategories(updatedCategories);
                 setSelectedCategoryId(null);
             } catch (error) {
-                console.error(error.message);
+                toast.error(error.message, {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             }
         } else {
-            console.log("삭제할 카테고리가 선택되지 않음"); // 로그 추가
+            toast.warn('삭제할 카테고리를 선택해주세요.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+
+    const handleCategoryCreated = async () => {
+        const updatedCategories = await fetchGetCategories();
+        setCategories(updatedCategories);
+
+        if (categoryListRef.current) {
+            categoryListRef.current.scrollTop = categoryListRef.current.scrollHeight;
         }
     };
 
@@ -51,7 +86,7 @@ function AdminCategory() {
             <h2 className="text-center mb-4 mt-3">카테고리 관리</h2>
             <span className="admin-category-btn-container" style={{marginRight: '0px'}}>
                 <button className="admin-category-btn" onClick={handleDelete}>삭제</button>
-                <button className="admin-category-btn">생성</button>
+                <button className="admin-category-btn">수정</button>
             </span>
             <div className="admin-category-header">
                 <span>
@@ -62,8 +97,8 @@ function AdminCategory() {
                 </span>
             </div>
             <div className="admin-category-list-container">
-                <div className="admin-category-list">
-                    <div className="admin-category-item">
+                <div className="admin-category-list" ref={categoryListRef}>
+                <div className="admin-category-item">
                         <CategoryItem
                             categories={categories}
                             hasParent={false}
@@ -73,9 +108,7 @@ function AdminCategory() {
                     </div>
                     <div className="admin-category-divider"></div>
                     <div className="admin-category-item">
-                        <div>생성</div>
-                        <div>생성</div>
-                        <div>생성</div>
+                        <CategoryCreate onCategoryCreated={handleCategoryCreated} />
                     </div>
                 </div>
             </div>

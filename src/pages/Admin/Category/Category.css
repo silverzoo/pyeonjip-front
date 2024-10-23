@@ -80,5 +80,16 @@
 }
 
 .category-item.selected {
-    background-color: lightgray; /* 원하는 색상으로 변경 */
+    background-color: #eee; /* 원하는 색상으로 변경 */
+}
+
+.admin-category-create-btn {
+    background-color: white;
+    color: #343a40;
+    border: 1px solid #343a40;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
