@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../utils/axiosInstance'; // Axios 인스턴스 가져오기
 import './ProductAdmin.css';
+import {toast} from "react-toastify";
 
 function ProductOptionEdit() {
     const { detailId } = useParams(); // URL에서 detailId(옵션 ID) 가져옴
@@ -42,11 +43,17 @@ function ProductOptionEdit() {
                 navigate(-1); // 이전 페이지로 이동
             } else {
                 console.error('Error updating option', response.status);
-                alert('옵션 업데이트 중 오류가 발생했습니다.'); // 사용자에게 알림
+                toast.error('옵션 업데이트 중 오류가 발생했습니다.', {
+                    position: "top-center",
+                    autoClose: 2000,
+                });
             }
         } catch (error) {
             console.error('Error updating option:', error);
-            alert('옵션 업데이트 중 오류가 발생했습니다.');
+            toast.error('옵션 업데이트 중 오류가 발생했습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
     };
 
