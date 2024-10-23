@@ -21,7 +21,7 @@ function ResetPasswordResult() {
                     <p className="mb-4">이메일({email})로 비밀번호 재설정 링크를 보냈습니다. 이메일을 확인해 주세요.</p>
                 </div>
                 <div className="d-flex justify-content-center mb-5">
-                    <Link to="/login" className="user-reset-button">로그인 페이지로 이동</Link>
+                    <Link to="/login" className="user-reset-button" style={{color : 'white'}}>로그인 페이지로 이동</Link>
                 </div>
                 <hr className="mb-3"/>
                 <div className="text-center">
