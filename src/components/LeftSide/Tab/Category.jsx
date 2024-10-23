@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import ToggleIcon from '../ToggleIcon/ToggleIcon';
 import { useLocation } from 'react-router-dom';
 
 function Category({ categories }) {
     const location = useLocation();
     const [expandedCategories, setExpandedCategories] = useState({});
-    // const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
     useEffect(() => {
         const savedExpandedState = JSON.parse(localStorage.getItem('expandedCategories')) || {};
@@ -51,28 +50,22 @@ function Category({ categories }) {
 
     return (
         <>
-            {categories.map((category) => {
-                const isActive = location.pathname === `/category/${category.id}`;
-
-                return (
-                    <div key={category.id}>
-                        <ToggleIcon
-                            label={category.name}
-                            to={`/category/${category.id}`}
-                            isExpanded={expandedCategories[category.id]}
-                            onToggle={() => handleCategoryToggle(category.id)}
-                            isActive={isActive}
-                            hasChildren={category.children && category.children.length > 0}
-                            className={`toggle-icon ${expandedCategories[category.id] ? 'expanded' : ''}`}
-                        />
-                        <div className={`collapse-content ${expandedCategories[category.id] ? 'expanded' : ''}`}>
-                            {expandedCategories[category.id] && category.children && (
-                                <Category categories={category.children} />
-                            )}
-                        </div>
+            {categories.map((category) => (
+                <div key={category.id}>
+                    <ToggleIcon
+                        label={category.name}
+                        to={`/category/${category.id}`}
+                        isExpanded={expandedCategories[category.id]}
+                        onToggle={() => handleCategoryToggle(category.id)}
+                        hasChildren={category.children && category.children.length > 0}
+                    />
+                    <div className={`collapse-content ${expandedCategories[category.id] ? 'expanded' : ''}`}>
+                        {expandedCategories[category.id] && category.children && (
+                            <Category categories={category.children} />
+                        )}
                     </div>
-                );
-            })}
+                </div>
+            ))}
         </>
     );
 }
