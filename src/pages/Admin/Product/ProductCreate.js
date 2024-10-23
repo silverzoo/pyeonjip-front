@@ -134,7 +134,7 @@ function CreateProduct() {
                         ))}
                     </select>
                 </div>
-
+                <hr></hr>
                 <h3>상품 옵션</h3>
                 {options.map((option, index) => (
                     <div key={index} className="form-group">
@@ -175,7 +175,7 @@ function CreateProduct() {
                         <button type="button" onClick={addOption} className="btn btn-secondary">옵션 추가</button>
                     </div>
                 ))}
-
+                <hr></hr>
                 <h3>상품 이미지</h3>
                 {productImages.map((image, index) => (
                     <div key={index} className="form-group">
