@@ -83,7 +83,32 @@
     background-color: #eee; /* 원하는 색상으로 변경 */
 }
 
-.admin-category-create-btn {
+.admin-category-edit-box {
+    display: flex;
+    flex-direction: column;
+    /*justify-content: flex-end;*/
+    align-items: flex-end;
+    height: 100%;
+}
+.admin-category-edit-area {
+    flex-grow: 1;
+    margin: 20px auto 20px 0;
+}
+
+.admin-category-edit-area-name {
+    width: 200px;
+    height: 35px;
+    margin: 20px 0;
+}
+
+.admin-category-edit-area-parent {
+    width: 200px;
+    height: 35px;
+    margin: 20px 0;
+}
+
+
+.admin-category-edit-btn {
     background-color: white;
     color: #343a40;
     border: 1px solid #343a40;
@@ -92,4 +117,22 @@
     margin-left: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+}
+
+.admin-category-delete-btn {
+    background-color: white;
+    color: #343a40;
+    border: 1px solid #343a40;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-category-edit-divider {
+    height: 0.1px;
+    background-color: #ccc;
+    align-self: stretch;
+    margin: 20px 0;
 }
