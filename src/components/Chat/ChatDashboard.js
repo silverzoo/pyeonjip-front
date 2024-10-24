@@ -19,7 +19,7 @@ function ChatDashboard({ onClose, onRoomActivated  }) {
 
   const fetchWaitingRooms = async () => {
     try {
-      const data = await fetchWithAuth('/api/chat/waiting-rooms');
+      const data = await fetchWithAuth('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/waiting-rooms');
       console.log('Fetched waiting rooms:', data);
       setWaitingRooms(data);
     } catch (error) {
@@ -36,7 +36,7 @@ function ChatDashboard({ onClose, onRoomActivated  }) {
         throw new Error('인증 토큰이 없습니다.');
       }
   
-      const response = await fetch(`/api/chat/activate-room/${roomId}`, {
+      const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/activate-room/${roomId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
