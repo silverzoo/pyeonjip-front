@@ -71,7 +71,6 @@ function AdminCategory() {
         setSort(sort+1);
     };
 
-
     // 렌더링 시 전체 클릭 핸들러 추가
     useEffect(() => {
         document.addEventListener('click', handleClickOutside);
@@ -79,6 +78,15 @@ function AdminCategory() {
             document.removeEventListener('click', handleClickOutside);
         };
     }, []);
+
+    const handleCategoryUpdated = () => {
+        setSelectedCategoryId(null);
+        setSelectedCategoryName('');
+        setSelectedParentName(null);
+        setChildrenLength(null);
+        setSort(null);
+    };
+
 
     const handleClickOutside = (event) => {
         // 수정 박스 외부 클릭 시에만 상태를 초기화
@@ -105,7 +113,7 @@ function AdminCategory() {
             });
             const updatedCategories = await fetchGetCategories();
             setCategories(updatedCategories);
-            setSelectedCategoryId(null);
+            handleCategoryUpdated();
         } catch (error) {
             toast.error(error.message, {
                 position: "top-center",
@@ -147,6 +155,7 @@ function AdminCategory() {
                             sort={sort}
                             onCategoryCreated={handleCategoryCreated}
                             onCategoryDeleted={handleCategoryDeleted}
+                            onCategoryUpdated={handleCategoryUpdated}
                             categories={categories}
                         />
 

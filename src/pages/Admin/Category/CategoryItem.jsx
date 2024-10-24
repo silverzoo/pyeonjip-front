@@ -11,7 +11,7 @@ function CategoryItem({ categories, hasParent = false, onCategorySelect, selecte
     };
 
     return (
-        <div>
+        <div style={{cursor: 'pointer'}}>
             {categories && categories.length > 0 ? (
                 categories.map((category) => {
                     const hasChildren = category.children && category.children.length > 0;

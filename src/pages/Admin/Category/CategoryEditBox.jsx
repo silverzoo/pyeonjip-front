@@ -10,6 +10,7 @@ const CategoryEditBox = ({
                              sort,
                              onCategoryCreated,
                              onCategoryDeleted,
+                             onCategoryUpdated,
                              categories
                          }) => {
     const [categoryId, setCategoryId] = useState(Number(selectedCategoryId));
@@ -17,6 +18,7 @@ const CategoryEditBox = ({
     const [parentId, setParentId] = useState('');
     const [parentName, setParentName] = useState('');
     const [sortOrder, setSortOrder] = useState('');
+
 
     useEffect(() => {
         setCategoryId(Number(selectedCategoryId));
@@ -26,14 +28,34 @@ const CategoryEditBox = ({
         setSortOrder(sort);
     }, [selectedCategoryId, selectedCategoryName, selectedParentName, sort, categories]);
 
+    useEffect(() => {
+        if (selectedCategoryId) {
+            const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
+            if (selectedCategory) {
+                setSortOrder(selectedCategory.sort + 1);
+            }
+        }
+    }, [selectedCategoryId, categories]);
+
+
     const handleInputChange = (e) => {
         setCategoryName(e.target.value);
     };
 
     const handleParentChange = (e) => {
         const newParentName = e.target.value;
-        setParentName(e.target.value);
-        setParentId(categories.find(cat => cat.name === newParentName)?.id || '');
+        const newParentId = categories.find(cat => cat.name === newParentName)?.id || '';
+
+        setParentName(newParentName);
+        setParentId(newParentId);
+
+        const parentCategory = categories.find(cat => cat.id === newParentId);
+        if (parentCategory && parentCategory.children) {
+            const newSortOrder = parentCategory.children.length + 1;
+            setSortOrder(newSortOrder);
+        } else {
+            setSortOrder(1);
+        }
     };
 
     const handleSortChange = (e) => {
@@ -52,7 +74,7 @@ const CategoryEditBox = ({
         const categoryData = {
             name: categoryName,
             parentId: parentId || null,
-            sort: sortOrder,
+            sort: parentId ? categories.find(cat => cat.id === parentId).children.length + 1 : 1,
         };
 
         try {
@@ -62,7 +84,6 @@ const CategoryEditBox = ({
                 autoClose: 2000,
             });
             onCategoryCreated();
-
         } catch (error) {
             toast.error(error.message, {
                 position: "top-center",
@@ -80,14 +101,27 @@ const CategoryEditBox = ({
             return;
         }
 
-        const categoryData = {
-            id: categoryId,
-            name: categoryName,
-            parentId: parentId || null,
-            sort: sortOrder-1,
-        };
+        const hasChanges =
+            categoryName !== selectedCategoryName ||
+            (parentId || null) !== (categories.find(cat => cat.name === selectedParentName)?.id || null) ||
+            (sortOrder - 1) !== (sort - 1);
+
+        if (!hasChanges) {
+            toast.warn('수정할 사항이 없습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return;
+        }
 
         try {
+            const categoryData = {
+                id: categoryId,
+                name: categoryName,
+                parentId: parentId || null,
+                sort: sortOrder-1,
+            };
+
             await fetchUpdateCategory(categoryId, categoryData);
             toast.success('카테고리가 수정되었습니다.', {
                 position: "top-center",
@@ -95,6 +129,7 @@ const CategoryEditBox = ({
             });
 
             onCategoryCreated();
+            onCategoryUpdated();
 
         } catch (error) {
             toast.error(error.message, {
@@ -141,9 +176,8 @@ const CategoryEditBox = ({
                             value={parentName}
                             onChange={handleParentChange}
                             className="admin-category-edit-area-name"
-                            placeholder="상위 카테고리 선택" // placeholder 추가
                         />
-                        <div>정렬 순서</div>
+                        <div>순서</div>
                         <select value={sortOrder} onChange={handleSortChange} className="admin-category-edit-area-order">
                             {sortOptions}
                         </select>
