@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-
+const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
 // 토큰 유효성 검사
 const isTokenValid = (token) => {
@@ -97,7 +97,7 @@ export const getUserRole = () => {
 // 로그아웃
 export const logout = async () => {
     try {
-        const response = await fetch('http://localhost:8080/api/auth/logout', {
+        const response = await fetch(BASE_URL + '/api/auth/logout', {
             method: 'POST',
             credentials: 'include',
         });

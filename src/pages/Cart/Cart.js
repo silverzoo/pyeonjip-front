@@ -32,10 +32,11 @@ function CartApp() {
 
     const { isLoggedIn, email, setIsLoggedIn } = useAuth();
     const { items, setItems, loadCartData } = useCart();
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
     // 쿠폰 데이터 로드
     useEffect(() => {
-        fetch('/api/coupon')
+        fetch(BASE_URL + '/api/coupon')
             .then((response) => response.json())
             .then((coupons) => {
                 setCoupons(coupons);
@@ -239,7 +240,7 @@ function CartApp() {
             couponId: couponId
         };
         console.log(checkoutData);
-        const response = await fetch('/api/orders/checkout', {
+        const response = await fetch(BASE_URL + '/api/orders/checkout', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

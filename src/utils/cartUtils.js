@@ -1,8 +1,9 @@
 import {getUserEmail} from "./authUtils";
+const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
 export const addServerCart = (cart, email) => {
 // 로그인 상태: 서버로 장바구니 항목 추가
-fetch(`/api/cart?email=${email}`, {
+fetch(BASE_URL + `/api/cart?email=${email}`, {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
@@ -38,7 +39,7 @@ export const syncWithLocal = () => {
         return;
     }
     const email = getUserEmail();
-    fetch(`/api/cart/sync?email=${email}`, {
+    fetch(BASE_URL + `/api/cart/sync?email=${email}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -62,7 +63,7 @@ export const syncWithLocal = () => {
 // 서버 -> 로컬
 export const syncWithServer = async (email) => {
     try {
-        const response = await fetch(`/api/cart/sync?email=${email}`, {
+        const response = await fetch(BASE_URL + `/api/cart/sync?email=${email}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ const buildQueryString = (cartDtos) => {
 
 export const fetchCartDetails = (cartDtos) => {
     const queryString = buildQueryString(cartDtos);
-    return fetch(`/api/cart/detail?${queryString}`, {
+    return fetch(BASE_URL + `/api/cart/detail?${queryString}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -134,7 +135,7 @@ export const fetchCartDetails = (cartDtos) => {
 };
 
 export const updateCartItemQuantity = (email, quantity, cartItem) => {
-    fetch(`/api/cart/${cartItem.optionId}?email=${email}`, {
+    fetch(BASE_URL + `/api/cart/${cartItem.optionId}?email=${email}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -157,7 +158,7 @@ export const updateCartItemQuantity = (email, quantity, cartItem) => {
 
 
 export const deleteCartItem = (email, optionId) => {
-    fetch(`/api/cart/${optionId}?email=${email}`, {
+    fetch(BASE_URL + `/api/cart/${optionId}?email=${email}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -182,7 +183,7 @@ export const deleteCartItem = (email, optionId) => {
 
 
 export const deleteAllCartItems = (email) => {
-    fetch(`/api/cart?email=${email}`, {
+    fetch(BASE_URL + `/api/cart?email=${email}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',

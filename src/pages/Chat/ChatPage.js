@@ -71,7 +71,7 @@ const ChatPage = () => {
     if (selectedCategory === '이전 문의 내역') {
       const userId = userEmail; // 실제 사용자 ID로 변경 필요
       try {
-        const response = await fetch(`/api/chat/chat-room-list/${userId}`,{
+        const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/chat-room-list/${userId}`,{
           headers: { 'Authorization': `Bearer ${localStorage.getItem('access')}` }
         });
         const chatRoomsData = await response.json();
@@ -101,7 +101,7 @@ const ChatPage = () => {
     } else {
       try {
         setIsLoading(true);  // 로딩 상태 추가
-        const response = await fetch('/api/chat/waiting-room', {
+        const response = await fetch('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/waiting-room', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -180,7 +180,7 @@ const ChatPage = () => {
   
   const loadChatMessages = useCallback(async (roomId) => {
     try {
-      const response = await fetch(`/api/chat/chat-message-history/${roomId}`, {
+      const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/chat-message-history/${roomId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('access')}` }
       });
       if (!response.ok) throw new Error('Failed to load chat messages');
@@ -205,7 +205,7 @@ const ChatPage = () => {
   const handleRoomSelect = useCallback(async (roomId) => {
     try {
       console.log('Selecting room:', roomId);
-      const response = await fetch(`/api/chat/chat-room/${roomId}`, {
+      const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/chat-room/${roomId}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('access')}` }
       });
       if (!response.ok) throw new Error('Failed to fetch chat room');
@@ -251,7 +251,7 @@ const ChatPage = () => {
 
   const handleCloseChatRoom = async (roomId) => {
     try {
-      const response = await fetch(`/api/chat/close-room/${roomId}`, {
+      const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/chat/close-room/${roomId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

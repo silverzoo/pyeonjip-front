@@ -8,7 +8,7 @@ const WaitingRoom = ({ room, onRoomActivated }) => {
 
   useEffect(() => {
     const token = localStorage.getItem('access');
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/ws');
     const stompClient = new Client({
       webSocketFactory: () => socket,
       connectHeaders: {
