@@ -3,7 +3,7 @@ import Icon from "./Icon";
 
 function CategoryItem({ categories, hasParent = false, onCategorySelect, selectedCategoryId }) {
     const handleCategoryClick = (id, hasChildren, e) => {
-        // e.stopPropagation();
+        e.stopPropagation();
 
         if (!hasChildren) {
             onCategorySelect(id);

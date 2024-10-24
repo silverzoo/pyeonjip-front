@@ -42,9 +42,9 @@ export const fetchCreateCategory = async (categoryData) => {
 };
 
 // ADMIN - 카테고리 수정
-export const fetchUpdateCategory = async (categoryData) => {
+export const fetchUpdateCategory = async (categoryId, categoryData) => {
     try {
-        const response = await axiosInstance.patch(`/api/admin/category`, categoryData);
+        const response = await axiosInstance.patch(`/api/admin/category/${categoryId}`, categoryData);
         return response.data;
     } catch (error) {
         await handleErrorResponse(error);

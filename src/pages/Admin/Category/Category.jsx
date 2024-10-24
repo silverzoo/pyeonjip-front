@@ -1,6 +1,6 @@
 // AdminCategory.js
 import './Category.css';
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { fetchDeleteCategory, fetchGetCategories } from "../../../api/AdminUtils";
 import CategoryItem from "./CategoryItem";
 import CategoryEditBox from "./CategoryEditBox";
@@ -13,6 +13,7 @@ function AdminCategory() {
     const [selectedParentName, setSelectedParentName] = useState('');
     const [childrenLength, setChildrenLength] = useState(1);
     const [sort, setSort] = useState(1);
+    const editBoxRef = useRef(null);
 
     useEffect(() => {
         window.feather.replace();
@@ -79,8 +80,15 @@ function AdminCategory() {
         };
     }, []);
 
-    const handleClickOutside = () => {
-        setSelectedCategoryId(null);
+    const handleClickOutside = (event) => {
+        // 수정 박스 외부 클릭 시에만 상태를 초기화
+        if (editBoxRef.current && !editBoxRef.current.contains(event.target)) {
+            setSelectedCategoryId(null);
+            setSelectedCategoryName('');
+            setSelectedParentName(null);
+            setChildrenLength(null);
+            setSort(null);
+        }
     };
 
     const handleCategoryCreated = async () => {
@@ -130,7 +138,7 @@ function AdminCategory() {
                         />
                     </div>
                     <div className="admin-category-divider"></div>
-                    <div className="admin-category-item" style={{ marginLeft: '20px' }}>
+                    <div className="admin-category-item" style={{ marginLeft: '20px' }} ref={editBoxRef}>
                         <CategoryEditBox
                             selectedCategoryId={selectedCategoryId}
                             selectedCategoryName={selectedCategoryName}

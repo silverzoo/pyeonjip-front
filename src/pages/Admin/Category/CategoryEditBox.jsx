@@ -12,34 +12,35 @@ const CategoryEditBox = ({
                              onCategoryDeleted,
                              categories
                          }) => {
-
     const [categoryId, setCategoryId] = useState(Number(selectedCategoryId));
     const [categoryName, setCategoryName] = useState(selectedCategoryName);
     const [parentId, setParentId] = useState('');
+    const [parentName, setParentName] = useState('');
     const [sortOrder, setSortOrder] = useState('');
 
     useEffect(() => {
-        console.log(selectedCategoryId)
-        console.log(selectedCategoryName)
         setCategoryId(Number(selectedCategoryId));
         setCategoryName(selectedCategoryName);
         setParentId(selectedParentName ? categories.find(cat => cat.name === selectedParentName)?.id : '');
+        setParentName(selectedParentName);
         setSortOrder(sort);
-    }, [selectedCategoryName, selectedParentName, sort, categories]);
+    }, [selectedCategoryId, selectedCategoryName, selectedParentName, sort, categories]);
 
     const handleInputChange = (e) => {
         setCategoryName(e.target.value);
     };
 
     const handleParentChange = (e) => {
-        setParentId(e.target.value);
+        const newParentName = e.target.value;
+        setParentName(e.target.value);
+        setParentId(categories.find(cat => cat.name === newParentName)?.id || '');
     };
 
     const handleSortChange = (e) => {
         setSortOrder(e.target.value);
     };
 
-    const handleCreateOrUpdate = async () => {
+    const handleCreate = async () => {
         if (!categoryName) {
             toast.warn('카테고리 이름을 입력해주세요.', {
                 position: "top-center",
@@ -49,30 +50,52 @@ const CategoryEditBox = ({
         }
 
         const categoryData = {
-            id: selectedCategoryId,
             name: categoryName,
             parentId: parentId || null,
             sort: sortOrder,
         };
 
         try {
-            if (selectedCategoryId) {
-                await fetchUpdateCategory(categoryData);
-                toast.success('카테고리가 수정되었습니다.', {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
-            } else {
-                await fetchCreateCategory(categoryData);
-                toast.success('카테고리가 생성되었습니다.', {
-                    position: "top-center",
-                    autoClose: 2000,
-                });
-            }
+            await fetchCreateCategory(categoryData);
+            toast.success('카테고리가 생성되었습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
             onCategoryCreated();
-            setCategoryName('');
-            setParentId('');
-            setSortOrder('');
+
+        } catch (error) {
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+
+    const handleUpdate = async () => {
+        if (!categoryName) {
+            toast.warn('카테고리 이름을 입력해주세요.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
+            return;
+        }
+
+        const categoryData = {
+            id: categoryId,
+            name: categoryName,
+            parentId: parentId || null,
+            sort: sortOrder-1,
+        };
+
+        try {
+            await fetchUpdateCategory(categoryId, categoryData);
+            toast.success('카테고리가 수정되었습니다.', {
+                position: "top-center",
+                autoClose: 2000,
+            });
+
+            onCategoryCreated();
+
         } catch (error) {
             toast.error(error.message, {
                 position: "top-center",
@@ -82,9 +105,9 @@ const CategoryEditBox = ({
     };
 
     const handleDelete = async () => {
-        console.log(categoryId);
         if (categoryId !== null) {
             await onCategoryDeleted(categoryId);
+            onCategoryCreated();
         } else {
             toast.warn('삭제할 카테고리를 선택해주세요.', {
                 position: "top-center",
@@ -93,11 +116,12 @@ const CategoryEditBox = ({
         }
     };
 
-    const sortOptions = Array.from({length: childrenLength > 0 ? childrenLength : 1}, (_, index) => (
+    const sortOptions = Array.from({ length: categoryId && !parentId ? sortOrder : childrenLength > 0 ? childrenLength : 1 }, (_, index) => (
         <option key={index + 1} value={index + 1}>
             {index + 1}
         </option>
     ));
+
 
     return (
         <div className="admin-category-edit-box">
@@ -109,30 +133,36 @@ const CategoryEditBox = ({
                     onChange={handleInputChange}
                     className="admin-category-edit-area-name"
                 />
-                <div>상위 카테고리</div>
-                <input
-                    type="text"
-                    value={selectedParentName || '없음'}
-                    onChange={handleParentChange}
-                    className="admin-category-edit-area-name"
-                />
-                <div>정렬 순서</div>
-                <select value={sortOrder} // Use sortOrder instead of sort
-                        onChange={handleSortChange}
-                        className="admin-category-edit-area-order">
-                    {sortOptions}
-                </select>
+                {categoryId ? (
+                    <>
+                        <div>상위 카테고리</div>
+                        <input
+                            type="text"
+                            value={parentName}
+                            onChange={handleParentChange}
+                            className="admin-category-edit-area-name"
+                            placeholder="상위 카테고리 선택" // placeholder 추가
+                        />
+                        <div>정렬 순서</div>
+                        <select value={sortOrder} onChange={handleSortChange} className="admin-category-edit-area-order">
+                            {sortOptions}
+                        </select>
+                    </>
+                ) : null}
             </div>
 
             <div className="admin-category-edit-divider"></div>
             <div className="admin-category-edit-btns">
-                <button className="admin-category-edit-btn" onClick={handleCreateOrUpdate}>
-                    {selectedCategoryId ? '수정' : '생성'}
-                </button>
+                {categoryId ? (
+                    <button className="admin-category-edit-btn" onClick={handleUpdate}>수정</button>
+                ) : (
+                    <button className="admin-category-edit-btn" onClick={handleCreate}>생성</button>
+                )}
                 <button className="admin-category-delete-btn" onClick={handleDelete}>삭제</button>
             </div>
         </div>
     );
+
 };
 
 export default CategoryEditBox;
