@@ -9,9 +9,10 @@ function ProductRate({ productId }) {
         const queryParams = new URLSearchParams(location.search);
         const idFromQuery = queryParams.get('productId');
         const idToFetch = productId || idFromQuery;
+        const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
         if (idToFetch) {
-            fetch(`/api/comments/product-rating/${idToFetch}`)
+            fetch(BASE_URL + `/api/comments/product-rating/${idToFetch}`)
                 .then((response) => response.json())
                 .then((data) => {
                     if (Array.isArray(data)) {

@@ -21,6 +21,7 @@ function ProductDetail() {
     const [comments, setComments] = useState([]);
     const { isLoggedIn, email} = useAuth();
     const {loadCartData} = useCart();
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
     const [product, setProduct] = useState({
         productImages: [],
@@ -40,7 +41,7 @@ function ProductDetail() {
     }, []);
 
     useEffect(() => {
-        fetch(`/api/products/${productId}`)
+        fetch(BASE_URL + `/api/products/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setProduct(data);
@@ -58,7 +59,7 @@ function ProductDetail() {
             })
             .catch((error) => console.error('Error fetching product details:', error));
 
-        fetch(`/api/comments/product/${productId}`)
+        fetch(BASE_URL + `/api/comments/product/${productId}`)
             .then((response) => response.json())
             .then((data) => {
                 setComments(Array.isArray(data) ? data : []);
