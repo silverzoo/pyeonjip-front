@@ -8,7 +8,7 @@ import {toast} from "react-toastify";
 function Comment({ productId, setCommentUpdated, comments, setComments, email, isLoggedIn}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [showInput, setShowInput] = useState(false);
-    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
     const handleAddComment = async ({ title, content, rating }) => {
         const comment = { title, content, productId, email, rating };

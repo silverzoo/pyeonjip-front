@@ -21,7 +21,7 @@ function ProductDetail() {
     const [comments, setComments] = useState([]);
     const { isLoggedIn, email} = useAuth();
     const {loadCartData} = useCart();
-    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
     const [product, setProduct] = useState({
         productImages: [],
