@@ -92,6 +92,7 @@ const CategoryEditBox = ({
                 position: "top-center",
                 autoClose: 2000,
             });
+            setCategoryName('');
         }
     };
 
