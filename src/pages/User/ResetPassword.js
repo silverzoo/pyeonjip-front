@@ -37,7 +37,7 @@ function ResetPassword() {
         }
 
         try {
-            const response = await fetch('http://localhost:8080/api/auth/check', {
+            const response = await fetch('/api/auth/check', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ function ResetPassword() {
                 navigate('/reset/result', { state: { email } });
 
                 // 비밀번호 재설정 이메일 발송 API 호출
-                await fetch('http://localhost:8080/api/auth/check/reset', {
+                await fetch('/api/auth/check/reset', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

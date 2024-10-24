@@ -11,7 +11,7 @@ const handleErrorResponse = async (error) => {
 
 // 모든 카테고리 가져오기
 export const fetchGetCategories = async () => {
-    const response = await fetch('/api/category');
+    const response = await fetch('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/category');
     if (!response.ok) {
         const errorData = await response.json(); // JSON 형태로 변환
         throw new Error(errorData.message || '카테고리를 가져오는 중 에러가 발생했습니다.');

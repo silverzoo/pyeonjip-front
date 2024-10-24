@@ -146,7 +146,7 @@ function OrderPage() {
 
         // 쿠폰 비활성화 API 호출
         if (couponId) {
-          await fetch(`http://localhost:8080/api/coupon/use/${couponId}`, {
+          await fetch(`/api/coupon/use/${couponId}`, {
             method: 'POST',
           });
           console.log('쿠폰이 성공적으로 비활성화되었습니다.');

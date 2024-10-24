@@ -19,7 +19,7 @@ function FindAccount() {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/auth/find?name=${name}&phoneNumber=${phoneNumber}`, {
+            const response = await fetch(`/api/auth/find?name=${name}&phoneNumber=${phoneNumber}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
