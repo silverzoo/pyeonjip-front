@@ -5,7 +5,6 @@
     justify-content: center;
     height: 100%;
     margin: 10px 10px;
-    cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 15px;
@@ -23,12 +22,12 @@
     padding: 10px;
     overflow-y: auto;
     height: 500px;
+
 }
 
 .admin-category-divider {
     width: 0.1px;
     background-color: #ccc;
-    /*height: 100%;*/
     align-self: stretch;
 }
 
@@ -98,16 +97,20 @@
 .admin-category-edit-area-name {
     width: 200px;
     height: 35px;
-    margin: 20px 0;
+    margin: 20px 0 30px 0;
 }
 
 .admin-category-edit-area-parent {
     width: 200px;
     height: 35px;
-    margin: 20px 0;
+    margin: 20px 0 30px 0;
 }
 
-
+.admin-category-edit-area-order {
+    width: 200px;
+    height: 35px;
+    margin: 20px 0 30px 0;
+}
 .admin-category-edit-btn {
     background-color: white;
     color: #343a40;

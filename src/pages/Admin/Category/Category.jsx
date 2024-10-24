@@ -1,6 +1,6 @@
 // AdminCategory.js
 import './Category.css';
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { fetchDeleteCategory, fetchGetCategories } from "../../../api/AdminUtils";
 import CategoryItem from "./CategoryItem";
 import CategoryEditBox from "./CategoryEditBox";
@@ -8,9 +8,12 @@ import { toast } from "react-toastify";
 
 function AdminCategory() {
     const [categories, setCategories] = useState([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+    const [selectedCategoryId, setSelectedCategoryId] = useState('');
     const [selectedCategoryName, setSelectedCategoryName] = useState('');
-    const categoryListRef = useRef(null);
+    const [selectedParentName, setSelectedParentName] = useState('');
+    const [childrenLength, setChildrenLength] = useState(1);
+    const [sort, setSort] = useState(1);
+    const editBoxRef = useRef(null);
 
     useEffect(() => {
         window.feather.replace();
@@ -28,10 +31,44 @@ function AdminCategory() {
         fetchCategories();
     }, []);
 
-    // 카테고리 선택 시 호출
-    const handleCategorySelect = (id, name) => {
-        setSelectedCategoryId(id);
-        setSelectedCategoryName(name);
+    const findCategoryById = (categories, id) => {
+        for (const category of categories) {
+            if (category.id === id) {
+                return category; // 카테고리 발견
+            }
+            // 자식 카테고리에서 재귀적으로 검색
+            if (category.children) {
+                const foundCategory = findCategoryById(category.children, id);
+                if (foundCategory) {
+                    return foundCategory; // 자식 카테고리에서 발견
+                }
+            }
+        }
+        return null;
+    };
+
+    const handleCategorySelect = (id) => {
+        console.log('Selected ID:', id);
+        console.log('Categories:', categories);
+
+        const selectedCategory = findCategoryById(categories, id);
+
+        const selectedId = selectedCategory ? selectedCategory.id : '';
+        const selectedName = selectedCategory ? selectedCategory.name : '';
+        const parentId = selectedCategory ? selectedCategory.parentId : null;
+        const sort = selectedCategory ? selectedCategory.sort : 1;
+        console.log(sort)
+
+        // 부모 ID를 통해 부모 카테고리를 찾아 자식 길이를 얻음
+        const parentCategory = parentId ? categories.find(cat => cat.id === parentId) : null;
+        const parentName = parentCategory ? parentCategory.name : '';
+        const childrenLength = parentCategory && parentCategory.children ? parentCategory.children.length : 1;
+
+        setSelectedCategoryId(selectedId);
+        setSelectedCategoryName(selectedName);
+        setSelectedParentName(parentName);
+        setChildrenLength(childrenLength);
+        setSort(sort+1);
     };
 
     // 렌더링 시 전체 클릭 핸들러 추가
@@ -42,16 +79,29 @@ function AdminCategory() {
         };
     }, []);
 
-    const handleClickOutside = () => {
+    const handleCategoryUpdated = () => {
         setSelectedCategoryId(null);
+        setSelectedCategoryName('');
+        setSelectedParentName(null);
+        setChildrenLength(null);
+        setSort(null);
+    };
+
+
+    const handleClickOutside = (event) => {
+        // 수정 박스 외부 클릭 시에만 상태를 초기화
+        if (editBoxRef.current && !editBoxRef.current.contains(event.target)) {
+            setSelectedCategoryId(null);
+            setSelectedCategoryName('');
+            setSelectedParentName(null);
+            setChildrenLength(null);
+            setSort(null);
+        }
     };
 
     const handleCategoryCreated = async () => {
         const updatedCategories = await fetchGetCategories();
         setCategories(updatedCategories);
-        if (categoryListRef.current) {
-            categoryListRef.current.scrollTop = categoryListRef.current.scrollHeight;
-        }
     };
 
     const handleCategoryDeleted = async (id) => {
@@ -63,7 +113,7 @@ function AdminCategory() {
             });
             const updatedCategories = await fetchGetCategories();
             setCategories(updatedCategories);
-            setSelectedCategoryId(null);
+            handleCategoryUpdated();
         } catch (error) {
             toast.error(error.message, {
                 position: "top-center",
@@ -86,7 +136,7 @@ function AdminCategory() {
                 </span>
             </div>
             <div className="admin-category-list-container">
-                <div className="admin-category-list" ref={categoryListRef}>
+                <div className="admin-category-list">
                     <div className="admin-category-item">
                         <CategoryItem
                             categories={categories}
@@ -96,13 +146,19 @@ function AdminCategory() {
                         />
                     </div>
                     <div className="admin-category-divider"></div>
-                    <div className="admin-category-item" style={{ marginLeft: '20px' }}>
+                    <div className="admin-category-item" style={{ marginLeft: '20px' }} ref={editBoxRef}>
                         <CategoryEditBox
-                            onCategoryCreated={handleCategoryCreated}
                             selectedCategoryId={selectedCategoryId}
                             selectedCategoryName={selectedCategoryName}
+                            selectedParentName={selectedParentName}
+                            childrenLength={childrenLength}
+                            sort={sort}
+                            onCategoryCreated={handleCategoryCreated}
                             onCategoryDeleted={handleCategoryDeleted}
+                            onCategoryUpdated={handleCategoryUpdated}
+                            categories={categories}
                         />
+
                     </div>
                 </div>
             </div>

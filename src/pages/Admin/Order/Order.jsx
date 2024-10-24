@@ -22,8 +22,16 @@ function AdminOrder() {
         const fetchData = async () => {
             try {
                 const data = await fetchGetOrders(currentPage, 5, 'createdAt', sortOrder, email);
-                setOrders(data.content);
-                setTotalPages(data.totalPages);
+
+                // 데이터가 없을 경우 totalPages를 1로 설정
+                if (data.content.length === 0) {
+                    setOrders([]); // 빈 배열 설정
+                    setTotalPages(1); // totalPages를 1로 설정
+                    setCurrentPage(0); // 현재 페이지를 0으로 설정
+                } else {
+                    setOrders(data.content);
+                    setTotalPages(data.totalPages);
+                }
             } catch (error) {
                 toast.error(error.message, {
                     position: "top-center",
@@ -91,9 +99,26 @@ function AdminOrder() {
         const newSortOrder = event.target.value;
         setSortOrder(newSortOrder);
         setCurrentPage(0);
+        setEmail('');
 
         try {
             const data = await fetchGetOrders(0, 5, 'createdAt', newSortOrder);
+            setOrders(data.content);
+            setTotalPages(data.totalPages);
+        } catch (error) {
+            toast.error(error.message, {
+                position: "top-center",
+                autoClose: 2000,
+            });
+        }
+    };
+
+    const handleSearch = async (searchEmail) => {
+        setEmail(searchEmail);
+        setCurrentPage(0);
+
+        try {
+            const data = await fetchGetOrders(0, 5, 'createdAt', sortOrder, searchEmail);
             setOrders(data.content);
             setTotalPages(data.totalPages);
         } catch (error) {
@@ -112,7 +137,7 @@ function AdminOrder() {
                     <option value="desc">최신순</option>
                     <option value="asc">오래된순</option>
                 </select>
-                <Search setEmail={setEmail} fetchGetOrders={fetchGetOrders} setOrders={setOrders} />
+                 <Search setEmail={setEmail} email={email} />
             </div>
             <div className="admin-order-content">
                 <OrderList orders={orders} onDelete={handleDelete}/>

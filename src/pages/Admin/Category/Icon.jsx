@@ -13,7 +13,7 @@ function Icon({ hasChildren, hasParent }) {
                         <i data-feather="more-vertical"
                            style={{width: '10px', height: '16px', marginTop: '-3px', marginRight: '-6px'}}></i>
                         <i data-feather="more-horizontal"
-                           style={{width: '10px', height: '16px', marginTop: '3px', marginRight: '5px'}}></i>&nbsp;
+                           style={{width: '10px', height: '16px', marginTop: '3px'}}></i>&nbsp;
                         <i data-feather="folder"
                            style={{width: '16px', height: '16px', marginTop: '-3px', marginRight: '3px'}}></i>&nbsp;
                     </i>
