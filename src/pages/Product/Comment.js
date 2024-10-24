@@ -8,12 +8,13 @@ import {toast} from "react-toastify";
 function Comment({ productId, setCommentUpdated, comments, setComments, email, isLoggedIn}) {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [showInput, setShowInput] = useState(false);
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
     const handleAddComment = async ({ title, content, rating }) => {
         const comment = { title, content, productId, email, rating };
 
         try {
-            const response = await fetch('/api/comments', {
+            const response = await fetch(BASE_URL + '/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(comment),
@@ -38,7 +39,7 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
 
     const handleUpdateComment = async ({ title, content, rating }) => {
         try {
-            const response = await fetch(`/api/comments/${editingCommentId}`, {
+            const response = await fetch(BASE_URL + `/api/comments/${editingCommentId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, content, rating }),
@@ -66,7 +67,7 @@ function Comment({ productId, setCommentUpdated, comments, setComments, email, i
 
     const handleDeleteComment = async (id) => {
         try {
-            const response = await fetch(`/api/comments/${id}`, { method: 'DELETE' });
+            const response = await fetch(BASE_URL + `/api/comments/${id}`, { method: 'DELETE' });
 
             if (!response.ok) {
                 throw new Error('리뷰 삭제에 실패했습니다.');
