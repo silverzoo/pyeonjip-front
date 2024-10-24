@@ -1,6 +1,6 @@
 const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 export const fetchCouponsAPI = async () => {
-    const response = await fetch('/api/coupon');
+    const response = await fetch(BASE_URL + '/api/coupon');
     return await response.json();
 };
 
