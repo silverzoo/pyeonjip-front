@@ -44,19 +44,22 @@ const CategoryEditBox = ({
 
     const handleParentChange = (e) => {
         const newParentName = e.target.value;
-        const newParentId = categories.find(cat => cat.name === newParentName)?.id || '';
-
         setParentName(newParentName);
+
+        // 부모 ID 조회
+        const parentCategory = categories.find(cat => cat.name === newParentName);
+        const newParentId = parentCategory ? parentCategory.id : '';
+
         setParentId(newParentId);
 
-        const parentCategory = categories.find(cat => cat.id === newParentId);
-        if (parentCategory && parentCategory.children) {
-            const newSortOrder = parentCategory.children.length + 1;
-            setSortOrder(newSortOrder);
+        // 자식 카테고리 길이 계산
+        if (parentCategory) {
+            setSortOrder(parentCategory.children.length + 1);
         } else {
             setSortOrder(1);
         }
     };
+
 
     const handleSortChange = (e) => {
         setSortOrder(e.target.value);
