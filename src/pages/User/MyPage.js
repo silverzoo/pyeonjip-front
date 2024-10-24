@@ -37,11 +37,16 @@ function MyPage() {
     // 구매 내역을 가져오는 함수
     const fetchPurchaseHistory = async (email) => {
         try {
-            const { data } = await axiosInstance.get(`/api/orders?email=${email}`);
-            setPurchaseHistory(data);
+            setPurchaseHistory([]);
+            const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/orders?email=${email}`);
+            if (!response.ok) {
+                throw new Error('구매 내역을 불러오는 데 실패했습니다.');
+            }
+            const data = await response.json();
+            setPurchaseHistory(Array.isArray(data) ? data : []);
         } catch (error) {
-            console.error("오류");
-            setPurchaseHistory();
+            console.error('오류', error);
+            setPurchaseHistory([]);
         }
     };
 
@@ -81,7 +86,10 @@ function MyPage() {
     const handleConfirmCancel = async (orderId) => {
         try {
             toast.dismiss();
-            await axiosInstance.patch(`/api/orders/${orderId}`);
+            const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/orders/${orderId}`, { method: 'PATCH' });
+            if (!response.ok) {
+                throw new Error('이미 배송이 진행되었습니다.');
+            }
             toast.success("주문이 취소되었습니다.", {
                 position: "top-center",
                 autoClose: 2000,
@@ -102,13 +110,17 @@ function MyPage() {
     // 나의 등급을 가져오는 함수
     const fetchUserGrade = async (email) => {
         try {
-            const { data } = await axiosInstance.get(`/api/user/${email}`);
+            const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/user/${email}`);
+            if (!response.ok) {
+                throw new Error('등급 정보를 불러오는 데 실패했습니다.');
+            }
+            const data = await response.json();
             setGradeInfo(data);
         } catch (error) {
-            setErrorMessage('등급 정보를 가져오는 중 오류가 발생했습니다.');
+            setErrorMessage(error.message);
         }
     };
-
+    
     // 탭에 따라 데이터를 가져오는 함수
     const fetchDataByTab = (email) => {
         if (activeTab === '구매 내역') {
