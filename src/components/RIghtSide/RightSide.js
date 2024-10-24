@@ -17,6 +17,7 @@ const SidePanelApp = () => {
 
     const { isLoggedIn, email, setIsLoggedIn, handleContextLogout } = useAuth();
     const { items, setItems, loadCartData } = useCart();
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
     useEffect(() => {
         updateTotalPrice(items);
@@ -25,7 +26,7 @@ const SidePanelApp = () => {
     // 로그아웃 핸들러
     const handleLogout = async () => {
         try {
-            const response = await fetch('/api/auth/logout', {
+            const response = await fetch(BASE_URL + '/api/auth/logout', {
                 method: 'POST',
                 credentials: 'include',
             });

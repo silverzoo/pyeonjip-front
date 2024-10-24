@@ -20,6 +20,7 @@ function SandboxApp() {
     const [hasMore, setHasMore] = useState(true);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
 
 
     const { isLoggedIn, email} = useAuth();
@@ -29,7 +30,7 @@ function SandboxApp() {
         const fetchProducts = async () => {
             try {
                 if (!categoryId) {
-                    const response = await fetch(`/api/products/all-pages?page=${currentPage}&size=9`);
+                    const response = await fetch(BASE_URL + `/api/products/all-pages?page=${currentPage}&size=9`);
                     const data = await response.json();
                     setItems(prevItems => currentPage === 0 ? data.content : [...prevItems, ...data.content]);
                     setHasMore(data.content.length > 0);
@@ -37,7 +38,7 @@ function SandboxApp() {
                     let categoryResponse;
 
                     try {
-                        categoryResponse = await fetch(`/api/category?categoryIds=${categoryId}`);
+                        categoryResponse = await fetch(BASE_URL + `/api/category?categoryIds=${categoryId}`);
 
                         if (!categoryResponse.ok) {
                             throw new Error(`Category fetch failed with status: ${categoryResponse.status}`);
@@ -53,7 +54,7 @@ function SandboxApp() {
 
                     const categoryIds = await categoryResponse.json();
                     const queryParams = categoryIds.map(id => `categoryIds=${id}`).join('&');
-                    const productResponse = await fetch(`/api/products/categories?${queryParams}`);
+                    const productResponse = await fetch(BASE_URL + `/api/products/categories?${queryParams}`);
                     if (productResponse.status === 404) {
                         navigate('/not-found');
                     }
