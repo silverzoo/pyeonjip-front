@@ -1,5 +1,5 @@
 import { jwtDecode } from 'jwt-decode';
-const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
 // 토큰 유효성 검사
 const isTokenValid = (token) => {

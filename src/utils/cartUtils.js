@@ -1,5 +1,5 @@
 import {getUserEmail} from "./authUtils";
-const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
 export const addServerCart = (cart, email) => {
 // 로그인 상태: 서버로 장바구니 항목 추가

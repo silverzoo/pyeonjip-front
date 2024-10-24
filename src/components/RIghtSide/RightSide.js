@@ -17,7 +17,7 @@ const SidePanelApp = () => {
 
     const { isLoggedIn, email, setIsLoggedIn, handleContextLogout } = useAuth();
     const { items, setItems, loadCartData } = useCart();
-    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
     useEffect(() => {
         updateTotalPrice(items);

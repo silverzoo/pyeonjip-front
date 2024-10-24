@@ -32,7 +32,7 @@ function CartApp() {
 
     const { isLoggedIn, email, setIsLoggedIn } = useAuth();
     const { items, setItems, loadCartData } = useCart();
-    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/";
+    const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
     // 쿠폰 데이터 로드
     useEffect(() => {
