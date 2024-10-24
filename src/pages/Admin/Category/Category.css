@@ -98,16 +98,20 @@
 .admin-category-edit-area-name {
     width: 200px;
     height: 35px;
-    margin: 20px 0;
+    margin: 20px 0 30px 0;
 }
 
 .admin-category-edit-area-parent {
     width: 200px;
     height: 35px;
-    margin: 20px 0;
+    margin: 20px 0 30px 0;
 }
 
-
+.admin-category-edit-area-order {
+    width: 200px;
+    height: 35px;
+    margin: 20px 0 30px 0;
+}
 .admin-category-edit-btn {
     background-color: white;
     color: #343a40;

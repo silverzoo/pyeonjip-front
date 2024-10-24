@@ -41,6 +41,16 @@ export const fetchCreateCategory = async (categoryData) => {
     }
 };
 
+// ADMIN - 카테고리 수정
+export const fetchUpdateCategory = async (categoryData) => {
+    try {
+        const response = await axiosInstance.patch(`/api/admin/category`, categoryData);
+        return response.data;
+    } catch (error) {
+        await handleErrorResponse(error);
+    }
+};
+
 // ADMIN - 모든 주문목록 가져오기
 export const fetchGetOrders = async (page = 0, size = 5, sortField = 'createdAt', sortDir = 'desc', keyword = '') => {
     try {
