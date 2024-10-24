@@ -27,7 +27,7 @@ function SignUp() {
         // 전화번호를 세 파트로 나눈 값을 결합하여 하나의 전화번호로 만듦
         const phoneNumber = `${phoneNumberPart1}${phoneNumberPart2}${phoneNumberPart3}`;
 
-        const response = await fetch('/api/user/signup', {
+        const response = await fetch('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/user/signup', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
