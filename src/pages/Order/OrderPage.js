@@ -46,7 +46,7 @@ function OrderPage() {
       }
 
       try {
-        const response = await fetch(`/api/user/${userEmail}`);
+        const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/user/${userEmail}`);
         if (!response.ok) {
           throw new Error(`HTTP 에러 발생, 현재 상태: ${response.status}`);
         }
@@ -126,7 +126,7 @@ function OrderPage() {
         userEmail: userEmail,
       };
 
-      const response = await fetch(`/api/orders?email=${userEmail}`, {
+      const response = await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/orders?email=${userEmail}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -139,14 +139,14 @@ function OrderPage() {
         console.log('주문이 성공적으로 완료되었습니다.');
 
         // 장바구니 비우기 API 호출
-        await fetch(`/api/cart?email=${userEmail}`, {
+        await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/cart?email=${userEmail}`, {
           method: 'DELETE',
         });
         console.log('장바구니가 성공적으로 비워졌습니다.');
 
         // 쿠폰 비활성화 API 호출
         if (couponId) {
-          await fetch(`/api/coupon/use/${couponId}`, {
+          await fetch(`https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/coupon/use/${couponId}`, {
             method: 'POST',
           });
           console.log('쿠폰이 성공적으로 비활성화되었습니다.');
@@ -168,6 +168,7 @@ function OrderPage() {
     navigate('/cart'); // 돌아가기 버튼 클릭 시 장바구니 페이지로 이동
   };
 
+  
   if (error) {
     return <div>{error}</div>;
   }

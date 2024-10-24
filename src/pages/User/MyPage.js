@@ -141,11 +141,11 @@ function MyPage() {
         switch (field) {
             case 'address':
                 updatedValue = user.address;
-                endpoint = `/api/user/address/${email}`;
+                endpoint = `https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/user/address/${email}`;
                 break;
             case 'password':
                 updatedValue = prompt('새 비밀번호를 입력해주세요:');
-                endpoint = `/api/user/password/${email}`;
+                endpoint = `https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/user/password/${email}`;
                 break;
             default:
                 return;
