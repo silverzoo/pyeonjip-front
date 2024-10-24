@@ -36,7 +36,7 @@ function Login() {
             return;
         }
 
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch('https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io/api/auth/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
