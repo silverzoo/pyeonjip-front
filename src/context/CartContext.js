@@ -3,6 +3,7 @@ import { fetchCartDetails } from '../utils/cartUtils';
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
+const BASE_URL = "https://dsrkzpzrzxqkarjw.tunnel-pt.elice.io";
 
 export const useCart = () => useContext(CartContext);
 
@@ -14,7 +15,7 @@ export const CartProvider = ({ children }) => {
     const loadCartData = useCallback(async () => {
         try {
             if (isLoggedIn) {
-                const response = await fetch(`/api/cart?email=${email}`);
+                const response = await fetch(BASE_URL + `/api/cart?email=${email}`);
                 const cartDetailDtos = await response.json();
                 setItems(cartDetailDtos);
                 console.log('Cart 동기화 완료:', cartDetailDtos);
