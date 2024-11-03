@@ -1,70 +1,113 @@
-# Getting Started with Create React App
+# 가구 쇼핑몰 프로젝트 '편집'
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 서비스 소개
+우리 가구 쇼핑몰 ʻ편집’은,
+#### 1. 다양한 제품군
+소파, 테이블, 의자 등 다양한 가구를 한곳에서 만나보세요. 최신 트렌드를 반영한 디자인으로 고객의 다양한 취향을 만족 시킵니다.
+#### 2. 실시간 채팅 서비스
+실시간 채팅 기능을 통해 고객의 문의사항을 즉시 해결해 드립니다. 언제든지 상담사가 대기하고 있어 신속한 답변을 받을 수 있습니다.
+#### 3. 회원 등급 시스템
+고객의 구매 가격에 따라 브론즈, 실버, 골드 등급으로 구분됩니다. 등급에 따라 제공되는 할인 혜택 서비스를 제공합니다.
+#### 4. 관리자 페이지
+관리자는 카테고리, 상품, 주문을 관리하며 실시간으로 업데이트가 가능합니다. 이를 통해 효율적인 운영과 고객 만족을 극대화합니다.
 
-## Available Scripts
+<br>
 
-In the project directory, you can run:
+## 담당 도메인
+| 팀원  | 담당                                     |
+|-----|----------------------------------------|
+| 송진욱 | CHAT / TEAM LEADER                     |
+| 신영광 | CART / COMMENT / COUPON / HOME / ADMIN |
+| 정현  | ORDER / MYPAGE                         |
+| 이은주 | CATEGORY / ADMIN                       |
+| 현태훈 | USER / MYPAGE                          |
+| 최병욱 | PRODUCT / ADMIN                        |
 
-### `npm start`
+<br>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 기능 명세서
+**진욱 : 채팅(chat)**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+| 업무구분(대) | 업무구분(중) | 업무구분(소)  | 요구사항 내용                                                    | TASK                                                                 |
+|---------|---------|----------|------------------------------------------------------------|----------------------------------------------------------------------|
+| 채팅      | 채팅방 생성  | 채팅방 생성   | 채팅 아이콘을 누른 후 채팅 카테고리를 선택하게 되면 채팅방이 생성된다.                   | 1. 회원만 채팅방 생성 가능 2. 주문 문의, 배송 문의, 파손/환불 문의, 기타, 이전 채팅 기록 보기 항목의 카테고리 |
+| 채팅      | 메시지 생성  | 메시지 생성   | 채팅이 시작된 후 사용자는 채팅입력창과 보내기 버튼을 클릭하면 메시지를 보낼 수 있다.           |                                                                      |
+| 채팅      | 메시지 수정  | 메시지 수정   | 보내져있는 채팅을 클릭하면 수정 버튼을 눌러 수정할 수 있다.                         |                                                                      |
+| 채팅      | 메시지 삭제  | 메시지 삭제   | 보내져있는 채팅을 클릭하면 삭제 버튼을 눌러 삭제할 수 있다.                         |                                                                      |
+| 채팅      | 채팅 조회   | 채팅 이력 조회 | 회원은 채팅 카테고리 중 하나인 “이전 채팅 보기”를 클릭하면 이전에 진행했던 채팅방을 열람할 수 있다. | 1. 이전 채팅 목록 조회 페이지 필요 2. 리스트 형식으로 쭉 나열                               |
+<br>
 
-### `npm test`
+**병욱 : 상품(product)**
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+| 업무구분(대) | 업무구분(중) | 업무구분(소)      | 요구사항 내용                                  | TASK                                                               |
+|---------|---------|--------------|------------------------------------------|--------------------------------------------------------------------|
+| 상품      | 상품 조회   | 상품 리스트 조회    | 상품 리스트 페이지에서 상품 리스트를 확인할 수 있다            | 1)비회원/회원 상관없이 조회 가능                                                |
+| 상품      | 상품 조회   | 상품 상세 조회     | 상품 리스트에서 상품을 클릭하면 상품 상세 정보를 확인할 수 있다     | 1)비회원/회원 상관없이 조회 가능 2) 상세 페이지에서 수량을 결정한 후 장바구니/구매 버튼을 눌러 구매를 진행 가능 |
+| 상품      | 상품 조회   | 상품 검색기능      | 상품을 검색하면 리스트를 띄워준다                       | 1)비회원/회원 상관없이 조회 가능 2) 상품의 이름에 검색어가 들어가 있으면 모두 리스트로 띄워줌            |
+| 상품      | 상품 추가   | 상품 추가 페이지    | 상품 추가 페이지에서 상품의 상세 정보를 입력하면 상품을 추가할 수 있다 | 1)관리자만 가능 2)관리자용 상품 리스트 페이지에서 추가 버튼 클릭 후 상품 추가 페이지로 이동             |
+| 상품      | 상품 수정   | 상품 정보 수정 페이지 | 상품의 상세 정보(이름 가격 상세 설명, 사진 등)을 수정할 수 있다   | 1)관리자만 가능 2)관리자용 상품 상세페이지에서 버튼 클릭 후 상품 수정페이지로 이동 가능                |
+| 상품      | 상품 삭제   | 상품 삭제        | 상품 삭제 버튼을 누르면 상품을 삭제할 수 있다               | 1)관리자만 가능 2)관리자용 상품 상세페이지에서 삭제 버튼 클릭                               |
+<br>
 
-### `npm run build`
+**태훈 : 유저(USER / ADMIN)**
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+| 업무구분(대) | 업무구분(중) | 업무구분(소)             | 요구사항 내용                                           | TASK                                                                                                                                         | 
+|---------|---------|---------------------|---------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+| 유저      | 유저 생성   | 유저 회원가입             | 회원가입 페이지에서 요구 정보를 입력한 후, 회원으로 가입할 수 있다.           | 1) **회원가입 페이지**에서 정보를 입력받는다. →id, email, name, password, address, role, pwhint 2) 비밀번호는 인코딩하여 저장한다.                                          | 
+| 유저      | 정보 조회   | 유저 마이페이지            | 마이페이지에서 가입 시 입력한 정보, 이용 내역을 확인할 수 있다.             | 1) **마이페이지**에서 사용자 입력 정보를 조회할 수 있다. 2) 장바구니, 구매내역 항목을 조회할 수 있다. 구매내역 항목에서는 등급을 조회할 수 있다. 3) 회원 탈퇴를 수행할 수 있다.                                 | 
+| 유저      | 정보 조회   | 아이디 찾기              | 아이디를 잊었을 경우, 사용자가 입력한 정보를 바탕으로 아이디를 찾는다.          | 1) **아이디 찾기 페이지**에서 정보를 입력받는다. →이메일, 이름 입력받기. 2) **일치하는 아이디를 보여주는 페이지**로 이동한다.                                                               | 
+| 유저      | 정보 수정   | 유저 마이페이지에서 개인정보 수정  | 마이페이지에서 가입 시 입력한 정보를 수정할 수 있다. 단, 수정이 불가한 항목도 있다. | 1) **마이페이지**에서 사용자 입력 정보를 확인할 수 있다. 2) 주소를 입력한 후 ‘변경하기’ 버튼을 누르면 주소가 변경된다. 3) 비밀번호를 입력한 후 ‘변경하기’ 버튼을 누르면 비밀번호가 변경된다.                          | 
+| 유저      | 정보 수정   | 비밀번호 재설정            | 비밀번호를 잊었을 경우, 비밀번호를 재설정할 수 있다.                    | 1) 사용자가 입력한 정보를 확인하는 과정을 거친다. → 아이디, 이메일, 비밀번호 힌트 2) 정보가 일치하면 **비밀번호 재설정 페이지**로 이동한다.                                                        | 
+| 유저      | 정보 삭제   | 회원 탈퇴               | 마이페이지에서 회원 탈퇴를 할 수 있다.                            | 1) 회원 탈퇴 시, 회원 탈퇴 여부를 재확인한다. 2) 재확인 후 회원 정보 삭제 및 탈퇴처리 알림                                                                                     | 
+| 유저      | 관리자 페이지 | 주문, 상품, 카테고리 관리 페이지 | 주문, 상품, 카테고리에 대한 관리를 수행할 수 있는 관리자 페이지다.           | role이 “ADMIN”인 사용자만 접근할 수 있다. 1) 주문 관리 회원들의 주문 내역 조회, 삭제, 배송 상태를 수정할 수 있다. 2) 상품 관리 상품을 추가, 수정, 삭제할 수 있다. 3) 카테고리 관리 카테고리를 추가, 수정, 삭제할 수 있다. |
+<br>
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**은주 : 카테고리(Category), 어드민(Admin) 페이지**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+| 업무구분(대) | 업무구분(중)  | 업무구분(소) | 요구사항 내용                                        | TASK                                                                                                                  |
+|---------|----------|---------|------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| 어드민 페이지 | 주문 관리 FE | 주문 조회   | 어드민 계정으로 모든 유저가 주문한 주문내역을 조회할 수 있는 페이지         | 1) 모든 유저들의 주문 내역을 볼 수 있는 리스트 페이지 필요 2) 주문일, 금액순 등 정렬옵션 선택 가능한 버튼 3) VIP / 일반 유저별로 주문 조회 가능한 버튼 4) 특정 유저을 검색할 수 있는 검색창 |
+| 어드민 페이지 | 주문 관리 FE | 주문 수정   | 어드민 계정으로 유저의 주문 내역의 배송 상태를 수정할 수 있는 옵션 버튼      | 1) 특정 주문 내역의 배송 상태를 수정할 수있는 옵션 버튼 2) 수정 가능한 옵션: @hyun 님과 상의 (배송준비중,배송중,배송완료,주문취소) 3) 배송준비중에서만 취소가 가능                  |
+| 어드민 페이지 | 주문 관리 FE | 주문 삭제   | 어드민 계정으로 유저의 주문 내역을 일괄 / 선택 삭제할 수 있는 버튼        | 1) 유저의 주문 내역은 체크박스를 이용해 전체, 일부, 단일 선택 후 삭제가 가능하다.                                                                     |
+| 어드민 페이지 | 상품 관리 FE | 상품 등록   | 어드민 계정으로 새로운 상품을 쇼핑몰에 등록할 수 있는 페이지             | 1) 새로운 상품을 등록할 수 있는 페이지가 필요 2) 상품 등록 중 새로운 카테고리 등록이 가능하다. (추후개발)                                                      |
+| 어드민 페이지 | 상품 관리 FE | 상품 수정   | 어드민 계정으로 상품 관련 데이터를 수정할 수 있는 페이지               | 1) 상품을 수정할 수 있는 페이지가 필요 2) 상품 수정 페이지로 이동하기 이전의 리스트 페이지도 필요                                                            |
+| 어드민 페이지 | 상품 관리 FE | 상품 삭제   | 어드민 계정으로 상품 관련 데이터를 일괄 / 선택 삭제할 수 있는 버튼        | 1) 상품 삭제는 리스트페이지에서 체크박스를 이용해 전체, 일부, 단일 선택 후 삭제가 가능하다.                                                                |
+| 카테고리    | 카테고리 조회  | 카테고리 조회 | 유저는 모든 페이지에서 카테고리를 조회하고 해당 페이지로 이동 가능하다.       | 1) 유저는 모든 페이지의 좌측 사이드바에서 볼 수 있다. 2) `+SHOP` 버튼을 누르면 전체 카테고리가 드롭다운 된다.                                                 |
+| 카테고리    | 카테고리 관리  | 카테고리 등록 | 어드민은 신규 제품을 위한 새로운 카테고리를 등록할 수 있다.             | 1) 신규 제품 출시 중 해당하는 카테고리가 없을 시, 새로운 카테고리를 등록할 수 있다.                                                                    |
+| 카테고리    | 카테고리 관리  | 카테고리 수정 | 어드민은 카테고리에 담긴 상품들을 일괄 수정하거나 카테고리 이름을 수정할 수 있다. | 1) 카테고리 수정이 필요한 상품들을 한번에 이동시킬 수 있다. 2) 카테고리의 이름을 수정할 수 있다.                                                            |
+| 카테고리    | 카테고리 관리  | 카테고리 삭제 | 어드민은 더 이상 사용하지 않는 카테고리를 삭제할 수 있다.              | 1) 카테고리는 데이터 손실 위험도가 높다고 판단하여 일괄 삭제가 불가능하도록 한다.                                                                       |
+<br>
 
-### `npm run eject`
+**현 : 주문(Order)**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+| 업무구분(대) | 업무구분(중)  | 업무구분(소)     | 요구사항 내용                           | TASK                          |
+|---------|----------|-------------|-----------------------------------|-------------------------------|
+| 주문      | 주문 목록 조회 | 주문 목록 조회    | 주문할 아이템 정보 표시(회원 한정)              | 1) 가격, 수량, 상품 이미지             |
+| 주문      | 주문 생성    | 주문 생성       | 수령인 정보, 연락처, 배송지 주소, 주문 시 요청사항 입력 | 1) 주문 시 요청사항은 선택              |
+| 주문      | 주문 생성    | 배송지 선택      | 기본 배송지, 배송지 직접 입력 선택              | 1) 기본 배송지 선택 시 회원 주소 자동 입력    |
+| 주문      | 주문 생성    | 총 금액 계산     | 할인율, 배송비 적용하여 총 금액 표시             | 1) VIP 할인 : 10% 및 배송비 무료      |
+| 주문      | 주문 취소    | 주문 취소       | 배송 준비 중일 시 주문 취소 가능               |                               |
+| 주문      | 주문 환불    | 주문 환불       | 마이페이지에서 주문 환불 가능                  | 1) 구매 내역에서 해당 아이템 환불 표시       |
+| 주문      | 장바구니 연동  | 장바구니 연동     | 장바구니에서 선택된 상품으로 주문 생성             |                               |
+| 주문      | 할인율 적용   | 할인율 적용      | 회원 등급에 따른 할인 적용                   | 1) VIP, BASIC                 |
+| 어드민     | 주문 조회    | 주문 상세 조회    | 전체 주문 목록 표시                       | 1) 회원 명 검색 및 필터 기능            |
+| 어드민     | 주문 수정    | 주문 배송 정보 수정 | 배송 준비 중, 배송 중, 배송 완료 등 주문 상태 수정   |                               |
+| 어드민     | 주문 삭제    | 주문 삭제       | 주문 취소 시 관리자는 주문을 삭제               | 1) 잘못된 주문 처리 시 2) 주문 취소를 원할 시 |
+<br>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+**영광 : 장바구니(Cart)**
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+| 업무구분(대) | 업무구분(중)      | 업무구분(소)      | 요구사항 내용                                                  | TASK                                           |
+|---------|--------------|--------------|----------------------------------------------------------|------------------------------------------------|
+| 장바구니    | 장바구니 - 추가    | 장바구니 - 추가    | 회원은 언제나 장바구니에 상품을 추가할 수 있다.                              | 저장 방식을 LocalStorage, 백엔드DB에 둘다 넣어보고 더 나은 방식 채택 |
+| 장바구니    | 장바구니 - 조회    | 장바구니 - 조회    | 회원은 추가한 상품의 목록 및 가격, 총액을 확인할 수 있다.                       | 장바구니의 수량, 선택여부, 삭제를 동적으로 반영하여 총액 계산            |
+| 장바구니    | 장바구니 - 수정    | 장바구니 - 수정    | 회원은 장바구니에 담긴 상품의 수량을 수정할 수 있다.                           | 상동                                             |
+| 장바구니    | 장바구니 - 삭제    | 장바구니 - 삭제    | 회원은 장바구니에 담긴 상품을 일부를 제거할 수 있다. 또한 전체 상품을 한번에 제거할 수 도 있다. | 상동                                             |
+| 어드민     | 할인 및 쿠폰 CRUD | 할인 및 쿠폰 CRUD | 특정 상품, 카테고리 할인 및 쿠폰 CRUD                                 | 할인 및 쿠폰 적용 여부는 장바구니 페이지에서 확인 가능                |
+| 어드민     | 장바구니 - 조회    | 장바구니 - 분석    | 장바구니에 담긴 상품의 정보 분석                                       | 아이템 별 추가된 횟수, 방치된 빈도 등등을 분석                    |
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+<br>
 
-## Learn More
+## ERD
+![image](https://github.com/user-attachments/assets/ee4c6421-9bb0-43b8-acd0-565a8a353956)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
